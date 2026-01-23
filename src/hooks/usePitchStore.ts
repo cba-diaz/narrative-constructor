@@ -1,9 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 
+// Types for exercise data storage
+export interface ExerciseData {
+  [fieldId: string]: string;
+}
+
+export interface SectionData {
+  exercises: Record<string, ExerciseData>; // keyed by exercise id (e.g., "1_1", "1_2")
+  currentStep: number;
+  completado: boolean;
+}
+
 export interface PitchData {
   userName: string;
   startupName: string;
   blocks: Record<number, string>;
+  sections: Record<number, SectionData>;
   currentBlock: number;
   createdAt: string;
   updatedAt: string;
@@ -11,10 +23,17 @@ export interface PitchData {
 
 const STORAGE_KEY = 'pitch-de-pelicula-data';
 
+const getDefaultSectionData = (): SectionData => ({
+  exercises: {},
+  currentStep: 0,
+  completado: false,
+});
+
 const getDefaultData = (): PitchData => ({
   userName: '',
   startupName: '',
   blocks: {},
+  sections: {},
   currentBlock: 1,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -28,7 +47,12 @@ const loadFromStorage = (): PitchData => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Ensure sections object exists (for backwards compatibility)
+      if (!parsed.sections) {
+        parsed.sections = {};
+      }
+      return parsed;
     }
   } catch {
     // Invalid data, use defaults
@@ -69,7 +93,15 @@ export function usePitchStore() {
     setSaveStatus('saving');
     setData(prev => {
       const newBlocks = { ...prev.blocks, [blockNumber]: content };
-      const updated = { ...prev, blocks: newBlocks, updatedAt: new Date().toISOString() };
+      // Mark section as completed when block is saved with content
+      const newSections = { ...prev.sections };
+      if (content.trim().length > 0) {
+        newSections[blockNumber] = {
+          ...(newSections[blockNumber] || getDefaultSectionData()),
+          completado: true,
+        };
+      }
+      const updated = { ...prev, blocks: newBlocks, sections: newSections, updatedAt: new Date().toISOString() };
       saveToStorage(updated);
       return updated;
     });
@@ -84,6 +116,76 @@ export function usePitchStore() {
       return updated;
     });
   }, []);
+
+  // New: Set exercise data for a specific section and exercise
+  const setExerciseData = useCallback((sectionNumber: number, exerciseId: string, fieldData: ExerciseData) => {
+    setSaveStatus('saving');
+    setData(prev => {
+      const sectionData = prev.sections[sectionNumber] || getDefaultSectionData();
+      const newExercises = {
+        ...sectionData.exercises,
+        [exerciseId]: {
+          ...(sectionData.exercises[exerciseId] || {}),
+          ...fieldData,
+        },
+      };
+      const newSections = {
+        ...prev.sections,
+        [sectionNumber]: {
+          ...sectionData,
+          exercises: newExercises,
+        },
+      };
+      const updated = { ...prev, sections: newSections, updatedAt: new Date().toISOString() };
+      saveToStorage(updated);
+      return updated;
+    });
+    setSaveStatus('saved');
+    setTimeout(() => setSaveStatus('idle'), 2000);
+  }, []);
+
+  // New: Set current step for a section
+  const setSectionStep = useCallback((sectionNumber: number, step: number) => {
+    setData(prev => {
+      const sectionData = prev.sections[sectionNumber] || getDefaultSectionData();
+      const newSections = {
+        ...prev.sections,
+        [sectionNumber]: {
+          ...sectionData,
+          currentStep: step,
+        },
+      };
+      const updated = { ...prev, sections: newSections, updatedAt: new Date().toISOString() };
+      saveToStorage(updated);
+      return updated;
+    });
+  }, []);
+
+  // New: Get exercise data for a specific section
+  const getSectionExercises = useCallback((sectionNumber: number): Record<string, ExerciseData> => {
+    return data.sections[sectionNumber]?.exercises || {};
+  }, [data.sections]);
+
+  // New: Get current step for a section
+  const getSectionStep = useCallback((sectionNumber: number): number => {
+    return data.sections[sectionNumber]?.currentStep || 0;
+  }, [data.sections]);
+
+  // New: Get protagonist data from section 1 (for use in other sections)
+  const getProtagonistData = useCallback(() => {
+    const section1Exercises = data.sections[1]?.exercises || {};
+    const protagonistExercise = section1Exercises['1_2'] || {};
+    return {
+      nombre: protagonistExercise.nombre || '',
+      edad: protagonistExercise.edad || '',
+      profesion: protagonistExercise.profesion || '',
+      ciudad: protagonistExercise.ciudad || '',
+      contexto: protagonistExercise.contexto || '',
+      aspiracion: protagonistExercise.aspiracion || '',
+      rutina: protagonistExercise.rutina || '',
+      frustracion: protagonistExercise.frustracion || '',
+    };
+  }, [data.sections]);
 
   const getCompletedBlocks = useCallback(() => {
     return Object.entries(data.blocks)
@@ -123,6 +225,11 @@ export function usePitchStore() {
     setUserInfo,
     setBlockContent,
     setCurrentBlock,
+    setExerciseData,
+    setSectionStep,
+    getSectionExercises,
+    getSectionStep,
+    getProtagonistData,
     getCompletedBlocks,
     isBlockCompleted,
     getNextIncompleteBlock,
