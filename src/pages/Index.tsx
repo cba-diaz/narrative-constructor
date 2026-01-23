@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LandingPage } from '@/components/LandingPage';
 import { HubPage } from '@/components/HubPage';
-import { BlockEditor } from '@/components/BlockEditor';
+import { SectionWizard } from '@/components/SectionWizard';
 import { PitchView } from '@/components/PitchView';
 import { blocks } from '@/data/blocks';
 import { usePitchStore } from '@/hooks/usePitchStore';
@@ -114,16 +114,21 @@ const Index = () => {
     );
   }
   
-  if (currentView === 'editor' && currentBlockData) {
+  if (currentView === 'editor') {
     return (
-      <BlockEditor
+      <SectionWizard
         key={editingBlock}
-        block={currentBlockData}
-        initialContent={data.blocks[editingBlock] || ''}
-        onSave={handleSaveBlock}
-        onSaveAndContinue={handleSaveAndContinue}
+        sectionNumber={editingBlock}
+        onComplete={() => {
+          if (editingBlock === 9) {
+            setCurrentView('pitch');
+          } else {
+            const nextBlock = editingBlock + 1;
+            setEditingBlock(nextBlock);
+            setCurrentBlock(nextBlock);
+          }
+        }}
         onBack={() => setCurrentView('hub')}
-        isLastBlock={editingBlock === 9}
       />
     );
   }
