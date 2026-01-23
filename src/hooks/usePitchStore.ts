@@ -11,86 +11,79 @@ export interface PitchData {
 
 const STORAGE_KEY = 'pitch-de-pelicula-data';
 
-const getInitialData = (): PitchData => {
+const getDefaultData = (): PitchData => ({
+  userName: '',
+  startupName: '',
+  blocks: {},
+  currentBlock: 1,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+
+const loadFromStorage = (): PitchData => {
   if (typeof window === 'undefined') {
-    return {
-      userName: '',
-      startupName: '',
-      blocks: {},
-      currentBlock: 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    return getDefaultData();
   }
   
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    try {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
       return JSON.parse(stored);
-    } catch {
-      return {
-        userName: '',
-        startupName: '',
-        blocks: {},
-        currentBlock: 1,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
     }
+  } catch {
+    // Invalid data, use defaults
   }
   
-  return {
-    userName: '',
-    startupName: '',
-    blocks: {},
-    currentBlock: 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
+  return getDefaultData();
+};
+
+const saveToStorage = (data: PitchData) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    console.error('Failed to save to localStorage');
+  }
 };
 
 export function usePitchStore() {
-  const [data, setData] = useState<PitchData>(getInitialData);
+  const [data, setData] = useState<PitchData>(loadFromStorage);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   // Load from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        setData(JSON.parse(stored));
-      } catch {
-        // Invalid data, use defaults
-      }
-    }
-  }, []);
-
-  // Save to localStorage whenever data changes
-  const saveData = useCallback((newData: PitchData) => {
-    setSaveStatus('saving');
-    try {
-      const updatedData = { ...newData, updatedAt: new Date().toISOString() };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
-      setData(updatedData);
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
-    } catch {
-      setSaveStatus('error');
-    }
+    setData(loadFromStorage());
   }, []);
 
   const setUserInfo = useCallback((userName: string, startupName: string) => {
-    saveData({ ...data, userName, startupName });
-  }, [data, saveData]);
+    setSaveStatus('saving');
+    setData(prev => {
+      const updated = { ...prev, userName, startupName, updatedAt: new Date().toISOString() };
+      saveToStorage(updated);
+      return updated;
+    });
+    setSaveStatus('saved');
+    setTimeout(() => setSaveStatus('idle'), 2000);
+  }, []);
 
   const setBlockContent = useCallback((blockNumber: number, content: string) => {
-    const newBlocks = { ...data.blocks, [blockNumber]: content };
-    saveData({ ...data, blocks: newBlocks });
-  }, [data, saveData]);
+    setSaveStatus('saving');
+    setData(prev => {
+      const newBlocks = { ...prev.blocks, [blockNumber]: content };
+      const updated = { ...prev, blocks: newBlocks, updatedAt: new Date().toISOString() };
+      saveToStorage(updated);
+      return updated;
+    });
+    setSaveStatus('saved');
+    setTimeout(() => setSaveStatus('idle'), 2000);
+  }, []);
 
   const setCurrentBlock = useCallback((blockNumber: number) => {
-    saveData({ ...data, currentBlock: blockNumber });
-  }, [data, saveData]);
+    setData(prev => {
+      const updated = { ...prev, currentBlock: blockNumber, updatedAt: new Date().toISOString() };
+      saveToStorage(updated);
+      return updated;
+    });
+  }, []);
 
   const getCompletedBlocks = useCallback(() => {
     return Object.entries(data.blocks)
@@ -104,10 +97,10 @@ export function usePitchStore() {
 
   const getNextIncompleteBlock = useCallback(() => {
     for (let i = 1; i <= 9; i++) {
-      if (!isBlockCompleted(i)) return i;
+      if (!data.blocks[i] || data.blocks[i].trim().length === 0) return i;
     }
     return null;
-  }, [isBlockCompleted]);
+  }, [data.blocks]);
 
   const getTotalWords = useCallback(() => {
     return Object.values(data.blocks)
@@ -119,14 +112,7 @@ export function usePitchStore() {
 
   const resetData = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
-    setData({
-      userName: '',
-      startupName: '',
-      blocks: {},
-      currentBlock: 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
+    setData(getDefaultData());
   }, []);
 
   const hasStarted = data.userName.length > 0 && data.startupName.length > 0;
