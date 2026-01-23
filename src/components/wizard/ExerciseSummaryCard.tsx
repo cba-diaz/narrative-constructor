@@ -11,9 +11,9 @@ interface ExerciseSummaryCardProps {
     edad: string;
     profesion: string;
     ciudad: string;
-    contexto: string;
-    aspiracion: string;
-    frustracion: string;
+    contexto?: string;
+    aspiracion?: string;
+    frustracion?: string;
   };
 }
 
