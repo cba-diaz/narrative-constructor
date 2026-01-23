@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LandingPage } from '@/components/LandingPage';
 import { HubPage } from '@/components/HubPage';
 import { BlockEditor } from '@/components/BlockEditor';
@@ -15,7 +15,6 @@ const Index = () => {
     setBlockContent,
     setCurrentBlock,
     getCompletedBlocks,
-    isBlockCompleted,
     getNextIncompleteBlock,
     resetData,
     hasStarted,
@@ -28,6 +27,8 @@ const Index = () => {
   useEffect(() => {
     if (hasStarted) {
       setCurrentView('hub');
+    } else {
+      setCurrentView('landing');
     }
   }, [hasStarted]);
 
@@ -60,20 +61,27 @@ const Index = () => {
   }, [editingBlock, setBlockContent]);
 
   const handleSaveAndContinue = useCallback((content: string) => {
+    // Save the content first
     setBlockContent(editingBlock, content);
     
-    // Find next incomplete block or go to hub if all complete
-    const nextBlock = getNextIncompleteBlock();
+    // Calculate next block after this save
+    // We need to manually check since state won't be updated yet
+    const hasContent = content && content.trim().length > 0;
     
-    if (editingBlock === 9 || !nextBlock) {
-      // Last block or all complete - go to pitch view
+    if (editingBlock === 9) {
+      // Last block - go to pitch view
       setCurrentView('pitch');
-    } else {
-      // Go to next block
+    } else if (hasContent) {
+      // Content saved, go to next block
+      const nextBlock = editingBlock + 1;
       setEditingBlock(nextBlock);
       setCurrentBlock(nextBlock);
+    } else {
+      // No content, stay on current block
+      // Just saved empty, go back to hub
+      setCurrentView('hub');
     }
-  }, [editingBlock, setBlockContent, getNextIncompleteBlock, setCurrentBlock]);
+  }, [editingBlock, setBlockContent, setCurrentBlock]);
 
   const handleReset = useCallback(() => {
     resetData();
@@ -81,49 +89,58 @@ const Index = () => {
     setEditingBlock(1);
   }, [resetData]);
 
-  const currentBlockData = blocks.find(b => b.numero === editingBlock);
+  const currentBlockData = useMemo(() => 
+    blocks.find(b => b.numero === editingBlock),
+    [editingBlock]
+  );
+  
   const completedBlocks = getCompletedBlocks();
 
-  return (
-    <>
-      {currentView === 'landing' && (
-        <LandingPage onStart={handleStart} />
-      )}
-      
-      {currentView === 'hub' && (
-        <HubPage
-          userName={data.userName}
-          startupName={data.startupName}
-          completedBlocks={completedBlocks}
-          currentBlock={data.currentBlock}
-          onSelectBlock={handleSelectBlock}
-          onViewPitch={() => setCurrentView('pitch')}
-          onReset={handleReset}
-        />
-      )}
-      
-      {currentView === 'editor' && currentBlockData && (
-        <BlockEditor
-          block={currentBlockData}
-          initialContent={data.blocks[editingBlock] || ''}
-          onSave={handleSaveBlock}
-          onSaveAndContinue={handleSaveAndContinue}
-          onBack={() => setCurrentView('hub')}
-          isLastBlock={editingBlock === 9}
-        />
-      )}
-      
-      {currentView === 'pitch' && (
-        <PitchView
-          userName={data.userName}
-          startupName={data.startupName}
-          blockContents={data.blocks}
-          onBack={() => setCurrentView('hub')}
-          onEditBlock={handleSelectBlock}
-        />
-      )}
-    </>
-  );
+  if (currentView === 'landing') {
+    return <LandingPage onStart={handleStart} />;
+  }
+  
+  if (currentView === 'hub') {
+    return (
+      <HubPage
+        userName={data.userName}
+        startupName={data.startupName}
+        completedBlocks={completedBlocks}
+        currentBlock={data.currentBlock}
+        onSelectBlock={handleSelectBlock}
+        onViewPitch={() => setCurrentView('pitch')}
+        onReset={handleReset}
+      />
+    );
+  }
+  
+  if (currentView === 'editor' && currentBlockData) {
+    return (
+      <BlockEditor
+        key={editingBlock}
+        block={currentBlockData}
+        initialContent={data.blocks[editingBlock] || ''}
+        onSave={handleSaveBlock}
+        onSaveAndContinue={handleSaveAndContinue}
+        onBack={() => setCurrentView('hub')}
+        isLastBlock={editingBlock === 9}
+      />
+    );
+  }
+  
+  if (currentView === 'pitch') {
+    return (
+      <PitchView
+        userName={data.userName}
+        startupName={data.startupName}
+        blockContents={data.blocks}
+        onBack={() => setCurrentView('hub')}
+        onEditBlock={handleSelectBlock}
+      />
+    );
+  }
+
+  return null;
 };
 
 export default Index;
