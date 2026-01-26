@@ -18,6 +18,7 @@ const Index = () => {
     getNextIncompleteBlock,
     resetData,
     hasStarted,
+    getPitchKitCompletedCount,
   } = usePitchStore();
 
   const [currentView, setCurrentView] = useState<View>('landing');
@@ -107,6 +108,7 @@ const Index = () => {
         startupName={data.startupName}
         completedBlocks={completedBlocks}
         currentBlock={data.currentBlock}
+        pitchKitCount={getPitchKitCompletedCount()}
         onSelectBlock={handleSelectBlock}
         onViewPitch={() => setCurrentView('pitch')}
         onReset={handleReset}

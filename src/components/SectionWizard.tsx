@@ -7,6 +7,7 @@ import { ExerciseStep } from './wizard/ExerciseStep';
 import { FinalBlockStep } from './wizard/FinalBlockStep';
 import { ChevronLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface SectionWizardProps {
   sectionNumber: number;
@@ -22,21 +23,29 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
     getSectionExercises, 
     getSectionStep,
     getProtagonistData,
-    setBlockContent 
+    setBlockContent,
+    saveToPitchKit
   } = usePitchStore();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const block = blocks.find(b => b.numero === sectionNumber)!;
   const sectionExerciseData = sectionExercises.find(s => s.seccionNumero === sectionNumber);
   const exercises = sectionExerciseData?.ejercicios || [];
   
   const [currentStep, setCurrentStep] = useState(() => getSectionStep(sectionNumber));
+  const [pitchKitSaved, setPitchKitSaved] = useState(() => !!data.pitchKit[sectionNumber]?.content);
   const totalSteps = exercises.length + 1; // exercises + final block
 
   // Sync step with store
   useEffect(() => {
     setSectionStep(sectionNumber, currentStep);
   }, [currentStep, sectionNumber, setSectionStep]);
+
+  // Update pitchKitSaved when data changes
+  useEffect(() => {
+    setPitchKitSaved(!!data.pitchKit[sectionNumber]?.content);
+  }, [data.pitchKit, sectionNumber]);
 
   const handleExerciseSave = useCallback((exerciseId: string, fieldData: ExerciseData) => {
     setExerciseData(sectionNumber, exerciseId, fieldData);
@@ -78,6 +87,16 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
     
     onComplete();
   }, [sectionNumber, setBlockContent, toast, onComplete]);
+
+  const handleSaveToPitchKit = useCallback((content: string) => {
+    saveToPitchKit(sectionNumber, content);
+    setPitchKitSaved(true);
+    toast({
+      title: `¡Bloque ${sectionNumber} guardado en Pitch Kit!`,
+      description: "Puedes ver tu Pitch Kit completo desde el Hub",
+      duration: 3000,
+    });
+  }, [sectionNumber, saveToPitchKit, toast]);
 
   const exercisesData = getSectionExercises(sectionNumber);
   const protagonistData = getProtagonistData();
@@ -138,8 +157,10 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
               protagonistData={sectionNumber > 1 ? protagonistData : undefined}
               onSave={handleBlockSave}
               onSaveAndFinish={handleBlockSaveAndFinish}
+              onSaveToPitchKit={handleSaveToPitchKit}
               onBack={handlePrev}
               isLastSection={sectionNumber === 9}
+              isPitchKitSaved={pitchKitSaved}
             />
           )}
         </div>
