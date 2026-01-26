@@ -11,11 +11,18 @@ export interface SectionData {
   completado: boolean;
 }
 
+export interface PitchKitBlock {
+  content: string;
+  savedAt: string;
+  wordCount: number;
+}
+
 export interface PitchData {
   userName: string;
   startupName: string;
   blocks: Record<number, string>;
   sections: Record<number, SectionData>;
+  pitchKit: Record<number, PitchKitBlock>; // Separate Pitch Kit storage
   currentBlock: number;
   createdAt: string;
   updatedAt: string;
@@ -34,6 +41,7 @@ const getDefaultData = (): PitchData => ({
   startupName: '',
   blocks: {},
   sections: {},
+  pitchKit: {},
   currentBlock: 1,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -51,6 +59,10 @@ const loadFromStorage = (): PitchData => {
       // Ensure sections object exists (for backwards compatibility)
       if (!parsed.sections) {
         parsed.sections = {};
+      }
+      // Ensure pitchKit object exists (for backwards compatibility)
+      if (!parsed.pitchKit) {
+        parsed.pitchKit = {};
       }
       return parsed;
     }
@@ -217,6 +229,40 @@ export function usePitchStore() {
     setData(getDefaultData());
   }, []);
 
+  // Pitch Kit functions
+  const saveToPitchKit = useCallback((blockNumber: number, content: string) => {
+    const wordCount = content.trim().split(/\s+/).filter(word => word.length > 0).length;
+    setSaveStatus('saving');
+    setData(prev => {
+      const newPitchKit = {
+        ...prev.pitchKit,
+        [blockNumber]: {
+          content,
+          savedAt: new Date().toISOString(),
+          wordCount,
+        },
+      };
+      const updated = { ...prev, pitchKit: newPitchKit, updatedAt: new Date().toISOString() };
+      saveToStorage(updated);
+      return updated;
+    });
+    setSaveStatus('saved');
+    setTimeout(() => setSaveStatus('idle'), 2000);
+  }, []);
+
+  const getPitchKitBlocks = useCallback(() => {
+    return data.pitchKit;
+  }, [data.pitchKit]);
+
+  const getPitchKitCompletedCount = useCallback(() => {
+    return Object.keys(data.pitchKit).filter(k => data.pitchKit[parseInt(k)]?.content?.trim().length > 0).length;
+  }, [data.pitchKit]);
+
+  const getPitchKitTotalWords = useCallback(() => {
+    return Object.values(data.pitchKit)
+      .reduce((total, block) => total + (block?.wordCount || 0), 0);
+  }, [data.pitchKit]);
+
   const hasStarted = data.userName.length > 0 && data.startupName.length > 0;
 
   return {
@@ -236,5 +282,10 @@ export function usePitchStore() {
     getTotalWords,
     resetData,
     hasStarted,
+    // Pitch Kit
+    saveToPitchKit,
+    getPitchKitBlocks,
+    getPitchKitCompletedCount,
+    getPitchKitTotalWords,
   };
 }

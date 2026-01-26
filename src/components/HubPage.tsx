@@ -1,6 +1,6 @@
 import { blocks } from '@/data/blocks';
 import { Button } from '@/components/ui/button';
-import { Check, Circle, ChevronRight, Eye, RotateCcw } from 'lucide-react';
+import { Check, Circle, ChevronRight, Eye, RotateCcw, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -18,12 +18,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useNavigate } from 'react-router-dom';
 
 interface HubPageProps {
   userName: string;
   startupName: string;
   completedBlocks: number[];
   currentBlock: number;
+  pitchKitCount: number;
   onSelectBlock: (blockNumber: number) => void;
   onViewPitch: () => void;
   onReset: () => void;
@@ -34,10 +36,12 @@ export function HubPage({
   startupName, 
   completedBlocks, 
   currentBlock,
+  pitchKitCount,
   onSelectBlock, 
   onViewPitch,
   onReset
 }: HubPageProps) {
+  const navigate = useNavigate();
   const getBlockStatus = (blockNumber: number) => {
     if (completedBlocks.includes(blockNumber)) return 'completed';
     
@@ -155,6 +159,43 @@ export function HubPage({
               </Tooltip>
             );
           })}
+        </div>
+
+        {/* Pitch Kit Section */}
+        <div className="mb-8 p-4 rounded-xl bg-primary/5 border-2 border-primary/20">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Package className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-foreground">Tu Pitch Kit</h3>
+                <p className="text-xs text-muted-foreground">Bloques listos para tu presentación</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-primary">{pitchKitCount}/9</div>
+              <div className="text-xs text-muted-foreground">guardados</div>
+            </div>
+          </div>
+          
+          {/* Progress bar for Pitch Kit */}
+          <div className="h-2 bg-secondary rounded-full overflow-hidden mb-3">
+            <div 
+              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${(pitchKitCount / 9) * 100}%` }}
+            />
+          </div>
+          
+          <Button 
+            variant="outline" 
+            className="w-full"
+            onClick={() => navigate('/pitch-kit')}
+          >
+            <Package className="w-4 h-4 mr-2" />
+            Ver Pitch Kit completo
+            <ChevronRight className="w-4 h-4 ml-auto" />
+          </Button>
         </div>
 
         {/* Action Buttons */}
