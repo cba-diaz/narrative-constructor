@@ -162,34 +162,55 @@ export function HubPage({
         </div>
 
         {/* Pitch Kit Section */}
-        <div className="mb-8 p-4 rounded-xl bg-primary/5 border-2 border-primary/20">
-          <div className="flex items-center justify-between mb-3">
+        <div className="mb-8 p-5 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Package className="w-5 h-5 text-primary" />
+              <div className="p-2.5 rounded-lg bg-primary/20">
+                <Package className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Tu Pitch Kit</h3>
+                <h3 className="text-lg font-bold text-foreground">🎬 TU PITCH KIT</h3>
                 <p className="text-xs text-muted-foreground">Bloques listos para tu presentación</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary">{pitchKitCount}/9</div>
+              <div className="text-3xl font-bold text-primary">{pitchKitCount}/9</div>
               <div className="text-xs text-muted-foreground">guardados</div>
             </div>
           </div>
           
           {/* Progress bar for Pitch Kit */}
-          <div className="h-2 bg-secondary rounded-full overflow-hidden mb-3">
+          <div className="h-3 bg-secondary rounded-full overflow-hidden mb-4">
             <div 
-              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+              className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${(pitchKitCount / 9) * 100}%` }}
             />
           </div>
+
+          {/* Block status grid */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            {blocks.map((block) => {
+              const isInKit = completedBlocks.includes(block.numero);
+              return (
+                <div key={block.numero} className="flex items-center gap-1.5 text-xs">
+                  {isInKit ? (
+                    <Check className="w-3.5 h-3.5 text-primary" />
+                  ) : (
+                    <Circle className="w-3.5 h-3.5 text-muted-foreground/50" />
+                  )}
+                  <span className={cn(
+                    "truncate",
+                    isInKit ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                    {block.nombre.split(' ')[1]}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
           
           <Button 
-            variant="outline" 
-            className="w-full"
+            className="w-full btn-primary-gradient"
             onClick={() => navigate('/pitch-kit')}
           >
             <Package className="w-4 h-4 mr-2" />

@@ -6,10 +6,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Lightbulb, Loader2, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import {
+  ProgressiveReductionExercise,
+  HeadlineExercise,
+  InvestorProfiler,
+  ThreeActsExercise,
+  ProblemDiggerExercise,
+  CustomerStoryBuilder,
+  SuperpowerDetector,
+} from '@/components/exercises';
 
 interface ExerciseStepProps {
   exercise: Exercise;
@@ -22,15 +29,6 @@ interface ExerciseStepProps {
   isFirst: boolean;
 }
 
-// Map of field IDs to their previous field (for "Los 5 Por Qués")
-const PORQUE_CHAIN: Record<string, { prevField: string; questionNumber: number }> = {
-  'porque_1': { prevField: 'problema_inicial', questionNumber: 1 },
-  'porque_2': { prevField: 'porque_1', questionNumber: 2 },
-  'porque_3': { prevField: 'porque_2', questionNumber: 3 },
-  'porque_4': { prevField: 'porque_3', questionNumber: 4 },
-  'porque_5': { prevField: 'porque_4', questionNumber: 5 },
-};
-
 export function ExerciseStep({
   exercise,
   exerciseNumber,
@@ -42,91 +40,15 @@ export function ExerciseStep({
   isFirst
 }: ExerciseStepProps) {
   const [formData, setFormData] = useState<ExerciseData>(initialData);
-  const [dynamicLabels, setDynamicLabels] = useState<Record<string, string>>({});
-  const [loadingFields, setLoadingFields] = useState<Record<string, boolean>>({});
-  const { toast } = useToast();
-
-  // Check if this is the "5 Por Qués" exercise
-  const isCincoPorQues = exercise.id === '1_1';
 
   // Update form when initialData changes
   useEffect(() => {
     setFormData(initialData);
   }, [initialData]);
 
-  // Generate dynamic question when previous field changes
-  const generateDynamicQuestion = useCallback(async (fieldId: string, previousAnswer: string) => {
-    if (!isCincoPorQues || !PORQUE_CHAIN[fieldId] || !previousAnswer.trim()) {
-      return;
-    }
-
-    setLoadingFields(prev => ({ ...prev, [fieldId]: true }));
-
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-why-question', {
-        body: {
-          previousAnswer: previousAnswer.trim(),
-          questionNumber: PORQUE_CHAIN[fieldId].questionNumber,
-        },
-      });
-
-      if (error) {
-        console.error('Error generating question:', error);
-        return;
-      }
-
-      if (data?.question) {
-        setDynamicLabels(prev => ({ ...prev, [fieldId]: data.question }));
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      if (error instanceof Error && error.message.includes('429')) {
-        toast({
-          title: "Límite de solicitudes alcanzado",
-          description: "Por favor espera un momento antes de continuar.",
-          variant: "destructive",
-        });
-      }
-    } finally {
-      setLoadingFields(prev => ({ ...prev, [fieldId]: false }));
-    }
-  }, [isCincoPorQues, toast]);
-
-  // Trigger generation when previous field value changes
-  useEffect(() => {
-    if (!isCincoPorQues) return;
-
-    // Check each "porque" field and generate if previous has content
-    Object.entries(PORQUE_CHAIN).forEach(([fieldId, { prevField }]) => {
-      const prevValue = formData[prevField];
-      if (prevValue && prevValue.trim().length > 10 && !dynamicLabels[fieldId]) {
-        generateDynamicQuestion(fieldId, prevValue);
-      }
-    });
-  }, [formData, isCincoPorQues, dynamicLabels, generateDynamicQuestion]);
-
-  const handleFieldChange = (fieldId: string, value: string) => {
-    const newData = { ...formData, [fieldId]: value };
-    setFormData(newData);
-  };
-
-  // Handle blur to trigger generation
-  const handleFieldBlur = (fieldId: string) => {
-    if (!isCincoPorQues) return;
-
-    // Find which field depends on this one
-    const dependentField = Object.entries(PORQUE_CHAIN).find(
-      ([_, { prevField }]) => prevField === fieldId
-    );
-
-    if (dependentField) {
-      const [depFieldId] = dependentField;
-      const currentValue = formData[fieldId];
-      if (currentValue && currentValue.trim().length > 5) {
-        generateDynamicQuestion(depFieldId, currentValue);
-      }
-    }
-  };
+  const handleFieldChange = useCallback((fieldId: string, value: string) => {
+    setFormData(prev => ({ ...prev, [fieldId]: value }));
+  }, []);
 
   const handleNext = () => {
     onSave(formData);
@@ -138,28 +60,80 @@ export function ExerciseStep({
     onBack();
   };
 
+  // Render specialized component if componentType is set
+  const renderSpecializedComponent = () => {
+    switch (exercise.componentType) {
+      case 'progressive-reduction':
+        return (
+          <ProgressiveReductionExercise
+            data={formData}
+            onChange={handleFieldChange}
+          />
+        );
+      case 'headline':
+        return (
+          <HeadlineExercise
+            data={formData}
+            onChange={handleFieldChange}
+          />
+        );
+      case 'investor-profiler':
+        return (
+          <InvestorProfiler
+            data={formData}
+            onChange={handleFieldChange}
+          />
+        );
+      case 'three-acts':
+        return (
+          <ThreeActsExercise
+            data={formData}
+            onChange={handleFieldChange}
+          />
+        );
+      case 'problem-digger':
+        return (
+          <ProblemDiggerExercise
+            data={formData}
+            onChange={handleFieldChange}
+          />
+        );
+      case 'customer-story':
+        return (
+          <CustomerStoryBuilder
+            data={formData}
+            onChange={handleFieldChange}
+          />
+        );
+      case 'superpower-detector':
+        return (
+          <SuperpowerDetector
+            data={formData}
+            onChange={handleFieldChange}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   const renderField = (field: ExerciseField) => {
     const value = formData[field.id] || '';
-    const isLoading = loadingFields[field.id];
-    
-    // Get dynamic label if available
-    const displayLabel = dynamicLabels[field.id] || field.label;
-    const hasDynamicLabel = !!dynamicLabels[field.id];
 
     switch (field.type) {
       case 'input':
+      case 'url':
+      case 'number':
         return (
           <div key={field.id} className="space-y-2">
-            <Label htmlFor={field.id} className="text-sm font-medium flex items-center gap-2">
-              {isLoading && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
-              {hasDynamicLabel && <Sparkles className="w-3 h-3 text-primary" />}
-              <span className={hasDynamicLabel ? "text-primary" : ""}>{displayLabel}</span>
+            <Label htmlFor={field.id} className="text-sm font-medium">
+              {field.label}
             </Label>
             <Input
               id={field.id}
+              type={field.type === 'url' ? 'url' : field.type === 'number' ? 'number' : 'text'}
               value={value}
               onChange={(e) => handleFieldChange(field.id, e.target.value)}
-              onBlur={() => handleFieldBlur(field.id)}
               placeholder={field.placeholder}
               className="w-full"
             />
@@ -169,16 +143,13 @@ export function ExerciseStep({
       case 'textarea':
         return (
           <div key={field.id} className="space-y-2">
-            <Label htmlFor={field.id} className="text-sm font-medium flex items-center gap-2">
-              {isLoading && <Loader2 className="w-3 h-3 animate-spin text-primary" />}
-              {hasDynamicLabel && <Sparkles className="w-3 h-3 text-primary" />}
-              <span className={hasDynamicLabel ? "text-primary" : ""}>{displayLabel}</span>
+            <Label htmlFor={field.id} className="text-sm font-medium">
+              {field.label}
             </Label>
             <Textarea
               id={field.id}
               value={value}
               onChange={(e) => handleFieldChange(field.id, e.target.value)}
-              onBlur={() => handleFieldBlur(field.id)}
               placeholder={field.placeholder}
               className="min-h-[100px] resize-none"
             />
@@ -209,10 +180,28 @@ export function ExerciseStep({
           </div>
         );
 
+      case 'time':
+        return (
+          <div key={field.id} className="space-y-2">
+            <Label htmlFor={field.id} className="text-sm font-medium">
+              {field.label}
+            </Label>
+            <Input
+              id={field.id}
+              type="time"
+              value={value}
+              onChange={(e) => handleFieldChange(field.id, e.target.value)}
+              className="w-full"
+            />
+          </div>
+        );
+
       default:
         return null;
     }
   };
+
+  const hasSpecializedComponent = !!exercise.componentType;
 
   return (
     <div className="space-y-6">
@@ -232,17 +221,13 @@ export function ExerciseStep({
         </div>
       </div>
 
-      {/* AI Badge for dynamic exercises */}
-      {isCincoPorQues && (
-        <div className="flex items-center gap-2 text-xs text-primary bg-primary/5 px-3 py-2 rounded-lg border border-primary/20">
-          <Sparkles className="w-4 h-4" />
-          <span>Las preguntas se generan automáticamente con IA basándose en tus respuestas</span>
-        </div>
-      )}
-
-      {/* Form Fields */}
+      {/* Content - either specialized component or form fields */}
       <div className="space-y-4">
-        {exercise.campos.map(renderField)}
+        {hasSpecializedComponent ? (
+          renderSpecializedComponent()
+        ) : (
+          exercise.campos.map(renderField)
+        )}
       </div>
 
       {/* Note if present */}
