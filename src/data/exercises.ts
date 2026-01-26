@@ -1,11 +1,12 @@
 // Types for exercises
 export interface ExerciseField {
   id: string;
-  type: 'input' | 'textarea' | 'radio';
+  type: 'input' | 'textarea' | 'radio' | 'select' | 'checkbox' | 'number' | 'time' | 'url';
   label: string;
   placeholder?: string;
   options?: { value: string; label: string; followUpField?: ExerciseField }[];
   required?: boolean;
+  maxWords?: number;
 }
 
 export interface Exercise {
@@ -14,6 +15,8 @@ export interface Exercise {
   instruccion: string;
   campos: ExerciseField[];
   nota?: string;
+  // New: specialized component type
+  componentType?: 'progressive-reduction' | 'headline' | 'investor-profiler' | 'three-acts' | 'problem-digger' | 'customer-story' | 'superpower-detector';
 }
 
 export interface SectionExercises {
@@ -23,26 +26,36 @@ export interface SectionExercises {
 
 // Exercise data for all 9 sections
 export const sectionExercises: SectionExercises[] = [
-  // SECTION 1: EL PROBLEMA
+  // SECTION 1: EL PROBLEMA (Chapter 1 - High Concept + Chapter 4 - Problem)
   {
     seccionNumero: 1,
     ejercicios: [
       {
         id: "1_1",
-        titulo: "Los 5 Por Qués",
-        instruccion: "Antes de describir el problema, asegúrate de que estás atacando la raíz, no un síntoma.",
-        campos: [
-          { id: "problema_inicial", type: "textarea", label: "Escribe el problema que tu startup resuelve en una frase", placeholder: "Los jóvenes no pueden acceder a formación técnica de calidad" },
-          { id: "porque_1", type: "textarea", label: "¿Por qué existe ese problema? (Por qué #1)", placeholder: "Porque los cursos son muy caros y largos" },
-          { id: "porque_2", type: "textarea", label: "¿Por qué? (Por qué #2)", placeholder: "Porque requieren infraestructura costosa" },
-          { id: "porque_3", type: "textarea", label: "¿Por qué? (Por qué #3)", placeholder: "Porque los institutos no tienen alianzas con empresas" },
-          { id: "porque_4", type: "textarea", label: "¿Por qué? (Por qué #4)", placeholder: "Porque históricamente han funcionado aislados" },
-          { id: "porque_5", type: "textarea", label: "¿Por qué? (Por qué #5)", placeholder: "Porque nadie había conectado oferta educativa con demanda laboral real" }
-        ],
-        nota: "La respuesta #5 es tu problema real. Los puntos 1-4 son síntomas."
+        titulo: "Tu startup en 8 palabras",
+        instruccion: "Reduce progresivamente la descripción de tu startup hasta obtener una frase de 8 palabras que será la apertura de tu pitch.",
+        campos: [],
+        componentType: "progressive-reduction",
+        nota: "Esta frase de 8 palabras será la apertura de tu pitch."
       },
       {
         id: "1_2",
+        titulo: "El titular de primera plana",
+        instruccion: "Si mañana tu startup saliera en la portada del diario más importante de tu país, ¿cuál sería el titular?",
+        campos: [],
+        componentType: "headline",
+        nota: "Un buen titular es memorable y genera curiosidad."
+      },
+      {
+        id: "1_3",
+        titulo: "Excavadora de Problemas",
+        instruccion: "Excava hasta encontrar la raíz del problema. La respuesta del Nivel 5 es tu problema real. Los niveles 1-4 son síntomas.",
+        campos: [],
+        componentType: "problem-digger",
+        nota: "Si tu solución ataca el Nivel 1, estás poniendo curitas. Ataca el Nivel 5."
+      },
+      {
+        id: "1_4",
         titulo: "Casting del Protagonista",
         instruccion: "Tu problema necesita una persona específica, no un 'segmento de mercado'. Los inversionistas invierten en personas, no en demografías.",
         campos: [
@@ -52,23 +65,11 @@ export const sectionExercises: SectionExercises[] = [
           { id: "ciudad", type: "input", label: "Ciudad y país", placeholder: "Medellín, Colombia" },
           { id: "contexto", type: "textarea", label: "Contexto: ¿De quién depende? ¿Quién depende de él/ella?", placeholder: "Vive con su mamá y hermana menor. Es el principal ingreso del hogar." },
           { id: "aspiracion", type: "textarea", label: "Aspiración: ¿Qué quiere lograr?", placeholder: "Quiere ser técnico en refrigeración porque vio que pagan tres veces más" },
-          { id: "rutina", type: "textarea", label: "Rutina: ¿Cómo es su día normal?", placeholder: "Trabaja de 10am a 10pm como mesero. Los domingos descansa." },
           { id: "frustracion", type: "textarea", label: "Frustración: ¿Qué lo frustra relacionado con tu problema?", placeholder: "Sabe que tiene potencial pero no puede estudiar porque no puede dejar de trabajar" }
         ]
       },
       {
-        id: "1_3",
-        titulo: "La Escena del Crimen",
-        instruccion: "Todo villano necesita una entrada memorable. Describe el instante específico donde tu protagonista enfrenta el problema.",
-        campos: [
-          { id: "timing", type: "input", label: "Timing: ¿Qué día y hora específica?", placeholder: "Viernes 4:17 pm" },
-          { id: "trigger", type: "textarea", label: "Trigger: ¿Qué evento rompe la normalidad?", placeholder: "Recibe una llamada de su jefe pidiendo..." },
-          { id: "decision_forzada", type: "textarea", label: "Decisión forzada: ¿Qué opciones malas tiene que elegir?", placeholder: "Puede pagar el curso pero dejar de aportar en casa, o seguir en su trabajo sin futuro" },
-          { id: "deadline", type: "input", label: "Deadline: ¿Cuánto tiempo tiene para resolverlo?", placeholder: "Lunes a primera hora" }
-        ]
-      },
-      {
-        id: "1_4",
+        id: "1_5",
         titulo: "La Escala del Problema",
         instruccion: "Ahora escala el problema. ¿Cuántas personas viven lo mismo que tu protagonista?",
         campos: [
@@ -79,30 +80,20 @@ export const sectionExercises: SectionExercises[] = [
       }
     ]
   },
-  // SECTION 2: LA SOLUCIÓN
+  // SECTION 2: LA SOLUCIÓN (Chapter 5 - The Solution)
   {
     seccionNumero: 2,
     ejercicios: [
       {
         id: "2_1",
-        titulo: "Define tu solución en una oración",
-        instruccion: "¿Qué hace tu producto? Descríbelo sin tecnicismos, solo el resultado visible.",
-        campos: [
-          { id: "solucion_oracion", type: "textarea", label: "Completa: '[Nombre de tu startup] permite que [usuario] pueda [resultado] en [tiempo/condición]'", placeholder: "TécnicoYa permite que jóvenes sin recursos puedan certificarse como técnicos en 12 semanas estudiando de noche" }
-        ]
+        titulo: "Constructor de Historia de Cliente",
+        instruccion: "Construye la historia de transformación de un cliente real. Los inversionistas recuerdan historias, no estadísticas.",
+        campos: [],
+        componentType: "customer-story",
+        nota: "Esta historia debe tener entre 80-120 palabras para el Pitch Kit."
       },
       {
         id: "2_2",
-        titulo: "El Antes y Después",
-        instruccion: "Vuelve al protagonista del problema. ¿Cómo cambia su vida con tu solución?",
-        campos: [
-          { id: "antes", type: "textarea", label: "ANTES: ¿Cómo era la vida de tu protagonista sin tu producto?", placeholder: "Carlos trabajaba 12 horas diarias como mesero sin posibilidad de estudiar" },
-          { id: "despues", type: "textarea", label: "DESPUÉS: ¿Cómo es su vida ahora? ¿Qué puede hacer que antes no podía?", placeholder: "Carlos estudia después del trabajo, hace prácticas los fines de semana, y ya tiene ofertas de empleo" },
-          { id: "logro", type: "textarea", label: "¿Cómo se siente? ¿Qué logró concretamente?", placeholder: "Pasó de ganar X a ganar Y / Ahorra X horas / etc." }
-        ]
-      },
-      {
-        id: "2_3",
         titulo: "Los 3 pasos de Obi-Wan",
         instruccion: "Como Obi-Wan entrenando a Luke, tu solución debe mostrarse en progresión.",
         campos: [
@@ -113,34 +104,20 @@ export const sectionExercises: SectionExercises[] = [
       }
     ]
   },
-  // SECTION 3: EL SUPERPODER
+  // SECTION 3: EL SUPERPODER (Chapter 6 - Superpower)
   {
     seccionNumero: 3,
     ejercicios: [
       {
         id: "3_1",
-        titulo: "Mapea a tus competidores",
-        instruccion: "Antes de diferenciarte, identifica contra quién compites.",
-        campos: [
-          { id: "competidor_1_nombre", type: "input", label: "Competidor directo #1", placeholder: "SENA, Coursera, etc." },
-          { id: "competidor_1_fortaleza", type: "textarea", label: "¿Qué hacen bien? ¿Por qué alguien los elegiría?", placeholder: "Es gratuito y tiene reconocimiento del gobierno" },
-          { id: "competidor_2_nombre", type: "input", label: "Competidor directo #2", placeholder: "Instituto X, Plataforma Y" },
-          { id: "competidor_2_fortaleza", type: "textarea", label: "¿Qué hacen bien? ¿Por qué alguien los elegiría?", placeholder: "Tiene la mejor infraestructura física" },
-          { id: "alternativa_obvia", type: "textarea", label: "¿Cuál es la alternativa más obvia que usa tu cliente hoy?", placeholder: "Excel, hacerlo manual, no hacer nada, etc." }
-        ]
+        titulo: "Detector de Superpoderes",
+        instruccion: "Tu superpoder es lo que te hace diferente de verdad. Esta suite de 4 módulos te ayudará a encontrarlo y articularlo.",
+        campos: [],
+        componentType: "superpower-detector",
+        nota: "Un superpoder real es algo que un competidor NO podría decir."
       },
       {
         id: "3_2",
-        titulo: "Encuentra tu diferencia real",
-        instruccion: "La diferencia debe ser específica y verificable. Algo que un competidor NO podría decir.",
-        campos: [
-          { id: "diferencia", type: "textarea", label: "¿Qué haces DIFERENTE (no mejor) que los competidores?", placeholder: "Somos los únicos que combinamos educación nocturna con prácticas en empresas reales" },
-          { id: "por_que_tu", type: "textarea", label: "¿Por qué solo TÚ puedes hacer esto?", placeholder: "Tenemos la red de talleres más grande / Somos los únicos con patente de X / etc." },
-          { id: "metrica_diferencia", type: "textarea", label: "¿Qué dato o métrica prueba tu diferencia?", placeholder: "73% menos costo por alumno / 23% más ahorro que alternativas globales" }
-        ]
-      },
-      {
-        id: "3_3",
         titulo: "Identifica tu etapa de superpoder",
         instruccion: "¿En qué etapa está tu startup? Tu diferenciación se comunica distinto según la etapa.",
         campos: [
