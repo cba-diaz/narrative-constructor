@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      pitch_data: {
+        Row: {
+          blocks: Json
+          created_at: string
+          current_block: number
+          id: string
+          pitch_kit: Json
+          sections: Json
+          startup_name: string
+          updated_at: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          blocks?: Json
+          created_at?: string
+          current_block?: number
+          id?: string
+          pitch_kit?: Json
+          sections?: Json
+          startup_name?: string
+          updated_at?: string
+          user_id: string
+          user_name?: string
+        }
+        Update: {
+          blocks?: Json
+          created_at?: string
+          current_block?: number
+          id?: string
+          pitch_kit?: Json
+          sections?: Json
+          startup_name?: string
+          updated_at?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

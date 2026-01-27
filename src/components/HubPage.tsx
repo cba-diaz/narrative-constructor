@@ -1,6 +1,6 @@
 import { blocks } from '@/data/blocks';
 import { Button } from '@/components/ui/button';
-import { Check, Circle, ChevronRight, Eye, RotateCcw, Package } from 'lucide-react';
+import { Check, Circle, ChevronRight, Eye, RotateCcw, Package, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 interface HubPageProps {
   userName: string;
@@ -42,6 +43,13 @@ export function HubPage({
   onReset
 }: HubPageProps) {
   const navigate = useNavigate();
+  const { signOut, user } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   const getBlockStatus = (blockNumber: number) => {
     if (completedBlocks.includes(blockNumber)) return 'completed';
     
@@ -71,7 +79,21 @@ export function HubPage({
   return (
     <div className="min-h-screen bg-background px-4 py-8">
       <div className="max-w-2xl mx-auto animate-fade-in">
-        {/* Header */}
+        {/* Header with logout */}
+        <div className="flex items-center justify-between mb-4">
+          <div />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSignOut}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Cerrar sesión
+          </Button>
+        </div>
+        
+        {/* Title */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-foreground mb-1">{startupName}</h1>
           <p className="text-muted-foreground">Pitch de {userName}</p>
