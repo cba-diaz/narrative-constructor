@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 // Types for exercise data storage
 export interface ExerciseData {
@@ -28,8 +30,6 @@ export interface PitchData {
   updatedAt: string;
 }
 
-const STORAGE_KEY = 'pitch-de-pelicula-data';
-
 const getDefaultSectionData = (): SectionData => ({
   exercises: {},
   currentStep: 0,
@@ -47,65 +47,95 @@ const getDefaultData = (): PitchData => ({
   updatedAt: new Date().toISOString(),
 });
 
-const loadFromStorage = (): PitchData => {
-  if (typeof window === 'undefined') {
-    return getDefaultData();
-  }
-  
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      // Ensure sections object exists (for backwards compatibility)
-      if (!parsed.sections) {
-        parsed.sections = {};
-      }
-      // Ensure pitchKit object exists (for backwards compatibility)
-      if (!parsed.pitchKit) {
-        parsed.pitchKit = {};
-      }
-      return parsed;
-    }
-  } catch {
-    // Invalid data, use defaults
-  }
-  
-  return getDefaultData();
-};
-
-const saveToStorage = (data: PitchData) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {
-    console.error('Failed to save to localStorage');
-  }
-};
-
 export function usePitchStore() {
-  const [data, setData] = useState<PitchData>(loadFromStorage);
+  const { user, loading: authLoading } = useAuth();
+  const [data, setData] = useState<PitchData>(getDefaultData);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load from localStorage on mount
+  // Load data from database when user is authenticated
   useEffect(() => {
-    setData(loadFromStorage());
-  }, []);
+    if (authLoading) return;
+    
+    if (!user) {
+      setData(getDefaultData());
+      setIsLoading(false);
+      return;
+    }
 
-  const setUserInfo = useCallback((userName: string, startupName: string) => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const { data: pitchData, error } = await supabase
+        .from('pitch_data')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error loading pitch data:', error);
+        setIsLoading(false);
+        return;
+      }
+
+      if (pitchData) {
+        setData({
+          userName: pitchData.user_name || '',
+          startupName: pitchData.startup_name || '',
+          blocks: (pitchData.blocks as unknown as Record<number, string>) || {},
+          sections: (pitchData.sections as unknown as Record<number, SectionData>) || {},
+          pitchKit: (pitchData.pitch_kit as unknown as Record<number, PitchKitBlock>) || {},
+          currentBlock: pitchData.current_block || 1,
+          createdAt: pitchData.created_at,
+          updatedAt: pitchData.updated_at,
+        });
+      }
+      setIsLoading(false);
+    };
+
+    loadData();
+  }, [user, authLoading]);
+
+  // Save data to database
+  const saveToDatabase = useCallback(async (newData: Partial<PitchData>) => {
+    if (!user) return;
+
     setSaveStatus('saving');
-    setData(prev => {
-      const updated = { ...prev, userName, startupName, updatedAt: new Date().toISOString() };
-      saveToStorage(updated);
-      return updated;
-    });
+    
+    const updatePayload = {
+      user_id: user.id,
+      user_name: newData.userName ?? data.userName,
+      startup_name: newData.startupName ?? data.startupName,
+      blocks: newData.blocks ?? data.blocks,
+      sections: newData.sections ?? data.sections,
+      pitch_kit: newData.pitchKit ?? data.pitchKit,
+      current_block: newData.currentBlock ?? data.currentBlock,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await supabase
+      .from('pitch_data')
+      .upsert(updatePayload as any, { onConflict: 'user_id' });
+
+    if (error) {
+      console.error('Error saving pitch data:', error);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+      return;
+    }
+
     setSaveStatus('saved');
     setTimeout(() => setSaveStatus('idle'), 2000);
-  }, []);
+  }, [user, data]);
 
-  const setBlockContent = useCallback((blockNumber: number, content: string) => {
-    setSaveStatus('saving');
+  const setUserInfo = useCallback(async (userName: string, startupName: string) => {
+    const newData = { ...data, userName, startupName, updatedAt: new Date().toISOString() };
+    setData(newData);
+    await saveToDatabase({ userName, startupName });
+  }, [data, saveToDatabase]);
+
+  const setBlockContent = useCallback(async (blockNumber: number, content: string) => {
     setData(prev => {
       const newBlocks = { ...prev.blocks, [blockNumber]: content };
-      // Mark section as completed when block is saved with content
       const newSections = { ...prev.sections };
       if (content.trim().length > 0) {
         newSections[blockNumber] = {
@@ -114,24 +144,20 @@ export function usePitchStore() {
         };
       }
       const updated = { ...prev, blocks: newBlocks, sections: newSections, updatedAt: new Date().toISOString() };
-      saveToStorage(updated);
+      saveToDatabase({ blocks: newBlocks, sections: newSections });
       return updated;
     });
-    setSaveStatus('saved');
-    setTimeout(() => setSaveStatus('idle'), 2000);
-  }, []);
+  }, [saveToDatabase]);
 
-  const setCurrentBlock = useCallback((blockNumber: number) => {
+  const setCurrentBlock = useCallback(async (blockNumber: number) => {
     setData(prev => {
       const updated = { ...prev, currentBlock: blockNumber, updatedAt: new Date().toISOString() };
-      saveToStorage(updated);
+      saveToDatabase({ currentBlock: blockNumber });
       return updated;
     });
-  }, []);
+  }, [saveToDatabase]);
 
-  // New: Set exercise data for a specific section and exercise
-  const setExerciseData = useCallback((sectionNumber: number, exerciseId: string, fieldData: ExerciseData) => {
-    setSaveStatus('saving');
+  const setExerciseData = useCallback(async (sectionNumber: number, exerciseId: string, fieldData: ExerciseData) => {
     setData(prev => {
       const sectionData = prev.sections[sectionNumber] || getDefaultSectionData();
       const newExercises = {
@@ -149,15 +175,12 @@ export function usePitchStore() {
         },
       };
       const updated = { ...prev, sections: newSections, updatedAt: new Date().toISOString() };
-      saveToStorage(updated);
+      saveToDatabase({ sections: newSections });
       return updated;
     });
-    setSaveStatus('saved');
-    setTimeout(() => setSaveStatus('idle'), 2000);
-  }, []);
+  }, [saveToDatabase]);
 
-  // New: Set current step for a section
-  const setSectionStep = useCallback((sectionNumber: number, step: number) => {
+  const setSectionStep = useCallback(async (sectionNumber: number, step: number) => {
     setData(prev => {
       const sectionData = prev.sections[sectionNumber] || getDefaultSectionData();
       const newSections = {
@@ -168,22 +191,19 @@ export function usePitchStore() {
         },
       };
       const updated = { ...prev, sections: newSections, updatedAt: new Date().toISOString() };
-      saveToStorage(updated);
+      saveToDatabase({ sections: newSections });
       return updated;
     });
-  }, []);
+  }, [saveToDatabase]);
 
-  // New: Get exercise data for a specific section
   const getSectionExercises = useCallback((sectionNumber: number): Record<string, ExerciseData> => {
     return data.sections[sectionNumber]?.exercises || {};
   }, [data.sections]);
 
-  // New: Get current step for a section
   const getSectionStep = useCallback((sectionNumber: number): number => {
     return data.sections[sectionNumber]?.currentStep || 0;
   }, [data.sections]);
 
-  // New: Get protagonist data from section 1 (for use in other sections)
   const getProtagonistData = useCallback(() => {
     const section1Exercises = data.sections[1]?.exercises || {};
     const protagonistExercise = section1Exercises['1_2'] || {};
@@ -224,15 +244,25 @@ export function usePitchStore() {
       .length;
   }, [data.blocks]);
 
-  const resetData = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
+  const resetData = useCallback(async () => {
+    if (!user) return;
+    
+    const { error } = await supabase
+      .from('pitch_data')
+      .delete()
+      .eq('user_id', user.id);
+    
+    if (error) {
+      console.error('Error resetting data:', error);
+      return;
+    }
+    
     setData(getDefaultData());
-  }, []);
+  }, [user]);
 
   // Pitch Kit functions
-  const saveToPitchKit = useCallback((blockNumber: number, content: string) => {
+  const saveToPitchKit = useCallback(async (blockNumber: number, content: string) => {
     const wordCount = content.trim().split(/\s+/).filter(word => word.length > 0).length;
-    setSaveStatus('saving');
     setData(prev => {
       const newPitchKit = {
         ...prev.pitchKit,
@@ -243,12 +273,10 @@ export function usePitchStore() {
         },
       };
       const updated = { ...prev, pitchKit: newPitchKit, updatedAt: new Date().toISOString() };
-      saveToStorage(updated);
+      saveToDatabase({ pitchKit: newPitchKit });
       return updated;
     });
-    setSaveStatus('saved');
-    setTimeout(() => setSaveStatus('idle'), 2000);
-  }, []);
+  }, [saveToDatabase]);
 
   const getPitchKitBlocks = useCallback(() => {
     return data.pitchKit;
@@ -268,6 +296,7 @@ export function usePitchStore() {
   return {
     data,
     saveStatus,
+    isLoading,
     setUserInfo,
     setBlockContent,
     setCurrentBlock,
