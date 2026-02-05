@@ -345,10 +345,46 @@ export function ExerciseStep({
           Anterior
         </Button>
 
-        <Button onClick={handleNext} className="btn-primary-gradient">
-          Siguiente
-          <ChevronRight className="w-4 h-4 ml-2" />
-        </Button>
+        <div className="flex items-center gap-3">
+          {/* Manual Save Button */}
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (saveTimeoutRef.current) {
+                clearTimeout(saveTimeoutRef.current);
+              }
+              setSaveStatus('saving');
+              onSave(formData);
+              hasChangesRef.current = false;
+              setSaveStatus('saved');
+              setTimeout(() => setSaveStatus('idle'), 2000);
+            }}
+            disabled={saveStatus === 'saving'}
+            className="flex items-center gap-2"
+          >
+            {saveStatus === 'saving' ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Guardando...
+              </>
+            ) : saveStatus === 'saved' ? (
+              <>
+                <Cloud className="w-4 h-4 text-success" />
+                Guardado
+              </>
+            ) : (
+              <>
+                <Cloud className="w-4 h-4" />
+                Guardar
+              </>
+            )}
+          </Button>
+
+          <Button onClick={handleNext} className="btn-primary-gradient">
+            Siguiente
+            <ChevronRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
       </div>
     </div>
   );
