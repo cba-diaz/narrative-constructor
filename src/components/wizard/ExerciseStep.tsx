@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Exercise, ExerciseField } from '@/data/exercises';
 import { ExerciseData } from '@/hooks/usePitchStore';
 import { Input } from '@/components/ui/input';
@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Lightbulb, Cloud, CloudOff, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   ProgressiveReductionExercise,
@@ -40,23 +40,85 @@ export function ExerciseStep({
   isFirst
 }: ExerciseStepProps) {
   const [formData, setFormData] = useState<ExerciseData>(initialData);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const hasChangesRef = useRef(false);
 
   // Update form when initialData changes
   useEffect(() => {
     setFormData(initialData);
   }, [initialData]);
 
+  // Auto-save function
+  const performSave = useCallback(() => {
+    if (hasChangesRef.current) {
+      setSaveStatus('saving');
+      onSave(formData);
+      hasChangesRef.current = false;
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }
+  }, [formData, onSave]);
+
+  // Set up auto-save interval (every 30 seconds)
+  useEffect(() => {
+    autoSaveIntervalRef.current = setInterval(() => {
+      performSave();
+    }, 30000);
+
+    return () => {
+      if (autoSaveIntervalRef.current) {
+        clearInterval(autoSaveIntervalRef.current);
+      }
+    };
+  }, [performSave]);
+
+  // Save on unmount
+  useEffect(() => {
+    return () => {
+      if (hasChangesRef.current) {
+        onSave(formData);
+      }
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [formData, onSave]);
+
   const handleFieldChange = useCallback((fieldId: string, value: string) => {
     setFormData(prev => ({ ...prev, [fieldId]: value }));
-  }, []);
+    hasChangesRef.current = true;
+    setSaveStatus('idle');
+    
+    // Debounced save after 3 seconds of no typing
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      setSaveStatus('saving');
+      onSave({ ...formData, [fieldId]: value });
+      hasChangesRef.current = false;
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }, 3000);
+  }, [formData, onSave]);
 
   const handleNext = () => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
     onSave(formData);
+    hasChangesRef.current = false;
     onNext();
   };
 
   const handleBack = () => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
     onSave(formData);
+    hasChangesRef.current = false;
     onBack();
   };
 
@@ -211,9 +273,32 @@ export function ExerciseStep({
           <div className="p-2 rounded-lg bg-primary/10">
             <Lightbulb className="w-5 h-5 text-primary" />
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-              Ejercicio {exerciseNumber} de {totalExercises}
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-1">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide">
+                Ejercicio {exerciseNumber} de {totalExercises}
+              </div>
+              {/* Save Status Indicator */}
+              <div className="flex items-center gap-1.5 text-xs">
+                {saveStatus === 'saving' && (
+                  <>
+                    <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+                    <span className="text-muted-foreground">Guardando...</span>
+                  </>
+                )}
+                {saveStatus === 'saved' && (
+                  <>
+                    <Cloud className="w-3 h-3 text-success" />
+                    <span className="text-success">Guardado</span>
+                  </>
+                )}
+                {saveStatus === 'error' && (
+                  <>
+                    <CloudOff className="w-3 h-3 text-destructive" />
+                    <span className="text-destructive">Error al guardar</span>
+                  </>
+                )}
+              </div>
             </div>
             <h2 className="text-xl font-bold text-foreground mb-2">{exercise.titulo}</h2>
             <p className="text-sm text-muted-foreground">{exercise.instruccion}</p>

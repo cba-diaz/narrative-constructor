@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Block } from '@/data/blocks';
 import { ExerciseData } from '@/hooks/usePitchStore';
 import { ExerciseSummaryCard } from './ExerciseSummaryCard';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Save, Check, Lightbulb, AlertTriangle, XCircle, Package } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Save, Check, Lightbulb, AlertTriangle, XCircle, Package, Cloud, CloudOff, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
@@ -45,11 +45,50 @@ export function FinalBlockStep({
 }: FinalBlockStepProps) {
   const [content, setContent] = useState(initialContent);
   const [showExample, setShowExample] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const hasChangesRef = useRef(false);
 
   useEffect(() => {
     setContent(initialContent);
   }, [initialContent]);
+
+  // Auto-save function
+  const performSave = useCallback(() => {
+    if (hasChangesRef.current && content.trim()) {
+      setSaveStatus('saving');
+      onSave(content);
+      hasChangesRef.current = false;
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }
+  }, [content, onSave]);
+
+  // Set up auto-save interval (every 30 seconds)
+  useEffect(() => {
+    autoSaveIntervalRef.current = setInterval(() => {
+      performSave();
+    }, 30000);
+
+    return () => {
+      if (autoSaveIntervalRef.current) {
+        clearInterval(autoSaveIntervalRef.current);
+      }
+    };
+  }, [performSave]);
+
+  // Save on unmount
+  useEffect(() => {
+    return () => {
+      if (hasChangesRef.current && content.trim()) {
+        onSave(content);
+      }
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [content, onSave]);
 
   // Word count
   const wordCount = useMemo(() => {
@@ -62,9 +101,33 @@ export function FinalBlockStep({
     return 'in-range';
   };
 
+  const handleContentChange = useCallback((value: string) => {
+    setContent(value);
+    hasChangesRef.current = true;
+    setSaveStatus('idle');
+    
+    // Debounced save after 3 seconds of no typing
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      if (value.trim()) {
+        setSaveStatus('saving');
+        onSave(value);
+        hasChangesRef.current = false;
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      }
+    }, 3000);
+  }, [onSave]);
+
   const handleSave = useCallback(() => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
     setSaveStatus('saving');
     onSave(content);
+    hasChangesRef.current = false;
     setSaveStatus('saved');
     setTimeout(() => setSaveStatus('idle'), 2000);
   }, [content, onSave]);
@@ -172,9 +235,30 @@ export function FinalBlockStep({
 
       {/* Editor */}
       <div>
+        {/* Save Status Indicator */}
+        <div className="flex items-center justify-end gap-1.5 text-xs mb-2">
+          {saveStatus === 'saving' && (
+            <>
+              <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+              <span className="text-muted-foreground">Guardando...</span>
+            </>
+          )}
+          {saveStatus === 'saved' && (
+            <>
+              <Cloud className="w-3 h-3 text-success" />
+              <span className="text-success">Guardado automáticamente</span>
+            </>
+          )}
+          {saveStatus === 'error' && (
+            <>
+              <CloudOff className="w-3 h-3 text-destructive" />
+              <span className="text-destructive">Error al guardar</span>
+            </>
+          )}
+        </div>
         <Textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => handleContentChange(e.target.value)}
           placeholder={block.placeholder}
           className="min-h-[250px] resize-none text-base leading-relaxed"
         />
