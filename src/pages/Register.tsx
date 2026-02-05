@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Film, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
+import { lovable } from '@/integrations/lovable';
 
 const registerSchema = z.object({
   fullName: z.string().trim().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }).max(100),
@@ -68,7 +69,9 @@ export default function Register() {
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
-    const { error } = await signInWithGoogle();
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
     setIsGoogleLoading(false);
     
     if (error) {
