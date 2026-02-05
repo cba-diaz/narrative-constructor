@@ -50,16 +50,28 @@ export function ExerciseStep({
     setFormData(initialData);
   }, [initialData]);
 
-  // Auto-save function
+  // Store the latest formData in a ref to avoid stale closure issues
+  const formDataRef = useRef(formData);
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
+
+  // Store onSave in a ref to avoid dependency issues
+  const onSaveRef = useRef(onSave);
+  useEffect(() => {
+    onSaveRef.current = onSave;
+  }, [onSave]);
+
+  // Auto-save function using refs to avoid stale closures
   const performSave = useCallback(() => {
     if (hasChangesRef.current) {
       setSaveStatus('saving');
-      onSave(formData);
+      onSaveRef.current(formDataRef.current);
       hasChangesRef.current = false;
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     }
-  }, [formData, onSave]);
+  }, []);
 
   // Set up auto-save interval (every 30 seconds)
   useEffect(() => {
@@ -78,13 +90,13 @@ export function ExerciseStep({
   useEffect(() => {
     return () => {
       if (hasChangesRef.current) {
-        onSave(formData);
+        onSaveRef.current(formDataRef.current);
       }
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [formData, onSave]);
+  }, []);
 
   const handleFieldChange = useCallback((fieldId: string, value: string) => {
     setFormData(prev => ({ ...prev, [fieldId]: value }));
