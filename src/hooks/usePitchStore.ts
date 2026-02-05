@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -95,36 +95,53 @@ export function usePitchStore() {
     loadData();
   }, [user, authLoading]);
 
-  // Save data to database
+  // Save data to database with debouncing to prevent rapid consecutive saves
+  const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const pendingDataRef = React.useRef<Partial<PitchData>>({});
+  
   const saveToDatabase = useCallback(async (newData: Partial<PitchData>) => {
     if (!user) return;
 
-    setSaveStatus('saving');
+    // Merge pending data
+    pendingDataRef.current = { ...pendingDataRef.current, ...newData };
     
-    const updatePayload = {
-      user_id: user.id,
-      user_name: newData.userName ?? data.userName,
-      startup_name: newData.startupName ?? data.startupName,
-      blocks: newData.blocks ?? data.blocks,
-      sections: newData.sections ?? data.sections,
-      pitch_kit: newData.pitchKit ?? data.pitchKit,
-      current_block: newData.currentBlock ?? data.currentBlock,
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await supabase
-      .from('pitch_data')
-      .upsert(updatePayload as any, { onConflict: 'user_id' });
-
-    if (error) {
-      console.error('Error saving pitch data:', error);
-      setSaveStatus('error');
-      setTimeout(() => setSaveStatus('idle'), 2000);
-      return;
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
+    
+    // Debounce the save
+    saveTimeoutRef.current = setTimeout(async () => {
+      setSaveStatus('saving');
+      
+      const dataToSave = pendingDataRef.current;
+      pendingDataRef.current = {};
+      
+      const updatePayload = {
+        user_id: user.id,
+        user_name: dataToSave.userName ?? data.userName,
+        startup_name: dataToSave.startupName ?? data.startupName,
+        blocks: dataToSave.blocks ?? data.blocks,
+        sections: dataToSave.sections ?? data.sections,
+        pitch_kit: dataToSave.pitchKit ?? data.pitchKit,
+        current_block: dataToSave.currentBlock ?? data.currentBlock,
+      };
 
-    setSaveStatus('saved');
-    setTimeout(() => setSaveStatus('idle'), 2000);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await supabase
+        .from('pitch_data')
+        .upsert(updatePayload as any, { onConflict: 'user_id' });
+
+      if (error) {
+        console.error('Error saving pitch data:', error);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+        return;
+      }
+
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }, 500); // 500ms debounce
   }, [user, data]);
 
   const setUserInfo = useCallback(async (userName: string, startupName: string) => {
