@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Film, ArrowRight, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
+import { lovable } from '@/integrations/lovable';
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: 'Introduce un email válido' }),
@@ -59,7 +60,9 @@ export default function Login() {
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
-    const { error } = await signInWithGoogle();
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
     setIsGoogleLoading(false);
     
     if (error) {
