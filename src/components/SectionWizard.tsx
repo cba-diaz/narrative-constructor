@@ -57,6 +57,10 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
     }
   }, [currentStep, totalSteps]);
 
+  const handleSkipToFinal = useCallback(() => {
+    setCurrentStep(exercises.length);
+  }, [exercises.length]);
+
   const handlePrev = useCallback(() => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
@@ -146,6 +150,7 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
               onSave={(data) => handleExerciseSave(exercises[currentStep].id, data)}
               onNext={handleNext}
               onBack={handlePrev}
+              onSkipToFinal={handleSkipToFinal}
               isFirst={currentStep === 0}
             />
           ) : (
