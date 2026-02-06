@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Save, Check, Lightbu
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { generateBlockDraft } from '@/lib/generateBlockDraft';
+import { Sparkles } from 'lucide-react';
 
 interface FinalBlockStepProps {
   block: Block;
@@ -68,8 +69,11 @@ export function FinalBlockStep({
     if (!hasExerciseData) return;
 
     draftGeneratedRef.current = true;
-    setIsGenerating(true);
+    triggerGeneration();
+  }, [initialContent]);
 
+  const triggerGeneration = useCallback(() => {
+    setIsGenerating(true);
     generateBlockDraft(sectionNumber, exercisesData, block, protagonistData)
       .then(draft => {
         if (draft) {
@@ -80,7 +84,11 @@ export function FinalBlockStep({
       })
       .catch(err => console.error('Error generating draft:', err))
       .finally(() => setIsGenerating(false));
-  }, [initialContent]);
+  }, [sectionNumber, exercisesData, block, protagonistData, onSave]);
+
+  const handleRegenerate = useCallback(() => {
+    triggerGeneration();
+  }, [triggerGeneration]);
 
   // Auto-save function
   const performSave = useCallback(() => {
@@ -323,6 +331,26 @@ export function FinalBlockStep({
           )}
         </div>
       </div>
+
+      {/* Regenerate Button */}
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={handleRegenerate}
+        disabled={isGenerating}
+      >
+        {isGenerating ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Generando borrador...
+          </>
+        ) : (
+          <>
+            <Sparkles className="w-4 h-4 mr-2" />
+            Regenerar borrador con IA
+          </>
+        )}
+      </Button>
 
       {/* Example */}
       <Collapsible open={showExample} onOpenChange={setShowExample}>
