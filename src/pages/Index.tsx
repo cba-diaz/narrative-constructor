@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { LandingPage } from '@/components/LandingPage';
 import { HubPage } from '@/components/HubPage';
 import { SectionWizard } from '@/components/SectionWizard';
@@ -13,7 +13,6 @@ type View = 'landing' | 'hub' | 'editor' | 'pitch';
 
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const {
     data,
@@ -27,24 +26,24 @@ const Index = () => {
     getPitchKitCompletedCount,
   } = usePitchStore();
 
-  // Get view and section from URL params for persistence
-  const urlView = searchParams.get('view') as View | null;
-  const urlSection = searchParams.get('section');
-  
-  const [currentView, setCurrentView] = useState<View>(() => {
-    if (urlView && ['landing', 'hub', 'editor', 'pitch'].includes(urlView)) {
-      return urlView;
-    }
+  // Derive view from URL — single source of truth
+  const currentView = useMemo<View>(() => {
+    const v = searchParams.get('view') as View | null;
+    if (v && ['hub', 'editor', 'pitch'].includes(v)) return v;
     return 'landing';
-  });
-  
-  const [editingBlock, setEditingBlock] = useState<number>(() => {
-    const section = urlSection ? parseInt(urlSection) : 1;
-    return section >= 1 && section <= 9 ? section : 1;
-  });
+  }, [searchParams]);
 
-  // Update URL when view/section changes
-  const updateUrl = useCallback((view: View, section?: number) => {
+  const editingBlock = useMemo(() => {
+    const s = searchParams.get('section');
+    if (s) {
+      const n = parseInt(s);
+      if (n >= 1 && n <= 9) return n;
+    }
+    return 1;
+  }, [searchParams]);
+
+  // Navigate by updating URL params only
+  const navigateTo = useCallback((view: View, section?: number) => {
     const params = new URLSearchParams();
     if (view !== 'landing') {
       params.set('view', view);
@@ -55,82 +54,37 @@ const Index = () => {
     setSearchParams(params, { replace: true });
   }, [setSearchParams]);
 
-  // Sync currentView with URL updates
-  const handleSetView = useCallback((view: View, section?: number) => {
-    setCurrentView(view);
-    updateUrl(view, section);
-  }, [updateUrl]);
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!authLoading && !user) {
-      handleSetView('landing');
-    }
-  }, [authLoading, user, handleSetView]);
-
-  // Initialize view based on stored data and URL
+  // Auto-redirect: if authenticated with data but on landing, go to hub
   useEffect(() => {
     if (authLoading || dataLoading) return;
-    
-    if (user && hasStarted) {
-      // If URL has a valid view, use it; otherwise default to hub
-      if (!urlView || !['hub', 'editor', 'pitch'].includes(urlView)) {
-        handleSetView('hub');
-      } else if (urlView === 'editor' && urlSection) {
-        const section = parseInt(urlSection);
-        if (section >= 1 && section <= 9) {
-          setEditingBlock(section);
-          setCurrentBlock(section);
-        }
-      }
-    } else if (user) {
-      handleSetView('landing');
+    if (user && hasStarted && currentView === 'landing') {
+      navigateTo('hub');
     }
-  }, [authLoading, dataLoading, user, hasStarted, urlView, urlSection, handleSetView, setCurrentBlock]);
+  }, [authLoading, dataLoading, user, hasStarted, currentView, navigateTo]);
+
+  // Redirect unauthenticated users away from protected views
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user && currentView !== 'landing') {
+      navigateTo('landing');
+    }
+  }, [authLoading, user, currentView, navigateTo]);
 
   const handleStart = useCallback((userName: string, startupName: string) => {
     setUserInfo(userName, startupName);
-    handleSetView('hub');
-  }, [setUserInfo, handleSetView]);
+    navigateTo('hub');
+  }, [setUserInfo, navigateTo]);
 
   const handleSelectBlock = useCallback((blockNumber: number) => {
-    setEditingBlock(blockNumber);
     setCurrentBlock(blockNumber);
-    handleSetView('editor', blockNumber);
-  }, [setCurrentBlock, handleSetView]);
-
-  const handleSaveBlock = useCallback((content: string) => {
-    setBlockContent(editingBlock, content);
-  }, [editingBlock, setBlockContent]);
-
-  const handleSaveAndContinue = useCallback((content: string) => {
-    setBlockContent(editingBlock, content);
-    
-    const hasContent = content && content.trim().length > 0;
-    
-    if (editingBlock === 9) {
-      handleSetView('pitch');
-    } else if (hasContent) {
-      const nextBlock = editingBlock + 1;
-      setEditingBlock(nextBlock);
-      setCurrentBlock(nextBlock);
-      handleSetView('editor', nextBlock);
-    } else {
-      handleSetView('hub');
-    }
-  }, [editingBlock, setBlockContent, setCurrentBlock, handleSetView]);
+    navigateTo('editor', blockNumber);
+  }, [setCurrentBlock, navigateTo]);
 
   const handleReset = useCallback(() => {
     resetData();
-    handleSetView('landing');
-    setEditingBlock(1);
-  }, [resetData, handleSetView]);
+    navigateTo('landing');
+  }, [resetData, navigateTo]);
 
-  const currentBlockData = useMemo(() => 
-    blocks.find(b => b.numero === editingBlock),
-    [editingBlock]
-  );
-  
   const completedBlocks = getCompletedBlocks();
 
   // Show loading while auth or data is loading
@@ -145,7 +99,6 @@ const Index = () => {
     );
   }
 
-  // Show landing page for unauthenticated users or authenticated users without data
   if (currentView === 'landing') {
     return <LandingPage onStart={handleStart} isAuthenticated={!!user} />;
   }
@@ -159,7 +112,7 @@ const Index = () => {
         currentBlock={data.currentBlock}
         pitchKitCount={getPitchKitCompletedCount()}
         onSelectBlock={handleSelectBlock}
-        onViewPitch={() => handleSetView('pitch')}
+        onViewPitch={() => navigateTo('pitch')}
         onReset={handleReset}
       />
     );
@@ -172,15 +125,14 @@ const Index = () => {
         sectionNumber={editingBlock}
         onComplete={() => {
           if (editingBlock === 9) {
-            handleSetView('pitch');
+            navigateTo('pitch');
           } else {
             const nextBlock = editingBlock + 1;
-            setEditingBlock(nextBlock);
             setCurrentBlock(nextBlock);
-            handleSetView('editor', nextBlock);
+            navigateTo('editor', nextBlock);
           }
         }}
-        onBack={() => handleSetView('hub')}
+        onBack={() => navigateTo('hub')}
       />
     );
   }
@@ -191,7 +143,7 @@ const Index = () => {
         userName={data.userName}
         startupName={data.startupName}
         blockContents={data.blocks}
-        onBack={() => handleSetView('hub')}
+        onBack={() => navigateTo('hub')}
         onEditBlock={handleSelectBlock}
       />
     );
