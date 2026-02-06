@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Save, Check, Lightbulb, AlertTriangle, XCircle, Package, Cloud, CloudOff, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { generateBlockDraft } from '@/lib/generateBlockDraft';
 
 interface FinalBlockStepProps {
   block: Block;
@@ -50,9 +51,19 @@ export function FinalBlockStep({
   const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasChangesRef = useRef(false);
 
+  // Generate draft from exercises if no content exists
   useEffect(() => {
-    setContent(initialContent);
-  }, [initialContent]);
+    if (initialContent) {
+      setContent(initialContent);
+    } else {
+      const draft = generateBlockDraft(sectionNumber, exercisesData, protagonistData);
+      if (draft) {
+        setContent(draft);
+        // Auto-save the generated draft
+        hasChangesRef.current = true;
+      }
+    }
+  }, [initialContent, sectionNumber, exercisesData, protagonistData]);
 
   // Auto-save function
   const performSave = useCallback(() => {
