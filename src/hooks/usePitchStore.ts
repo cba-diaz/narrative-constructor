@@ -53,13 +53,22 @@ export function usePitchStore() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [isLoading, setIsLoading] = useState(true);
 
+  // Track if we've already loaded data for this user to avoid re-fetching on tab switch
+  const loadedUserIdRef = React.useRef<string | null>(null);
+
   // Load data from database when user is authenticated
   useEffect(() => {
     if (authLoading) return;
     
     if (!user) {
+      loadedUserIdRef.current = null;
       setData(getDefaultData());
       setIsLoading(false);
+      return;
+    }
+
+    // Skip re-loading if we already loaded for this user (prevents tab-switch reset)
+    if (loadedUserIdRef.current === user.id) {
       return;
     }
 
@@ -89,6 +98,7 @@ export function usePitchStore() {
           updatedAt: pitchData.updated_at,
         });
       }
+      loadedUserIdRef.current = user.id;
       setIsLoading(false);
     };
 
