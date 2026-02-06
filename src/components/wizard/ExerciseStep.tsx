@@ -99,7 +99,11 @@ export function ExerciseStep({
   }, []);
 
   const handleFieldChange = useCallback((fieldId: string, value: string) => {
-    setFormData(prev => ({ ...prev, [fieldId]: value }));
+    setFormData(prev => {
+      const updated = { ...prev, [fieldId]: value };
+      formDataRef.current = updated;
+      return updated;
+    });
     hasChangesRef.current = true;
     setSaveStatus('idle');
     
@@ -108,13 +112,9 @@ export function ExerciseStep({
       clearTimeout(saveTimeoutRef.current);
     }
     saveTimeoutRef.current = setTimeout(() => {
-      setSaveStatus('saving');
-      onSave({ ...formData, [fieldId]: value });
-      hasChangesRef.current = false;
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      performSave();
     }, 3000);
-  }, [formData, onSave]);
+  }, [performSave]);
 
   const handleNext = () => {
     if (saveTimeoutRef.current) {
