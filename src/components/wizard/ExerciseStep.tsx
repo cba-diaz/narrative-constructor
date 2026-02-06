@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Lightbulb, Cloud, CloudOff, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Lightbulb, Cloud, CloudOff, Loader2, SkipForward } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   ProgressiveReductionExercise,
@@ -26,6 +26,7 @@ interface ExerciseStepProps {
   onSave: (data: ExerciseData) => void;
   onNext: () => void;
   onBack: () => void;
+  onSkipToFinal: () => void;
   isFirst: boolean;
 }
 
@@ -37,6 +38,7 @@ export function ExerciseStep({
   onSave,
   onNext,
   onBack,
+  onSkipToFinal,
   isFirst
 }: ExerciseStepProps) {
   const [formData, setFormData] = useState<ExerciseData>(initialData);
@@ -132,6 +134,15 @@ export function ExerciseStep({
     onSave(formData);
     hasChangesRef.current = false;
     onBack();
+  };
+
+  const handleSkipToFinal = () => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    onSave(formData);
+    hasChangesRef.current = false;
+    onSkipToFinal();
   };
 
   // Render specialized component if componentType is set
@@ -335,55 +346,68 @@ export function ExerciseStep({
       )}
 
       {/* Navigation */}
-      <div className="flex items-center justify-between pt-4 border-t border-border">
+      <div className="space-y-3 pt-4 border-t border-border">
+        {/* Skip to final */}
         <Button
           variant="ghost"
-          onClick={handleBack}
-          className={cn(isFirst && "invisible")}
+          size="sm"
+          className="w-full text-muted-foreground hover:text-primary"
+          onClick={handleSkipToFinal}
         >
-          <ChevronLeft className="w-4 h-4 mr-2" />
-          Anterior
+          <SkipForward className="w-4 h-4 mr-2" />
+          Ir al paso final
         </Button>
 
-        <div className="flex items-center gap-3">
-          {/* Manual Save Button */}
+        <div className="flex items-center justify-between">
           <Button
-            variant="outline"
-            onClick={() => {
-              if (saveTimeoutRef.current) {
-                clearTimeout(saveTimeoutRef.current);
-              }
-              setSaveStatus('saving');
-              onSave(formData);
-              hasChangesRef.current = false;
-              setSaveStatus('saved');
-              setTimeout(() => setSaveStatus('idle'), 2000);
-            }}
-            disabled={saveStatus === 'saving'}
-            className="flex items-center gap-2"
+            variant="ghost"
+            onClick={handleBack}
+            className={cn(isFirst && "invisible")}
           >
-            {saveStatus === 'saving' ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Guardando...
-              </>
-            ) : saveStatus === 'saved' ? (
-              <>
-                <Cloud className="w-4 h-4 text-success" />
-                Guardado
-              </>
-            ) : (
-              <>
-                <Cloud className="w-4 h-4" />
-                Guardar
-              </>
-            )}
+            <ChevronLeft className="w-4 h-4 mr-2" />
+            Anterior
           </Button>
 
-          <Button onClick={handleNext} className="btn-primary-gradient">
-            Siguiente
-            <ChevronRight className="w-4 h-4 ml-2" />
-          </Button>
+          <div className="flex items-center gap-3">
+            {/* Manual Save Button */}
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (saveTimeoutRef.current) {
+                  clearTimeout(saveTimeoutRef.current);
+                }
+                setSaveStatus('saving');
+                onSave(formData);
+                hasChangesRef.current = false;
+                setSaveStatus('saved');
+                setTimeout(() => setSaveStatus('idle'), 2000);
+              }}
+              disabled={saveStatus === 'saving'}
+              className="flex items-center gap-2"
+            >
+              {saveStatus === 'saving' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Guardando...
+                </>
+              ) : saveStatus === 'saved' ? (
+                <>
+                  <Cloud className="w-4 h-4 text-success" />
+                  Guardado
+                </>
+              ) : (
+                <>
+                  <Cloud className="w-4 h-4" />
+                  Guardar
+                </>
+              )}
+            </Button>
+
+            <Button onClick={handleNext} className="btn-primary-gradient">
+              Siguiente
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
