@@ -44,8 +44,8 @@ serve(async (req) => {
 
     const systemPrompt = `Eres un coach de pitch de inversión experto. Tu trabajo es redactar el borrador de UN bloque del pitch basándote en los datos que el usuario preparó en ejercicios previos.
 
-REGLAS ABSOLUTAS:
-1. El texto DEBE tener entre ${block.palabrasMin} y ${block.palabrasMax} palabras. NI UNA MENOS, NI UNA MÁS. Cuenta las palabras antes de responder.
+REGLAS ABSOLUTAS (INCUMPLIR CUALQUIERA = RESPUESTA RECHAZADA):
+1. LÍMITE DE PALABRAS ESTRICTO: El texto DEBE tener ENTRE ${block.palabrasMin} Y ${block.palabrasMax} PALABRAS. CUENTA CADA PALABRA ANTES DE RESPONDER. Si tu borrador tiene más de ${block.palabrasMax} palabras, RECÓRTALO. Si tiene menos de ${block.palabrasMin}, AMPLÍALO. VERIFICA EL CONTEO FINAL.
 2. DEBE cumplir TODAS estas restricciones: ${JSON.stringify(block.restricciones)}
 3. PROHIBIDO usar cualquiera de estos elementos: ${JSON.stringify(block.prohibido)}
 4. Sigue esta estructura:
@@ -54,7 +54,8 @@ ${block.estructura.map((s: { titulo: string; descripcion: string }) => `   - ${s
 5. Usa español latinoamericano natural, directo, sin florituras.
 6. NO inventes datos. Solo usa la información proporcionada por el usuario.
 7. NO agregues encabezados, títulos ni etiquetas de sección. Solo el texto narrativo corrido.
-8. Responde ÚNICAMENTE con el texto del bloque. Sin explicaciones, sin comentarios, sin meta-texto.
+8. Responde ÚNICAMENTE con el texto del bloque. Sin explicaciones, sin comentarios, sin meta-texto, sin conteo de palabras.
+9. PRIORIDAD MÁXIMA: Mantener el texto entre ${block.palabrasMin}-${block.palabrasMax} palabras. Sé conciso. Elimina redundancias. Cada palabra debe aportar valor.
 
 EJEMPLO DE REFERENCIA (para que entiendas el tono y estilo, NO lo copies):
 ${block.ejemplo}`;
@@ -78,7 +79,7 @@ Recuerda: entre ${block.palabrasMin} y ${block.palabrasMax} palabras exactas. So
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        max_tokens: 500,
+        max_tokens: 300,
         temperature: 0.7,
       }),
     });
