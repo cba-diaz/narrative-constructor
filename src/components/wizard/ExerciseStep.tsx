@@ -47,10 +47,13 @@ export function ExerciseStep({
   const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasChangesRef = useRef(false);
 
-  // Update form when initialData changes
+  // Update form only when switching exercises, not on every initialData change
   useEffect(() => {
     setFormData(initialData);
-  }, [initialData]);
+    formDataRef.current = initialData;
+    hasChangesRef.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exercise.id]);
 
   // Store the latest formData in a ref to avoid stale closure issues
   const formDataRef = useRef(formData);
