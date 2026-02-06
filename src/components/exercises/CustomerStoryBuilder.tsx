@@ -24,18 +24,6 @@ const DIAS_SEMANA = [
   { value: 'domingo', label: 'Domingo' },
 ];
 
-const FRECUENCIAS_DINERO = [
-  { value: 'dia', label: 'por día' },
-  { value: 'semana', label: 'por semana' },
-  { value: 'mes', label: 'por mes' },
-  { value: 'anio', label: 'por año' },
-];
-
-const FRECUENCIAS_TIEMPO = [
-  { value: 'dia', label: 'por día' },
-  { value: 'semana', label: 'por semana' },
-  { value: 'mes', label: 'por mes' },
-];
 
 const countWords = (text: string): number => {
   return text.trim().split(/\s+/).filter(word => word.length > 0).length;
@@ -156,53 +144,43 @@ export function CustomerStoryBuilder({ data, onChange }: CustomerStoryBuilderPro
 
           <div className="p-3 bg-muted/50 rounded-lg">
             <p className="text-sm font-medium mb-3">Cuantifica el dolor:</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground">$</span>
                 <Input
-                  type="number"
+                  type="text"
                   value={data['dinero_perdido'] || ''}
                   onChange={(e) => onChange('dinero_perdido', e.target.value)}
-                  placeholder="Cantidad"
+                  placeholder="1,800,000"
                   className="flex-1"
                 />
-                <Select
-                  value={data['frecuencia_dinero'] || ''}
-                  onValueChange={(value) => onChange('frecuencia_dinero', value)}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="por..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {FRECUENCIAS_DINERO.map((f) => (
-                      <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  type="text"
+                  value={data['unidad_dinero'] || ''}
+                  onChange={(e) => onChange('unidad_dinero', e.target.value)}
+                  placeholder="por startup, por mes, por cliente..."
+                  className="flex-1"
+                />
               </div>
               <div className="flex items-center gap-2">
                 <Input
-                  type="number"
+                  type="text"
                   value={data['tiempo_perdido'] || ''}
                   onChange={(e) => onChange('tiempo_perdido', e.target.value)}
-                  placeholder="Horas"
+                  placeholder="80"
+                  className="w-24"
+                />
+                <Input
+                  type="text"
+                  value={data['unidad_tiempo'] || ''}
+                  onChange={(e) => onChange('unidad_tiempo', e.target.value)}
+                  placeholder="horas por ronda, minutos por día..."
                   className="flex-1"
                 />
-                <span className="text-muted-foreground">horas</span>
-                <Select
-                  value={data['frecuencia_tiempo'] || ''}
-                  onValueChange={(value) => onChange('frecuencia_tiempo', value)}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="por..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {FRECUENCIAS_TIEMPO.map((f) => (
-                      <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
+              <p className="text-xs text-muted-foreground">
+                💡 Usa cualquier unidad que tenga sentido: "por startup", "por ronda", "por cliente", etc.
+              </p>
             </div>
           </div>
         </CardContent>
