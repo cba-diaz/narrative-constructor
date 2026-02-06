@@ -111,6 +111,8 @@ export function usePitchStore() {
   
   const saveToDatabase = useCallback(async (newData: Partial<PitchData>) => {
     if (!user) return;
+    // CRITICAL: Don't save while still loading data from DB — would overwrite with empty defaults
+    if (isLoading) return;
 
     // Merge pending data
     pendingDataRef.current = { ...pendingDataRef.current, ...newData };
@@ -152,7 +154,7 @@ export function usePitchStore() {
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     }, 500); // 500ms debounce
-  }, [user, data]);
+  }, [user, data, isLoading]);
 
   const setUserInfo = useCallback(async (userName: string, startupName: string) => {
     const newData = { ...data, userName, startupName, updatedAt: new Date().toISOString() };
