@@ -47,23 +47,40 @@ export function FinalBlockStep({
   const [content, setContent] = useState(initialContent);
   const [showExample, setShowExample] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [isGenerating, setIsGenerating] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const hasChangesRef = useRef(false);
+  const draftGeneratedRef = useRef(false);
 
-  // Generate draft from exercises if no content exists
+  // Generate AI draft if no content exists
   useEffect(() => {
     if (initialContent) {
       setContent(initialContent);
-    } else {
-      const draft = generateBlockDraft(sectionNumber, exercisesData, protagonistData);
-      if (draft) {
-        setContent(draft);
-        // Auto-save the generated draft
-        hasChangesRef.current = true;
-      }
+      return;
     }
-  }, [initialContent, sectionNumber, exercisesData, protagonistData]);
+
+    if (draftGeneratedRef.current) return;
+
+    const hasExerciseData = Object.values(exercisesData).some(
+      data => Object.values(data).some(v => v && v.trim().length > 0)
+    );
+    if (!hasExerciseData) return;
+
+    draftGeneratedRef.current = true;
+    setIsGenerating(true);
+
+    generateBlockDraft(sectionNumber, exercisesData, block, protagonistData)
+      .then(draft => {
+        if (draft) {
+          setContent(draft);
+          hasChangesRef.current = true;
+          onSave(draft);
+        }
+      })
+      .catch(err => console.error('Error generating draft:', err))
+      .finally(() => setIsGenerating(false));
+  }, [initialContent]);
 
   // Auto-save function
   const performSave = useCallback(() => {
@@ -245,7 +262,7 @@ export function FinalBlockStep({
       </div>
 
       {/* Editor */}
-      <div>
+      <div className="relative">
         {/* Save Status Indicator */}
         <div className="flex items-center justify-end gap-1.5 text-xs mb-2">
           {saveStatus === 'saving' && (
@@ -267,11 +284,20 @@ export function FinalBlockStep({
             </>
           )}
         </div>
+        {isGenerating && (
+          <div className="absolute inset-0 top-8 flex items-center justify-center bg-background/80 rounded-md z-10">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <span className="text-sm text-muted-foreground">Generando borrador con IA...</span>
+            </div>
+          </div>
+        )}
         <Textarea
           value={content}
           onChange={(e) => handleContentChange(e.target.value)}
-          placeholder={block.placeholder}
+          placeholder={isGenerating ? 'Generando borrador...' : block.placeholder}
           className="min-h-[250px] resize-none text-base leading-relaxed"
+          disabled={isGenerating}
         />
         
         {/* Word Counter */}
