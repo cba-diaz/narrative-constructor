@@ -146,28 +146,29 @@ export const sectionExercises: SectionExercises[] = [
     ejercicios: [
       {
         id: "5_1",
-        titulo: "Tu mercado en unidades humanas y círculos",
-        instruccion: "El cerebro no procesa '$50 billones'. Traduce tu mercado a unidades tangibles y estructura tu expansión en círculos concéntricos.",
+        titulo: "Mapa del territorio",
+        instruccion: "El cerebro no procesa '$50 billones'. Traduce tu mercado a personas o empresas reales y muéstralo en tres círculos concéntricos: donde ya operas, tu próxima expansión, y tu visión regional.",
         campos: [
-          { id: "unidad", type: "input", label: "¿Qué unidad representa tu mercado?", placeholder: "técnicos / tiendas / envíos / transacciones" },
-          { id: "valor_promedio", type: "input", label: "¿Cuál es el valor promedio por unidad?", placeholder: "$400 por curso" },
-          { id: "circulo_1", type: "textarea", label: "Círculo 1 — Donde ya operas (cantidad + geografía):", placeholder: "Colombia: 340,000 vacantes técnicas" },
-          { id: "circulo_2", type: "textarea", label: "Círculo 2 — Próxima expansión:", placeholder: "México + Perú: 800,000 vacantes" },
-          { id: "circulo_3", type: "textarea", label: "Círculo 3 — Visión regional:", placeholder: "Latinoamérica: 2.3 millones de vacantes" }
-        ]
+          { id: "unidad", type: "input", label: "¿Qué unidad representa tu mercado?", placeholder: "técnicos / tiendas / pacientes / transacciones" },
+          { id: "valor_promedio", type: "input", label: "Valor promedio por unidad", placeholder: "$400 por curso / $1,200 por cliente / $15 por transacción" },
+          { id: "circulo_1", type: "textarea", label: "Círculo 1 — Donde ya operas (cantidad + geografía)", placeholder: "Colombia: 340,000 vacantes técnicas sin llenar" },
+          { id: "circulo_2", type: "textarea", label: "Círculo 2 — Tu próxima expansión", placeholder: "México + Perú: 800,000 vacantes adicionales" },
+          { id: "circulo_3", type: "textarea", label: "Círculo 3 — Tu visión regional", placeholder: "Latinoamérica: 2.3 millones de vacantes técnicas" }
+        ],
+        nota: "El mercado en unidades humanas siempre es más poderoso que en dólares. Un inversionista visualiza personas, no billones."
       },
       {
         id: "5_2",
-        titulo: "El Censo de Westeros",
-        instruccion: "Como Tywin Lannister, necesitas conocer a todos los jugadores en tu mapa.",
+        titulo: "Censo de Westeros",
+        instruccion: "Como Tywin Lannister, necesitas conocer a todos los jugadores en tu mapa antes de moverte. Nombra a tus competidores y define exactamente dónde estás mejor posicionado.",
         campos: [
-          { id: "lannister_nombre", type: "input", label: "Los Lannister (Incumbentes): ¿Quiénes son los gigantes establecidos?", placeholder: "Bancos tradicionales, SENA" },
-          { id: "lannister_debilidad", type: "textarea", label: "¿Cuál es su debilidad?", placeholder: "Son lentos, burocráticos, no innovan" },
-          { id: "stark_nombre", type: "input", label: "Los Stark (Insurgentes directos): ¿Quién ataca el mismo problema que tú?", placeholder: "Startups locales, competidores directos" },
-          { id: "stark_diferencia", type: "textarea", label: "¿Qué hacen bien? ¿Dónde estás mejor posicionado?", placeholder: "Tienen buena marca pero no tienen nuestra red de empresas" },
-          { id: "targaryen_nombre", type: "input", label: "Los Targaryen (Disruptores internacionales): ¿Qué jugador global podría entrar?", placeholder: "Coursera, Uber, etc." },
-          { id: "targaryen_ventaja", type: "textarea", label: "¿Por qué el contexto local te da ventaja?", placeholder: "No entienden las regulaciones locales, no tienen las alianzas" }
-        ]
+          { id: "competidor_principal", type: "input", label: "Tu competidor más fuerte (por nombre)", placeholder: "SENA, Rappi, Mercado Libre, el banco X..." },
+          { id: "competidor_debilidad", type: "textarea", label: "¿Cuál es su debilidad que tú resuelves?", placeholder: "Son lentos, no garantizan empleo, no entienden el contexto local" },
+          { id: "competidor_2", type: "input", label: "Segundo competidor o alternativa (puede ser 'hacer nada')", placeholder: "Excel manual, contratar un consultor, no hacer nada" },
+          { id: "tu_ventaja", type: "textarea", label: "¿Por qué estás mejor posicionado que ambos?", placeholder: "Somos los únicos que combinamos formación + colocación laboral garantizada" },
+          { id: "barrera", type: "textarea", label: "¿Qué harías que ellos no pueden copiar fácilmente?", placeholder: "Llevamos 3 años construyendo la red de 340 empresas aliadas. No se replica en 6 meses." }
+        ],
+        nota: "El Bloque 5 requiere mencionar al menos un competidor por nombre. Sin este dato, el AI no puede cumplir esa restricción."
       }
     ]
   },
