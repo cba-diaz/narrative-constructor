@@ -1,12 +1,7 @@
 import { blocks } from '@/data/blocks';
 import { Button } from '@/components/ui/button';
-import { Check, Circle, ChevronRight, Eye, RotateCcw, Package, LogOut } from 'lucide-react';
+import { Check, ChevronRight, Eye, RotateCcw, Package, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,11 +50,11 @@ export function HubPage({
   const getBlockStatus = (blockNumber: number) => {
     if (completedBlocks.includes(blockNumber)) return 'completed';
     
-    // Find the first incomplete block
+    // Find the first incomplete block to highlight as "current"
     const firstIncomplete = blocks.find(b => !completedBlocks.includes(b.numero))?.numero || 1;
     if (blockNumber === firstIncomplete) return 'current';
     
-    return 'pending';
+    return 'available';
   };
 
   const getNextBlock = () => {
@@ -70,8 +65,6 @@ export function HubPage({
   };
 
   const handleBlockClick = (blockNumber: number) => {
-    const status = getBlockStatus(blockNumber);
-    if (status === 'pending') return;
     onSelectBlock(blockNumber);
   };
 
@@ -121,66 +114,54 @@ export function HubPage({
             const status = getBlockStatus(block.numero);
             
             return (
-              <Tooltip key={block.numero}>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => handleBlockClick(block.numero)}
-                    disabled={status === 'pending'}
-                    className={cn(
-                      "w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200",
-                      status === 'completed' && "bg-success/5 border-success/30 hover:border-success cursor-pointer",
-                      status === 'current' && "bg-primary/5 border-primary/30 hover:border-primary cursor-pointer ring-2 ring-primary/20",
-                      status === 'pending' && "bg-muted/50 border-border cursor-not-allowed opacity-60"
-                    )}
-                  >
-                    {/* Status Icon */}
-                    <div className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
-                      status === 'completed' && "bg-success text-success-foreground",
-                      status === 'current' && "bg-primary text-primary-foreground",
-                      status === 'pending' && "bg-muted text-muted-foreground"
-                    )}>
-                      {status === 'completed' ? (
-                        <Check className="w-5 h-5" />
-                      ) : status === 'current' ? (
-                        <span className="font-bold">{block.numero}</span>
-                      ) : (
-                        <Circle className="w-5 h-5" />
-                      )}
-                    </div>
-
-                    {/* Block Info */}
-                    <div className="flex-1 text-left">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-muted-foreground">
-                          BLOQUE {block.numero}
-                        </span>
-                        {status === 'current' && (
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
-                            En progreso
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="font-semibold text-foreground">{block.nombre}</h3>
-                      <p className="text-sm text-muted-foreground">{block.pregunta}</p>
-                    </div>
-
-                    {/* Arrow */}
-                    {status !== 'pending' && (
-                      <ChevronRight className={cn(
-                        "w-5 h-5 flex-shrink-0",
-                        status === 'completed' && "text-success",
-                        status === 'current' && "text-primary"
-                      )} />
-                    )}
-                  </button>
-                </TooltipTrigger>
-                {status === 'pending' && (
-                  <TooltipContent>
-                    <p>Completa los bloques anteriores primero</p>
-                  </TooltipContent>
+              <button
+                key={block.numero}
+                onClick={() => handleBlockClick(block.numero)}
+                className={cn(
+                  "w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 cursor-pointer",
+                  status === 'completed' && "bg-success/5 border-success/30 hover:border-success",
+                  status === 'current' && "bg-primary/5 border-primary/30 hover:border-primary ring-2 ring-primary/20",
+                  status === 'available' && "bg-background border-border hover:border-muted-foreground"
                 )}
-              </Tooltip>
+              >
+                {/* Status Icon */}
+                <div className={cn(
+                  "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
+                  status === 'completed' && "bg-success text-success-foreground",
+                  status === 'current' && "bg-primary text-primary-foreground",
+                  status === 'available' && "bg-muted text-muted-foreground"
+                )}>
+                  {status === 'completed' ? (
+                    <Check className="w-5 h-5" />
+                  ) : (
+                    <span className="font-bold">{block.numero}</span>
+                  )}
+                </div>
+
+                {/* Block Info */}
+                <div className="flex-1 text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      BLOQUE {block.numero}
+                    </span>
+                    {status === 'current' && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                        En progreso
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="font-semibold text-foreground">{block.nombre}</h3>
+                  <p className="text-sm text-muted-foreground">{block.pregunta}</p>
+                </div>
+
+                {/* Arrow */}
+                <ChevronRight className={cn(
+                  "w-5 h-5 flex-shrink-0",
+                  status === 'completed' && "text-success",
+                  status === 'current' && "text-primary",
+                  status === 'available' && "text-muted-foreground"
+                )} />
+              </button>
             );
           })}
         </div>
@@ -220,7 +201,7 @@ export function HubPage({
                   {isInKit ? (
                     <Check className="w-3.5 h-3.5 text-primary" />
                   ) : (
-                    <Circle className="w-3.5 h-3.5 text-muted-foreground/50" />
+                    <div className="w-3.5 h-3.5 rounded-full border border-muted-foreground/50" />
                   )}
                   <span className={cn(
                     "truncate",

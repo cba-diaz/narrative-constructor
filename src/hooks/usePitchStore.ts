@@ -243,7 +243,6 @@ export function usePitchStore() {
       ciudad: protagonistExercise.ciudad || '',
       contexto: protagonistExercise.contexto || '',
       aspiracion: protagonistExercise.aspiracion || '',
-      rutina: protagonistExercise.rutina || '',
       frustracion: protagonistExercise.frustracion || '',
     };
   }, [data.sections]);
