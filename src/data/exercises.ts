@@ -40,14 +40,6 @@ export const sectionExercises: SectionExercises[] = [
       },
       {
         id: "1_2",
-        titulo: "El titular de primera plana",
-        instruccion: "Si mañana tu startup saliera en la portada del diario más importante de tu país, ¿cuál sería el titular?",
-        campos: [],
-        componentType: "headline",
-        nota: "Un buen titular es memorable y genera curiosidad."
-      },
-      {
-        id: "1_3",
         titulo: "Excavadora de Problemas",
         instruccion: "Excava hasta encontrar la raíz del problema. La respuesta del Nivel 5 es tu problema real. Los niveles 1-4 son síntomas.",
         campos: [],
@@ -55,7 +47,7 @@ export const sectionExercises: SectionExercises[] = [
         nota: "Si tu solución ataca el Nivel 1, estás poniendo curitas. Ataca el Nivel 5."
       },
       {
-        id: "1_4",
+        id: "1_3",
         titulo: "Casting del Protagonista",
         instruccion: "Tu problema necesita una persona específica, no un 'segmento de mercado'. Los inversionistas invierten en personas, no en demografías.",
         campos: [
@@ -69,7 +61,7 @@ export const sectionExercises: SectionExercises[] = [
         ]
       },
       {
-        id: "1_5",
+        id: "1_4",
         titulo: "La Escala del Problema",
         instruccion: "Ahora escala el problema. ¿Cuántas personas viven lo mismo que tu protagonista?",
         campos: [
@@ -115,25 +107,6 @@ export const sectionExercises: SectionExercises[] = [
         campos: [],
         componentType: "superpower-detector",
         nota: "Un superpoder real es algo que un competidor NO podría decir."
-      },
-      {
-        id: "3_2",
-        titulo: "Identifica tu etapa de superpoder",
-        instruccion: "¿En qué etapa está tu startup? Tu diferenciación se comunica distinto según la etapa.",
-        campos: [
-          { 
-            id: "etapa", 
-            type: "radio", 
-            label: "Selecciona tu etapa actual",
-            options: [
-              { value: "idea", label: "Idea/MVP: Mi superpoder es un INSIGHT que nadie más ve" },
-              { value: "traccion", label: "Tracción temprana: Mi superpoder es EVIDENCIA de que funciona" },
-              { value: "crecimiento", label: "Crecimiento: Mi superpoder es una VENTAJA que se acumula con el tiempo" },
-              { value: "escalamiento", label: "Escalamiento: Mi superpoder es un ECOSISTEMA difícil de replicar" }
-            ]
-          },
-          { id: "validacion_etapa", type: "textarea", label: "Según tu etapa, ¿qué valida tu superpoder?", placeholder: "Si Idea: ¿Qué estudios validan tu insight? Si Tracción: ¿Qué resultados demuestran que funciona?" }
-        ]
       }
     ]
   },
@@ -166,8 +139,8 @@ export const sectionExercises: SectionExercises[] = [
       },
       {
         id: "4_2",
-        titulo: "Construye tu timeline de tracción",
-        instruccion: "Muestra cómo has evolucionado. Los inversionistas quieren ver tendencia, no solo un número.",
+        titulo: "Timeline y momentum de tracción",
+        instruccion: "Muestra cómo has evolucionado y qué está pasando ahora. Los inversionistas quieren ver tendencia y momentum.",
         campos: [
           { id: "hito_1_fecha", type: "input", label: "Hito 1 - Fecha (mes/año)", placeholder: "Marzo 2024" },
           { id: "hito_1_metrica", type: "input", label: "Hito 1 - Métrica", placeholder: "120 estudiantes" },
@@ -177,15 +150,8 @@ export const sectionExercises: SectionExercises[] = [
           { id: "hito_2_contexto", type: "textarea", label: "Hito 2 - ¿Qué pasó?", placeholder: "Expandimos a Bogotá" },
           { id: "hito_3_fecha", type: "input", label: "Hito 3 - Fecha", placeholder: "Diciembre 2024" },
           { id: "hito_3_metrica", type: "input", label: "Hito 3 - Métrica", placeholder: "2,340 graduados" },
-          { id: "hito_3_contexto", type: "textarea", label: "Hito 3 - ¿Qué pasó?", placeholder: "4 ciudades operando" }
-        ]
-      },
-      {
-        id: "4_3",
-        titulo: "El momentum actual",
-        instruccion: "Los inversionistas quieren saber que el crecimiento continúa. ¿Qué pasó esta semana o este mes?",
-        campos: [
-          { id: "logro_reciente", type: "textarea", label: "¿Qué logro reciente puedes mencionar?", placeholder: "Esta semana cerramos con Walmart / Este mes sumamos 92 empresas nuevas" },
+          { id: "hito_3_contexto", type: "textarea", label: "Hito 3 - ¿Qué pasó?", placeholder: "4 ciudades operando" },
+          { id: "logro_reciente", type: "textarea", label: "Momentum: ¿Qué logro reciente puedes mencionar?", placeholder: "Esta semana cerramos con Walmart / Este mes sumamos 92 empresas nuevas" },
           { id: "senal_crecimiento", type: "textarea", label: "¿Qué señal tienes de que el crecimiento va a continuar?", placeholder: "Lista de espera de X / Pipeline de Y clientes" }
         ]
       }
@@ -339,8 +305,7 @@ export const sectionExercises: SectionExercises[] = [
         instruccion: "No 'somos amigos de la universidad'. ¿Qué habilidades distintas aporta cada uno?",
         campos: [
           { id: "complementariedad", type: "textarea", label: "¿Cómo se complementan las habilidades del equipo?", placeholder: "Uno sabe escalar, otro conoce la industria, otro construye la tecnología" },
-          { id: "como_conocieron", type: "textarea", label: "¿Cómo se conocieron y cuánto tiempo llevan trabajando juntos?", placeholder: "Nos conocimos en un programa del BID en 2021. Llevamos 3 años juntos." },
-          { id: "momentos_dificiles", type: "textarea", label: "¿Han pasado por momentos difíciles juntos? ¿Cómo los resolvieron?", placeholder: "Casi cerramos en 2022 pero pivoteamos y salimos adelante" }
+          { id: "como_conocieron", type: "textarea", label: "¿Cómo se conocieron y cuánto tiempo llevan trabajando juntos?", placeholder: "Nos conocimos en un programa del BID en 2021. Llevamos 3 años juntos." }
         ]
       },
       {
@@ -361,26 +326,12 @@ export const sectionExercises: SectionExercises[] = [
     ejercicios: [
       {
         id: "9_1",
-        titulo: "Reconexión emocional",
-        instruccion: "¿Recuerdas a la persona del Bloque 1? ¿Qué le pasó? ¿Cómo cambió su vida?",
+        titulo: "Cierre memorable",
+        instruccion: "Reconecta con tu protagonista, pinta la visión del mundo y deja claro el siguiente paso. Este es tu momento final.",
         campos: [
-          { id: "protagonista_hoy", type: "textarea", label: "¿Cómo está tu protagonista hoy gracias a tu solución?", placeholder: "Carlos hoy gana tres veces más. Se cambió de barrio. Está pagando la universidad de su hermana." }
-        ]
-      },
-      {
-        id: "9_2",
-        titulo: "La visión del mundo",
-        instruccion: "¿Cómo se ve el mundo cuando ganes? Piensa más allá de tu startup.",
-        campos: [
+          { id: "protagonista_hoy", type: "textarea", label: "¿Cómo está tu protagonista hoy gracias a tu solución?", placeholder: "Carlos hoy gana tres veces más. Se cambió de barrio. Está pagando la universidad de su hermana." },
           { id: "escala_vision", type: "textarea", label: "¿Cuántas personas podrían vivir lo que vivió tu protagonista?", placeholder: "2.3 millones de vacantes en Latinoamérica esperando un Carlos que las llene" },
-          { id: "mundo_diferente", type: "textarea", label: "¿Qué cambia en el mundo si tu startup tiene éxito?", placeholder: "Millones de jóvenes pueden acceder a empleos técnicos bien pagados sin endeudarse" }
-        ]
-      },
-      {
-        id: "9_3",
-        titulo: "El llamado a la acción",
-        instruccion: "Sé específico. Elimina fricción. Hazlo fácil.",
-        campos: [
+          { id: "mundo_diferente", type: "textarea", label: "¿Qué cambia en el mundo si tu startup tiene éxito?", placeholder: "Millones de jóvenes pueden acceder a empleos técnicos bien pagados sin endeudarse" },
           { id: "siguiente_paso", type: "textarea", label: "¿Cuál es el siguiente paso concreto?", placeholder: "Una llamada de 30 minutos esta semana" },
           { id: "facilitar", type: "textarea", label: "¿Cómo lo facilitas?", placeholder: "Les mando tres horarios apenas terminemos" }
         ]

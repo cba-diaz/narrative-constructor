@@ -24,8 +24,8 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
   const getSummaryContent = () => {
     switch (sectionNumber) {
       case 1:
-        const protagonista = exercisesData['1_2'] || {};
-        const escena = exercisesData['1_3'] || {};
+        const protagonista = exercisesData['1_3'] || {};
+        const escena = exercisesData['1_2'] || {};
         const escala = exercisesData['1_4'] || {};
         return (
           <div className="space-y-4">

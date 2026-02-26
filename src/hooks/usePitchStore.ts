@@ -235,7 +235,7 @@ export function usePitchStore() {
 
   const getProtagonistData = useCallback(() => {
     const section1Exercises = data.sections[1]?.exercises || {};
-    const protagonistExercise = section1Exercises['1_2'] || {};
+    const protagonistExercise = section1Exercises['1_3'] || {};
     return {
       nombre: protagonistExercise.nombre || '',
       edad: protagonistExercise.edad || '',
