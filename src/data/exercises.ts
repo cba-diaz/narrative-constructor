@@ -196,7 +196,7 @@ export const sectionExercises: SectionExercises[] = [
           { id: "ratio", type: "input", label: "Ratio LTV/CAC:", placeholder: "50:1 / 11:1" },
           { id: "ratio_contexto", type: "textarea", label: "¿Por qué este ratio es bueno para tu industria?", placeholder: "El estándar en edtech es 3:1, nosotros tenemos 50:1" },
           { id: "escala_sin_costo", type: "textarea", label: "¿Qué parte de tu negocio crece sin agregar costos proporcionales?", placeholder: "El contenido se crea una vez y se usa infinitas veces" },
-          { id: "apalancamiento", type: "textarea", label: "¿Dónde está tu apalancamiento operativo?", placeholder: "Cada vendedor genera $45K mensuales en nuevo revenue" }
+          
         ]
       }
     ]
