@@ -94,6 +94,17 @@ export function HubPage({
           <p className="text-muted-foreground">Pitch de {userName}</p>
         </div>
 
+        {completedBlocks.length > 0 && completedBlocks.length < 9 && (
+          <p className="text-sm text-muted-foreground text-center mb-4">
+            Bienvenido de vuelta, {userName}. Llevas {completedBlocks.length} de 9 bloques.
+          </p>
+        )}
+        {completedBlocks.length === 9 && (
+          <p className="text-sm text-primary text-center font-medium mb-4">
+            🎬 Tu pitch está completo, {userName}. Léelo en voz alta antes de presentar.
+          </p>
+        )}
+
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between text-sm mb-2">
