@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Block, blocks } from '@/data/blocks';
 import { sectionExercises, sectionMotivationalMessages } from '@/data/exercises';
 import { usePitchStore, ExerciseData } from '@/hooks/usePitchStore';
@@ -37,9 +37,13 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
   const [pitchKitSaved, setPitchKitSaved] = useState(() => !!data.pitchKit[sectionNumber]?.content);
   const totalSteps = exercises.length + 1; // exercises + final block
 
-  // Sync step with store
+  // Sync step with store (use ref to avoid infinite loop)
+  const prevStepRef = React.useRef(currentStep);
   useEffect(() => {
-    setSectionStep(sectionNumber, currentStep);
+    if (prevStepRef.current !== currentStep) {
+      prevStepRef.current = currentStep;
+      setSectionStep(sectionNumber, currentStep);
+    }
   }, [currentStep, sectionNumber, setSectionStep]);
 
   // Update pitchKitSaved when data changes
@@ -70,10 +74,8 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
   }, [currentStep, onBack]);
 
   const handleStepClick = useCallback((step: number) => {
-    if (step < currentStep) {
-      setCurrentStep(step);
-    }
-  }, [currentStep]);
+    setCurrentStep(step);
+  }, []);
 
   const handleBlockSave = useCallback((content: string) => {
     setBlockContent(sectionNumber, content);
@@ -136,6 +138,10 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
         <WizardStepper
           steps={exercises.map(e => ({ id: e.id, titulo: e.titulo }))}
           currentStep={currentStep}
+          completedSteps={exercises.map((e, i) => {
+            const exData = exercisesData[e.id];
+            return !!exData && Object.values(exData).some(v => v && v.trim().length > 0);
+          })}
           onStepClick={handleStepClick}
         />
 
