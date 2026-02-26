@@ -37,6 +37,10 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
   const [pitchKitSaved, setPitchKitSaved] = useState(() => !!data.pitchKit[sectionNumber]?.content);
   const totalSteps = exercises.length + 1; // exercises + final block
 
+  const exercisesData = getSectionExercises(sectionNumber);
+  const protagonistData = getProtagonistData();
+  const blockContent = data.blocks[sectionNumber] || '';
+
   // Sync step with store (use ref to avoid infinite loop)
   const prevStepRef = React.useRef(currentStep);
   useEffect(() => {
@@ -73,9 +77,24 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
     }
   }, [currentStep, onBack]);
 
+  const hasAnyExerciseData = useCallback(() => {
+    return exercises.some(e => {
+      const exData = exercisesData[e.id];
+      return !!exData && Object.values(exData).some(v => v && v.trim().length > 0);
+    });
+  }, [exercises, exercisesData]);
+
   const handleStepClick = useCallback((step: number) => {
+    if (step === exercises.length && !hasAnyExerciseData()) {
+      toast({
+        title: "Completa al menos un ejercicio antes de escribir el bloque",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
     setCurrentStep(step);
-  }, []);
+  }, [exercises.length, hasAnyExerciseData, toast]);
 
   const handleBlockSave = useCallback((content: string) => {
     setBlockContent(sectionNumber, content);
@@ -104,9 +123,6 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
     });
   }, [sectionNumber, saveToPitchKit, toast]);
 
-  const exercisesData = getSectionExercises(sectionNumber);
-  const protagonistData = getProtagonistData();
-  const blockContent = data.blocks[sectionNumber] || '';
 
   const isFinalStep = currentStep === exercises.length;
 
