@@ -87,6 +87,9 @@ export function CustomerStoryBuilder({ data, onChange, protagonistData }: Custom
     if (data['dinero_ahorrado']) {
       parts.push(`Y ha recuperado $${data['dinero_ahorrado']}.`);
     }
+    if (data['primer_momento']) {
+      parts.push(`El primer día, ${data['primer_momento']}.`);
+    }
 
     const story = parts.join(' ').replace(/\s+/g, ' ').trim();
     onChange('historia_generada', story);
@@ -313,48 +316,14 @@ export function CustomerStoryBuilder({ data, onChange, protagonistData }: Custom
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* PART 4: The 3 Steps (Obi-Wan) */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-500" />
-            PARTE 4 — Los 3 Pasos de Obi-Wan
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Como Obi-Wan entrenando a Luke, tu solución debe mostrarse en progresión.
-          </p>
           <div className="space-y-2">
-            <Label htmlFor="reveal">EL REVEAL: ¿Cuál es el 'wow' inmediato?</Label>
+            <Label htmlFor="primer_momento">¿Cómo se ve el primer momento de uso?</Label>
             <Textarea
-              id="reveal"
-              value={data['reveal'] || ''}
-              onChange={(e) => onChange('reveal', e.target.value)}
-              placeholder="En 47 segundos tiene las 40 rutas optimizadas"
-              className="min-h-[80px]"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="transformacion">LA TRANSFORMACIÓN: ¿Qué experimenta paso a paso?</Label>
-            <Textarea
-              id="transformacion"
-              value={data['transformacion'] || ''}
-              onChange={(e) => onChange('transformacion', e.target.value)}
-              placeholder="Primero elige su carrera, luego estudia módulos de 45 min, después hace prácticas reales..."
-              className="min-h-[80px]"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="vision">LA VISIÓN: ¿Cómo se ve el futuro en 6-12-24 meses?</Label>
-            <Textarea
-              id="vision"
-              value={data['vision'] || ''}
-              onChange={(e) => onChange('vision', e.target.value)}
-              placeholder="En 12 semanas tiene certificación, en 6 meses ya tiene experiencia, en 1 año está capacitando a otros"
+              id="primer_momento"
+              value={data['primer_momento'] || ''}
+              onChange={(e) => onChange('primer_momento', e.target.value)}
+              placeholder="Abre la app, sube su CV en 2 minutos, y recibe 3 ofertas de empresas reales antes del mediodía"
               className="min-h-[80px]"
             />
           </div>
