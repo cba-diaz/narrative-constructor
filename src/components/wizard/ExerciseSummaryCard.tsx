@@ -159,14 +159,15 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
 
         return (
           <div className="space-y-2 max-h-[300px] overflow-y-auto">
+            <p className="text-xs text-muted-foreground mb-3">Lo que preparaste en los ejercicios:</p>
             {entries.slice(0, 6).map(([key, value]) => (
               <div key={key} className="p-2 rounded bg-background border border-border">
-                <p className="text-xs text-muted-foreground truncate">{value}</p>
+                <p className="text-xs text-foreground line-clamp-2">{value}</p>
               </div>
             ))}
             {entries.length > 6 && (
               <p className="text-xs text-muted-foreground">
-                +{entries.length - 6} campos más...
+                +{entries.length - 6} respuestas más guardadas
               </p>
             )}
           </div>
