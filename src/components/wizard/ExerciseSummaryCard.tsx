@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ExerciseData } from '@/hooks/usePitchStore';
-import { ChevronDown, ChevronUp, User, Clock, BarChart3, FileText } from 'lucide-react';
+import { ChevronDown, ChevronUp, User, Pickaxe, BarChart3, FileText, Zap, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ExerciseSummaryCardProps {
@@ -20,15 +20,37 @@ interface ExerciseSummaryCardProps {
 export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistData }: ExerciseSummaryCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
-  // Get summary content based on section
   const getSummaryContent = () => {
     switch (sectionNumber) {
-      case 1:
+      case 1: {
+        const reduction = exercisesData['1_1'] || {};
+        const digger = exercisesData['1_2'] || {};
         const protagonista = exercisesData['1_3'] || {};
-        const escena = exercisesData['1_2'] || {};
         const escala = exercisesData['1_4'] || {};
         return (
           <div className="space-y-4">
+            {/* 8-word phrase */}
+            {reduction.frase_8 && (
+              <div className="p-3 rounded-lg bg-background border border-border">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  <span className="font-medium text-sm">Tu frase de 8 palabras</span>
+                </div>
+                <p className="text-sm font-medium text-foreground italic">"{reduction.frase_8}"</p>
+              </div>
+            )}
+
+            {/* Root problem from digger */}
+            {digger.nivel_5 && (
+              <div className="p-3 rounded-lg bg-background border border-border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Pickaxe className="w-4 h-4 text-warning" />
+                  <span className="font-medium text-sm">Problema raíz (Nivel 5)</span>
+                </div>
+                <p className="text-sm text-muted-foreground">{digger.nivel_5}</p>
+              </div>
+            )}
+
             {/* Protagonist Card */}
             {protagonista.nombre && (
               <div className="p-3 rounded-lg bg-background border border-border">
@@ -50,20 +72,6 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
               </div>
             )}
 
-            {/* Scene Card */}
-            {escena.timing && (
-              <div className="p-3 rounded-lg bg-background border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <Clock className="w-4 h-4 text-warning" />
-                  <span className="font-medium text-sm">La escena del crimen</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {escena.timing && <span className="font-medium text-foreground">{escena.timing}</span>}
-                  {escena.trigger && ` - ${escena.trigger}`}
-                </p>
-              </div>
-            )}
-
             {/* Scale Card */}
             {escala.cantidad && (
               <div className="p-3 rounded-lg bg-background border border-border">
@@ -75,14 +83,18 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
                   <span className="font-medium text-foreground">{escala.cantidad}</span>
                   {escala.frecuencia && ` ${escala.frecuencia}`}
                 </p>
+                {escala.tangible && (
+                  <p className="text-sm text-muted-foreground mt-1 italic">{escala.tangible}</p>
+                )}
               </div>
             )}
           </div>
         );
+      }
 
-      case 2:
-        const solucion = exercisesData['2_1'] || {};
-        const antesDesp = exercisesData['2_2'] || {};
+      case 2: {
+        const story = exercisesData['2_1'] || {};
+        const pasos = exercisesData['2_2'] || {};
         return (
           <div className="space-y-4">
             {protagonistData?.nombre && (
@@ -98,39 +110,43 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
                 </p>
               </div>
             )}
-            {solucion.solucion_oracion && (
+            {story.historia_generada && (
               <div className="p-3 rounded-lg bg-background border border-border">
                 <div className="flex items-center gap-2 mb-2">
-                  <FileText className="w-4 h-4 text-success" />
-                  <span className="font-medium text-sm">Tu solución en una oración</span>
+                  <Calendar className="w-4 h-4 text-warning" />
+                  <span className="font-medium text-sm">Historia de cliente</span>
                 </div>
-                <p className="text-sm text-muted-foreground">{solucion.solucion_oracion}</p>
+                <p className="text-sm text-muted-foreground line-clamp-3">{story.historia_generada}</p>
               </div>
             )}
-            {(antesDesp.antes || antesDesp.despues) && (
+            {(pasos.reveal || pasos.transformacion || pasos.vision) && (
               <div className="p-3 rounded-lg bg-background border border-border">
                 <div className="flex items-center gap-2 mb-2">
-                  <Clock className="w-4 h-4 text-warning" />
-                  <span className="font-medium text-sm">Antes y después</span>
+                  <Zap className="w-4 h-4 text-success" />
+                  <span className="font-medium text-sm">Los 3 pasos</span>
                 </div>
-                {antesDesp.antes && (
+                {pasos.reveal && (
                   <p className="text-sm text-muted-foreground mb-1">
-                    <span className="text-destructive font-medium">Antes:</span> {antesDesp.antes}
+                    <span className="text-primary font-medium">Reveal:</span> {pasos.reveal}
                   </p>
                 )}
-                {antesDesp.despues && (
+                {pasos.transformacion && (
+                  <p className="text-sm text-muted-foreground mb-1">
+                    <span className="text-success font-medium">Transformación:</span> {pasos.transformacion}
+                  </p>
+                )}
+                {pasos.vision && (
                   <p className="text-sm text-muted-foreground">
-                    <span className="text-success font-medium">Después:</span> {antesDesp.despues}
+                    <span className="text-warning font-medium">Visión:</span> {pasos.vision}
                   </p>
                 )}
               </div>
             )}
           </div>
         );
+      }
 
-      // Add more section-specific summaries...
-      default:
-        // Generic summary for other sections
+      default: {
         const allData = Object.values(exercisesData).reduce((acc, data) => ({ ...acc, ...data }), {});
         const entries = Object.entries(allData).filter(([_, v]) => v && v.trim().length > 0);
         
@@ -156,6 +172,7 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
             )}
           </div>
         );
+      }
     }
   };
 

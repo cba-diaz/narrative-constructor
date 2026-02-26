@@ -10,9 +10,6 @@ import { ChevronLeft, ChevronRight, Lightbulb, Cloud, CloudOff, Loader2, SkipFor
 import { cn } from '@/lib/utils';
 import {
   ProgressiveReductionExercise,
-  HeadlineExercise,
-  InvestorProfiler,
-  ThreeActsExercise,
   ProblemDiggerExercise,
   CustomerStoryBuilder,
   SuperpowerDetector,
@@ -154,27 +151,6 @@ export function ExerciseStep({
       case 'progressive-reduction':
         return (
           <ProgressiveReductionExercise
-            data={formData}
-            onChange={handleFieldChange}
-          />
-        );
-      case 'headline':
-        return (
-          <HeadlineExercise
-            data={formData}
-            onChange={handleFieldChange}
-          />
-        );
-      case 'investor-profiler':
-        return (
-          <InvestorProfiler
-            data={formData}
-            onChange={handleFieldChange}
-          />
-        );
-      case 'three-acts':
-        return (
-          <ThreeActsExercise
             data={formData}
             onChange={handleFieldChange}
           />
