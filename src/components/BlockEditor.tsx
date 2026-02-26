@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Block, motivationalMessages } from '@/data/blocks';
+import { Block } from '@/data/blocks';
+import { sectionMotivationalMessages } from '@/data/exercises';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { 
@@ -87,13 +88,13 @@ export function BlockEditor({
     
     if (isLastBlock && content.trim().length > 0) {
       toast({
-        title: motivationalMessages[block.numero],
+        title: sectionMotivationalMessages[block.numero],
         description: "¡Pitch completo! Ahora a practicarlo.",
         duration: 4000,
       });
     } else if (content.trim().length > 0) {
       toast({
-        title: motivationalMessages[block.numero],
+        title: sectionMotivationalMessages[block.numero],
         duration: 3000,
       });
     }

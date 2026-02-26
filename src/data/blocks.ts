@@ -334,15 +334,3 @@ export const blocks: Block[] = [
     ejemplo: "Carlos hoy gana tres veces más que hace un año. Pudo cambiarse de barrio. Está pagando la universidad de su hermana menor.\n\nHay 2.3 millones de vacantes técnicas en Latinoamérica esperando un Carlos que las llene.\n\nNosotros ya probamos que el modelo funciona en Colombia. Ahora queremos llevarlo al resto de la región.\n\nSi esto les hace sentido, el siguiente paso es una llamada de 30 minutos esta semana."
   }
 ];
-
-export const motivationalMessages: Record<number, string> = {
-  1: "Excelente. Tu villano está en escena.",
-  2: "El héroe apareció. La solución existe.",
-  3: "Ahora saben por qué solo tú puedes ganar.",
-  4: "Los números hablan. Esto no es ficción.",
-  5: "La oportunidad es clara. El mercado espera.",
-  6: "El motor está definido. Saben cómo ganas dinero.",
-  7: "Pediste con convicción. Eso se nota.",
-  8: "El equipo está listo. Confían en ustedes.",
-  9: "¡Pitch completo! Ahora a practicarlo."
-};
