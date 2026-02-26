@@ -208,6 +208,7 @@ export function ExerciseStep({
               placeholder={field.placeholder}
               className="w-full"
             />
+            {field.nota && <p className="text-xs text-muted-foreground">{field.nota}</p>}
           </div>
         );
 
@@ -224,6 +225,7 @@ export function ExerciseStep({
               placeholder={field.placeholder}
               className="min-h-[100px] resize-none"
             />
+            {field.nota && <p className="text-xs text-muted-foreground">{field.nota}</p>}
           </div>
         );
 
