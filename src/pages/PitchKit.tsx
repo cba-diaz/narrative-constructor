@@ -109,7 +109,7 @@ export default function PitchKit() {
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/?view=hub')}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -266,7 +266,7 @@ export default function PitchKit() {
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Completa los ejercicios de cada sección y usa el botón "Guardar en Pitch Kit" para ir construyendo tu pitch final.
             </p>
-            <Button onClick={() => navigate('/')} className="btn-primary-gradient">
+            <Button onClick={() => navigate('/?view=hub')} className="btn-primary-gradient">
               Ir al Hub
             </Button>
           </div>
