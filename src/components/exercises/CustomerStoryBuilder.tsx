@@ -39,7 +39,7 @@ export function CustomerStoryBuilder({ data, onChange, protagonistData }: Custom
   const { toast } = useToast();
 
   // Pre-fill protagonist data from Section 1 if available and fields are empty
-  useState(() => {
+  useEffect(() => {
     if (protagonistData?.nombre && !data['cliente_nombre']) {
       onChange('cliente_nombre', protagonistData.nombre);
     }
@@ -49,7 +49,7 @@ export function CustomerStoryBuilder({ data, onChange, protagonistData }: Custom
     if (protagonistData?.frustracion && !data['cliente_problema']) {
       onChange('cliente_problema', protagonistData.frustracion);
     }
-  });
+  }, [protagonistData]);
 
   const generateStory = () => {
     const parts: string[] = [];
