@@ -208,31 +208,23 @@ export const sectionExercises: SectionExercises[] = [
     ejercicios: [
       {
         id: "7_1",
-        titulo: "Tu petición y destino del capital",
-        instruccion: "Di tu número en voz alta hasta que salga sin temblarte la voz. Luego define máximo 3 categorías de uso que sumen 100%.",
+        titulo: "Tu petición completa",
+        instruccion: "Di tu número en voz alta hasta que salga sin temblarte la voz. Luego define el destino del capital y los resultados que prometes en 18 meses. Los tres van juntos: sin resultados, la petición queda en el aire.",
         campos: [
           { id: "monto", type: "input", label: "¿Cuánto dinero estás levantando?", placeholder: "$1.2 millones USD" },
-          { id: "por_que_monto", type: "textarea", label: "¿Por qué ese número específico y no otro?", placeholder: "Es lo que necesitamos para llegar a break-even en 18 meses" },
-          { id: "cat_1_nombre", type: "input", label: "Categoría 1 - Nombre", placeholder: "Expansión geográfica" },
-          { id: "cat_1_porcentaje", type: "input", label: "Categoría 1 - Porcentaje", placeholder: "50%" },
-          { id: "cat_1_detalle", type: "textarea", label: "Categoría 1 - ¿Qué específicamente?", placeholder: "Abrir en Ciudad de México y Lima" },
-          { id: "cat_2_nombre", type: "input", label: "Categoría 2 - Nombre", placeholder: "Tecnología" },
-          { id: "cat_2_porcentaje", type: "input", label: "Categoría 2 - Porcentaje", placeholder: "30%" },
-          { id: "cat_2_detalle", type: "textarea", label: "Categoría 2 - ¿Qué específicamente?", placeholder: "Automatizar creación de currículos" },
-          { id: "cat_3_nombre", type: "input", label: "Categoría 3 - Nombre", placeholder: "Equipo" },
-          { id: "cat_3_porcentaje", type: "input", label: "Categoría 3 - Porcentaje", placeholder: "20%" },
-          { id: "cat_3_detalle", type: "textarea", label: "Categoría 3 - ¿Qué específicamente?", placeholder: "Director de operaciones en México y Perú" }
-        ]
-      },
-      {
-        id: "7_3",
-        titulo: "Los resultados esperados",
-        instruccion: "En 18 meses, ¿qué métricas habrás alcanzado?",
-        campos: [
-          { id: "metrica_1", type: "input", label: "Métrica 1:", placeholder: "15,000 graduados" },
-          { id: "metrica_2", type: "input", label: "Métrica 2:", placeholder: "$4M USD en ingresos anuales" },
-          { id: "metrica_3", type: "input", label: "Métrica 3:", placeholder: "Break even operativo" },
-          
+          { id: "por_que_monto", type: "textarea", label: "¿Por qué ese número y no otro?", placeholder: "Es lo que necesitamos para llegar a break-even en 18 meses" },
+          { id: "cat_1_nombre", type: "input", label: "Categoría 1 — Nombre", placeholder: "Expansión geográfica" },
+          { id: "cat_1_porcentaje", type: "input", label: "Categoría 1 — Porcentaje", placeholder: "50%" },
+          { id: "cat_1_detalle", type: "textarea", label: "Categoría 1 — ¿Qué específicamente?", placeholder: "Abrir en Ciudad de México y Lima" },
+          { id: "cat_2_nombre", type: "input", label: "Categoría 2 — Nombre", placeholder: "Tecnología" },
+          { id: "cat_2_porcentaje", type: "input", label: "Categoría 2 — Porcentaje", placeholder: "30%" },
+          { id: "cat_2_detalle", type: "textarea", label: "Categoría 2 — ¿Qué específicamente?", placeholder: "Automatizar creación de currículos" },
+          { id: "cat_3_nombre", type: "input", label: "Categoría 3 — Nombre (opcional)", placeholder: "Equipo" },
+          { id: "cat_3_porcentaje", type: "input", label: "Categoría 3 — Porcentaje (opcional)", placeholder: "20%" },
+          { id: "cat_3_detalle", type: "textarea", label: "Categoría 3 — ¿Qué específicamente? (opcional)", placeholder: "Director de operaciones en México y Perú" },
+          { id: "metrica_1", type: "input", label: "Métrica 1 que alcanzarás en 18 meses", placeholder: "15,000 graduados" },
+          { id: "metrica_2", type: "input", label: "Métrica 2 que alcanzarás en 18 meses", placeholder: "$4M USD en ingresos anuales" },
+          { id: "metrica_3", type: "input", label: "Métrica 3 que alcanzarás en 18 meses", placeholder: "Break even operativo" }
         ]
       }
     ]
