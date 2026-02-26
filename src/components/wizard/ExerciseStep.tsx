@@ -322,6 +322,12 @@ export function ExerciseStep({
         ) : (
           exercise.campos.map((field) => (
             <React.Fragment key={field.id}>
+              {field.id === 'protagonista_hoy' && exercise.id.startsWith('9_') && protagonistData?.nombre && (
+                <div className="mb-2 p-2 rounded bg-primary/5 border border-primary/20 text-xs text-muted-foreground">
+                  Tu protagonista de Sección 1: <span className="font-medium text-foreground">{protagonistData.nombre}</span>
+                  {protagonistData.contexto && ` — ${protagonistData.contexto}`}
+                </div>
+              )}
               {field.id === 'hito_1_fecha' && exercise.id === '4_1' && (
                 <div className="pt-4 pb-2 border-t border-border">
                   <p className="text-sm font-semibold text-foreground">Tu línea de tiempo</p>
