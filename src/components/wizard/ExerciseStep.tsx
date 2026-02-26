@@ -330,6 +330,12 @@ export function ExerciseStep({
                   {protagonistData.contexto && ` — ${protagonistData.contexto}`}
                 </div>
               )}
+              {field.id === 'protagonista_hoy' && exercise.id.startsWith('9_') && !protagonistData?.nombre && (
+                <div className="mb-2 p-3 rounded bg-amber-50 border border-amber-200 text-xs text-amber-800 dark:bg-amber-950/20 dark:border-amber-800 dark:text-amber-200">
+                  <p className="font-medium">Tu protagonista de Bloque 1 no está definido.</p>
+                  <p className="mt-1 text-muted-foreground">El cierre debe volver a la misma persona con la que abriste el pitch. Completa el Casting del Protagonista en Bloque 1 antes de escribir este bloque.</p>
+                </div>
+              )}
               {field.id === 'hito_1_fecha' && exercise.id === '4_1' && (
                 <div className="pt-4 pb-2 border-t border-border">
                   <p className="text-sm font-semibold text-foreground">Tu línea de tiempo</p>
