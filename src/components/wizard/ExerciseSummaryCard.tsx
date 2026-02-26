@@ -30,13 +30,13 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
         return (
           <div className="space-y-4">
             {/* 8-word phrase */}
-            {reduction.frase_8 && (
+            {reduction.max_8 && (
               <div className="p-3 rounded-lg bg-background border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <FileText className="w-4 h-4 text-primary" />
                   <span className="font-medium text-sm">Tu frase de 8 palabras</span>
                 </div>
-                <p className="text-sm font-medium text-foreground italic">"{reduction.frase_8}"</p>
+                <p className="text-sm font-medium text-foreground italic">"{reduction.max_8}"</p>
               </div>
             )}
 
@@ -94,7 +94,6 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
 
       case 2: {
         const story = exercisesData['2_1'] || {};
-        const pasos = exercisesData['2_2'] || {};
         return (
           <div className="space-y-4">
             {protagonistData?.nombre && (
@@ -119,25 +118,25 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
                 <p className="text-sm text-muted-foreground line-clamp-3">{story.historia_generada}</p>
               </div>
             )}
-            {(pasos.reveal || pasos.transformacion || pasos.vision) && (
+            {(story.reveal || story.transformacion || story.vision) && (
               <div className="p-3 rounded-lg bg-background border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="w-4 h-4 text-success" />
                   <span className="font-medium text-sm">Los 3 pasos</span>
                 </div>
-                {pasos.reveal && (
+                {story.reveal && (
                   <p className="text-sm text-muted-foreground mb-1">
-                    <span className="text-primary font-medium">Reveal:</span> {pasos.reveal}
+                    <span className="text-primary font-medium">Reveal:</span> {story.reveal}
                   </p>
                 )}
-                {pasos.transformacion && (
+                {story.transformacion && (
                   <p className="text-sm text-muted-foreground mb-1">
-                    <span className="text-success font-medium">Transformación:</span> {pasos.transformacion}
+                    <span className="text-success font-medium">Transformación:</span> {story.transformacion}
                   </p>
                 )}
-                {pasos.vision && (
+                {story.vision && (
                   <p className="text-sm text-muted-foreground">
-                    <span className="text-warning font-medium">Visión:</span> {pasos.vision}
+                    <span className="text-warning font-medium">Visión:</span> {story.vision}
                   </p>
                 )}
               </div>

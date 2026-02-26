@@ -158,6 +158,11 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
               onBack={handlePrev}
               onSkipToFinal={handleSkipToFinal}
               isFirst={currentStep === 0}
+              protagonistData={sectionNumber === 2 ? {
+                nombre: protagonistData.nombre,
+                contexto: protagonistData.contexto || '',
+                frustracion: protagonistData.frustracion || '',
+              } : undefined}
             />
           ) : (
             <FinalBlockStep

@@ -25,6 +25,11 @@ interface ExerciseStepProps {
   onBack: () => void;
   onSkipToFinal: () => void;
   isFirst: boolean;
+  protagonistData?: {
+    nombre: string;
+    contexto: string;
+    frustracion: string;
+  };
 }
 
 export function ExerciseStep({
@@ -36,7 +41,8 @@ export function ExerciseStep({
   onNext,
   onBack,
   onSkipToFinal,
-  isFirst
+  isFirst,
+  protagonistData
 }: ExerciseStepProps) {
   const [formData, setFormData] = useState<ExerciseData>(initialData);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -167,6 +173,7 @@ export function ExerciseStep({
           <CustomerStoryBuilder
             data={formData}
             onChange={handleFieldChange}
+            protagonistData={protagonistData}
           />
         );
       case 'superpower-detector':

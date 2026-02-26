@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -12,6 +12,11 @@ import { useToast } from '@/hooks/use-toast';
 interface CustomerStoryBuilderProps {
   data: Record<string, string>;
   onChange: (fieldId: string, value: string) => void;
+  protagonistData?: {
+    nombre: string;
+    contexto: string;
+    frustracion: string;
+  };
 }
 
 const DIAS_SEMANA = [
@@ -29,9 +34,22 @@ const countWords = (text: string): number => {
   return text.trim().split(/\s+/).filter(word => word.length > 0).length;
 };
 
-export function CustomerStoryBuilder({ data, onChange }: CustomerStoryBuilderProps) {
+export function CustomerStoryBuilder({ data, onChange, protagonistData }: CustomerStoryBuilderProps) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+
+  // Pre-fill protagonist data from Section 1 if available and fields are empty
+  useState(() => {
+    if (protagonistData?.nombre && !data['cliente_nombre']) {
+      onChange('cliente_nombre', protagonistData.nombre);
+    }
+    if (protagonistData?.contexto && !data['cliente_contexto']) {
+      onChange('cliente_contexto', protagonistData.contexto);
+    }
+    if (protagonistData?.frustracion && !data['cliente_problema']) {
+      onChange('cliente_problema', protagonistData.frustracion);
+    }
+  });
 
   const generateStory = () => {
     const parts: string[] = [];
@@ -294,6 +312,51 @@ export function CustomerStoryBuilder({ data, onChange }: CustomerStoryBuilderPro
                 />
               </div>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* PART 4: The 3 Steps (Obi-Wan) */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-purple-500" />
+            PARTE 4 — Los 3 Pasos de Obi-Wan
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Como Obi-Wan entrenando a Luke, tu solución debe mostrarse en progresión.
+          </p>
+          <div className="space-y-2">
+            <Label htmlFor="reveal">EL REVEAL: ¿Cuál es el 'wow' inmediato?</Label>
+            <Textarea
+              id="reveal"
+              value={data['reveal'] || ''}
+              onChange={(e) => onChange('reveal', e.target.value)}
+              placeholder="En 47 segundos tiene las 40 rutas optimizadas"
+              className="min-h-[80px]"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="transformacion">LA TRANSFORMACIÓN: ¿Qué experimenta paso a paso?</Label>
+            <Textarea
+              id="transformacion"
+              value={data['transformacion'] || ''}
+              onChange={(e) => onChange('transformacion', e.target.value)}
+              placeholder="Primero elige su carrera, luego estudia módulos de 45 min, después hace prácticas reales..."
+              className="min-h-[80px]"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="vision">LA VISIÓN: ¿Cómo se ve el futuro en 6-12-24 meses?</Label>
+            <Textarea
+              id="vision"
+              value={data['vision'] || ''}
+              onChange={(e) => onChange('vision', e.target.value)}
+              placeholder="En 12 semanas tiene certificación, en 6 meses ya tiene experiencia, en 1 año está capacitando a otros"
+              className="min-h-[80px]"
+            />
           </div>
         </CardContent>
       </Card>

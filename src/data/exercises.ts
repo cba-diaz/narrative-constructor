@@ -78,21 +78,11 @@ export const sectionExercises: SectionExercises[] = [
     ejercicios: [
       {
         id: "2_1",
-        titulo: "Constructor de Historia de Cliente",
-        instruccion: "Construye la historia de transformación de un cliente real. Los inversionistas recuerdan historias, no estadísticas.",
+        titulo: "Historia de Cliente y Transformación",
+        instruccion: "Construye la historia de transformación de un cliente real y muestra la progresión de tu solución. Los inversionistas recuerdan historias, no estadísticas.",
         campos: [],
         componentType: "customer-story",
         nota: "Esta historia debe tener entre 80-120 palabras para el Pitch Kit."
-      },
-      {
-        id: "2_2",
-        titulo: "Los 3 pasos de Obi-Wan",
-        instruccion: "Como Obi-Wan entrenando a Luke, tu solución debe mostrarse en progresión.",
-        campos: [
-          { id: "reveal", type: "textarea", label: "EL REVEAL: ¿Cuál es el 'wow' inmediato que genera tu producto?", placeholder: "En 47 segundos tiene las 40 rutas optimizadas" },
-          { id: "transformacion", type: "textarea", label: "LA TRANSFORMACIÓN: ¿Qué experimenta el usuario paso a paso?", placeholder: "Primero elige su carrera, luego estudia módulos de 45 min, después hace prácticas reales..." },
-          { id: "vision", type: "textarea", label: "LA VISIÓN: ¿Cómo se ve el futuro del usuario en 6-12-24 meses?", placeholder: "En 12 semanas tiene certificación, en 6 meses ya tiene experiencia, en 1 año está capacitando a otros" }
-        ]
       }
     ]
   },
@@ -205,20 +195,13 @@ export const sectionExercises: SectionExercises[] = [
       },
       {
         id: "6_2",
-        titulo: "Unit Economics",
-        instruccion: "¿Cuánto cuesta conseguir un cliente y cuánto genera?",
+        titulo: "Unit Economics y Escalabilidad",
+        instruccion: "¿Cuánto cuesta conseguir un cliente, cuánto genera, y qué parte de tu negocio escala sin costos lineales?",
         campos: [
           { id: "cac", type: "input", label: "CAC: ¿Cuánto cuesta adquirir un cliente?", placeholder: "$42,000 pesos / $380 USD" },
           { id: "ltv", type: "input", label: "LTV: ¿Cuánto genera ese cliente en total?", placeholder: "$2.1 millones / $4,186 USD" },
           { id: "ratio", type: "input", label: "Ratio LTV/CAC:", placeholder: "50:1 / 11:1" },
-          { id: "ratio_contexto", type: "textarea", label: "¿Por qué este ratio es bueno para tu industria?", placeholder: "El estándar en edtech es 3:1, nosotros tenemos 50:1" }
-        ]
-      },
-      {
-        id: "6_3",
-        titulo: "La escalabilidad",
-        instruccion: "El mejor negocio tiene partes que escalan sin agregar costos lineales.",
-        campos: [
+          { id: "ratio_contexto", type: "textarea", label: "¿Por qué este ratio es bueno para tu industria?", placeholder: "El estándar en edtech es 3:1, nosotros tenemos 50:1" },
           { id: "escala_sin_costo", type: "textarea", label: "¿Qué parte de tu negocio crece sin agregar costos proporcionales?", placeholder: "El contenido se crea una vez y se usa infinitas veces" },
           { id: "apalancamiento", type: "textarea", label: "¿Dónde está tu apalancamiento operativo?", placeholder: "Cada vendedor genera $45K mensuales en nuevo revenue" }
         ]
@@ -231,18 +214,11 @@ export const sectionExercises: SectionExercises[] = [
     ejercicios: [
       {
         id: "7_1",
-        titulo: "Define tu número",
-        instruccion: "Párate frente al espejo y di tu número en voz alta hasta que salga sin temblarte la voz.",
+        titulo: "Tu petición y destino del capital",
+        instruccion: "Di tu número en voz alta hasta que salga sin temblarte la voz. Luego define máximo 3 categorías de uso que sumen 100%.",
         campos: [
           { id: "monto", type: "input", label: "¿Cuánto dinero estás levantando?", placeholder: "$1.2 millones USD" },
-          { id: "por_que_monto", type: "textarea", label: "¿Por qué ese número específico y no otro?", placeholder: "Es lo que necesitamos para llegar a break-even en 18 meses" }
-        ]
-      },
-      {
-        id: "7_2",
-        titulo: "El destino del capital",
-        instruccion: "Máximo 3 categorías. Deben sumar 100%.",
-        campos: [
+          { id: "por_que_monto", type: "textarea", label: "¿Por qué ese número específico y no otro?", placeholder: "Es lo que necesitamos para llegar a break-even en 18 meses" },
           { id: "cat_1_nombre", type: "input", label: "Categoría 1 - Nombre", placeholder: "Expansión geográfica" },
           { id: "cat_1_porcentaje", type: "input", label: "Categoría 1 - Porcentaje", placeholder: "50%" },
           { id: "cat_1_detalle", type: "textarea", label: "Categoría 1 - ¿Qué específicamente?", placeholder: "Abrir en Ciudad de México y Lima" },

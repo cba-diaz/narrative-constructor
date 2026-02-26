@@ -7,9 +7,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, Search, MessageSquare, Wand2, AlertTriangle, Copy, Check, Sparkles } from 'lucide-react';
+import { Shield, Search, MessageSquare, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
 
 interface SuperpowerDetectorProps {
   data: Record<string, string>;
@@ -24,14 +23,9 @@ const FRASES_FALSAS = [
   { id: 'tecnologia', label: '"Tecnología superior"', warning: 'Demuéstralo con resultados' },
 ];
 
-const countWords = (text: string): number => {
-  return text.trim().split(/\s+/).filter(word => word.length > 0).length;
-};
 
 export function SuperpowerDetector({ data, onChange }: SuperpowerDetectorProps) {
   const [activeTab, setActiveTab] = useState('competidor');
-  const [copied, setCopied] = useState(false);
-  const { toast } = useToast();
 
   const selectedFrases = (data['frases_falsas'] || '').split(',').filter(Boolean);
 
@@ -52,53 +46,18 @@ export function SuperpowerDetector({ data, onChange }: SuperpowerDetectorProps) 
     onChange('test_resultado', result);
   };
 
-  const generateSequence = () => {
-    const tipo_cliente = data['seq_tipo_cliente'] || '[tipo de cliente]';
-    const resultado = data['seq_resultado'] || '[resultado]';
-    const obstaculo = data['seq_obstaculo'] || '[obstáculo]';
-    const comp1 = data['seq_competidor_1'] || '[competidor 1]';
-    const comp1_falla = data['seq_comp1_falla'] || '[razón]';
-    const comp2 = data['seq_competidor_2'] || '[competidor 2]';
-    const comp2_falla = data['seq_comp2_falla'] || '[razón]';
-    const accion = data['seq_accion'] || '[acción]';
-    const recurso = data['seq_recurso'] || '[recurso único]';
-    const resultado_esp = data['seq_resultado_esp'] || '[resultado específico]';
-    const metrica = data['seq_metrica'] || '[métrica]';
-    const benchmark = data['seq_benchmark'] || '[benchmark]';
-
-    const sequence = `Mis ${tipo_cliente} necesitan ${resultado} pero actualmente ${obstaculo}.
-
-La opción A (${comp1}) falla porque ${comp1_falla}. La opción B (${comp2}) falla porque ${comp2_falla}.
-
-Nosotros ${accion} usando ${recurso} que ${resultado_esp}.
-
-Esto se traduce en ${metrica} versus ${benchmark}.`;
-
-    onChange('secuencia_generada', sequence);
-    toast({
-      title: "Secuencia generada",
-      description: `${countWords(sequence)} palabras`,
-    });
-  };
-
-  const copySequence = () => {
-    if (data['secuencia_generada']) {
-      navigator.clipboard.writeText(data['secuencia_generada']);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+  // Removed: generateSequence and copySequence (tab 4 eliminated)
 
   return (
     <div className="space-y-6">
       <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
         <p className="text-sm text-primary font-medium">
-          🛡️ Tu superpoder es lo que te hace diferente de verdad. Estos 4 módulos te ayudarán a encontrarlo y articularlo.
+          🛡️ Tu superpoder es lo que te hace diferente de verdad. Estos 3 módulos te ayudarán a encontrarlo y articularlo.
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-4 w-full">
+        <TabsList className="grid grid-cols-3 w-full">
           <TabsTrigger value="competidor" className="text-xs">
             <Shield className="w-4 h-4 mr-1 hidden sm:inline" />
             Test
@@ -110,10 +69,6 @@ Esto se traduce en ${metrica} versus ${benchmark}.`;
           <TabsTrigger value="porques" className="text-xs">
             <MessageSquare className="w-4 h-4 mr-1 hidden sm:inline" />
             3 Por Qués
-          </TabsTrigger>
-          <TabsTrigger value="secuencia" className="text-xs">
-            <Wand2 className="w-4 h-4 mr-1 hidden sm:inline" />
-            Generador
           </TabsTrigger>
         </TabsList>
 
@@ -315,174 +270,6 @@ Esto se traduce en ${metrica} versus ${benchmark}.`;
           </Card>
         </TabsContent>
 
-        {/* MODULE 4: Sequence Generator */}
-        <TabsContent value="secuencia" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Wand2 className="w-5 h-5 text-purple-500" />
-                Generador de Secuencia
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Completa el mad-lib para generar tu párrafo de superpoder.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="seq_tipo_cliente">Mis...</Label>
-                  <Input
-                    id="seq_tipo_cliente"
-                    value={data['seq_tipo_cliente'] || ''}
-                    onChange={(e) => onChange('seq_tipo_cliente', e.target.value)}
-                    placeholder="tipo de cliente"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="seq_resultado">...necesitan</Label>
-                  <Input
-                    id="seq_resultado"
-                    value={data['seq_resultado'] || ''}
-                    onChange={(e) => onChange('seq_resultado', e.target.value)}
-                    placeholder="resultado que buscan"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="seq_obstaculo">...pero actualmente</Label>
-                <Input
-                  id="seq_obstaculo"
-                  value={data['seq_obstaculo'] || ''}
-                  onChange={(e) => onChange('seq_obstaculo', e.target.value)}
-                  placeholder="obstáculo principal"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="seq_competidor_1">La opción A</Label>
-                  <Input
-                    id="seq_competidor_1"
-                    value={data['seq_competidor_1'] || ''}
-                    onChange={(e) => onChange('seq_competidor_1', e.target.value)}
-                    placeholder="Competidor 1"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="seq_comp1_falla">...falla porque</Label>
-                  <Input
-                    id="seq_comp1_falla"
-                    value={data['seq_comp1_falla'] || ''}
-                    onChange={(e) => onChange('seq_comp1_falla', e.target.value)}
-                    placeholder="razón"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="seq_competidor_2">La opción B</Label>
-                  <Input
-                    id="seq_competidor_2"
-                    value={data['seq_competidor_2'] || ''}
-                    onChange={(e) => onChange('seq_competidor_2', e.target.value)}
-                    placeholder="Competidor 2"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="seq_comp2_falla">...falla porque</Label>
-                  <Input
-                    id="seq_comp2_falla"
-                    value={data['seq_comp2_falla'] || ''}
-                    onChange={(e) => onChange('seq_comp2_falla', e.target.value)}
-                    placeholder="razón"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="seq_accion">Nosotros</Label>
-                  <Input
-                    id="seq_accion"
-                    value={data['seq_accion'] || ''}
-                    onChange={(e) => onChange('seq_accion', e.target.value)}
-                    placeholder="acción que hacemos"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="seq_recurso">...usando</Label>
-                  <Input
-                    id="seq_recurso"
-                    value={data['seq_recurso'] || ''}
-                    onChange={(e) => onChange('seq_recurso', e.target.value)}
-                    placeholder="recurso único"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="seq_resultado_esp">...que</Label>
-                <Input
-                  id="seq_resultado_esp"
-                  value={data['seq_resultado_esp'] || ''}
-                  onChange={(e) => onChange('seq_resultado_esp', e.target.value)}
-                  placeholder="resultado específico"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="seq_metrica">Esto se traduce en</Label>
-                  <Input
-                    id="seq_metrica"
-                    value={data['seq_metrica'] || ''}
-                    onChange={(e) => onChange('seq_metrica', e.target.value)}
-                    placeholder="tu métrica"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="seq_benchmark">...versus</Label>
-                  <Input
-                    id="seq_benchmark"
-                    value={data['seq_benchmark'] || ''}
-                    onChange={(e) => onChange('seq_benchmark', e.target.value)}
-                    placeholder="benchmark/comparación"
-                  />
-                </div>
-              </div>
-
-              <Button onClick={generateSequence} className="w-full" size="lg">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Generar párrafo
-              </Button>
-
-              {data['secuencia_generada'] && (
-                <Card className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border-purple-200 dark:border-purple-800">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm text-purple-800 dark:text-purple-200">
-                        Tu secuencia de superpoder
-                      </CardTitle>
-                      <Button variant="ghost" size="sm" onClick={copySequence}>
-                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      value={data['secuencia_generada']}
-                      onChange={(e) => onChange('secuencia_generada', e.target.value)}
-                      className="min-h-[120px] bg-white/50 dark:bg-background/50"
-                    />
-                  </CardContent>
-                </Card>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );
