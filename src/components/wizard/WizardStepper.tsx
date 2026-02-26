@@ -4,10 +4,11 @@ import { Check } from 'lucide-react';
 interface WizardStepperProps {
   steps: { id: string; titulo: string }[];
   currentStep: number;
+  completedSteps?: boolean[];
   onStepClick?: (step: number) => void;
 }
 
-export function WizardStepper({ steps, currentStep, onStepClick }: WizardStepperProps) {
+export function WizardStepper({ steps, currentStep, completedSteps, onStepClick }: WizardStepperProps) {
   // Add "Bloque Final" as the last step
   const allSteps = [
     ...steps.map(s => ({ id: s.id, titulo: s.titulo })),
@@ -17,10 +18,10 @@ export function WizardStepper({ steps, currentStep, onStepClick }: WizardStepper
   return (
     <div className="flex items-center justify-between w-full mb-6 overflow-x-auto pb-2">
       {allSteps.map((step, index) => {
-        const isCompleted = index < currentStep;
+        const isCompleted = completedSteps ? (index < steps.length ? completedSteps[index] : index < currentStep) : index < currentStep;
         const isCurrent = index === currentStep;
         const isFuture = index > currentStep;
-        const canClick = isCompleted && onStepClick;
+        const canClick = (isCompleted || index <= currentStep) && index !== currentStep && onStepClick;
 
         return (
           <div key={step.id} className="flex items-center flex-1 min-w-0">
