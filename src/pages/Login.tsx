@@ -9,6 +9,7 @@ import { Film, ArrowRight, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { lovable } from '@/integrations/lovable';
+import { translateAuthError } from '@/lib/translateAuthError';
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: 'Introduce un email válido' }),
@@ -47,9 +48,7 @@ export default function Login() {
     if (error) {
       toast({
         title: 'Error al iniciar sesión',
-        description: error.message === 'Invalid login credentials' 
-          ? 'Email o contraseña incorrectos' 
-          : error.message,
+        description: translateAuthError(error.message),
         variant: 'destructive',
       });
       return;
@@ -68,7 +67,7 @@ export default function Login() {
     if (error) {
       toast({
         title: 'Error al iniciar sesión con Google',
-        description: error.message,
+        description: translateAuthError(error.message),
         variant: 'destructive',
       });
     }

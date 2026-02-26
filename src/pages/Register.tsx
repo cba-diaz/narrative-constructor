@@ -9,6 +9,7 @@ import { Film, ArrowRight, Loader2, Sparkles, MailCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { lovable } from '@/integrations/lovable';
+import { translateAuthError } from '@/lib/translateAuthError';
 
 const registerSchema = z.object({
   fullName: z.string().trim().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }).max(100),
@@ -55,7 +56,7 @@ export default function Register() {
     if (error) {
       toast({
         title: 'Error al registrarse',
-        description: error.message,
+        description: translateAuthError(error.message),
         variant: 'destructive',
       });
       return;
@@ -74,7 +75,7 @@ export default function Register() {
     if (error) {
       toast({
         title: 'Error al registrarse con Google',
-        description: error.message,
+        description: translateAuthError(error.message),
         variant: 'destructive',
       });
     }
