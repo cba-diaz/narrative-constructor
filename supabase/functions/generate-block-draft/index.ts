@@ -44,10 +44,22 @@ serve(async (req) => {
     }
 
     // Build context from exercises
+    // For section 8, filter out empty founder 3 fields
     const exercisesSummary = Object.entries(exercisesData as Record<string, Record<string, string>>)
       .map(([exerciseId, fields]) => {
-        const filledFields = Object.entries(fields)
-          .filter(([_, v]) => v && v.trim().length > 0)
+        let filteredFields = Object.entries(fields)
+          .filter(([_, v]) => v && v.trim().length > 0);
+
+        // If section 8, check if founder 3 is empty and exclude those fields
+        if (sectionNumber === 8) {
+          const f3Name = fields["fundador_3_nombre"]?.trim();
+          const f3Exp = fields["fundador_3_experiencia"]?.trim();
+          if (!f3Name && !f3Exp) {
+            filteredFields = filteredFields.filter(([k]) => !k.startsWith("fundador_3"));
+          }
+        }
+
+        const filledFields = filteredFields
           .map(([k, v]) => `  - ${k}: ${v}`)
           .join("\n");
         return filledFields ? `Ejercicio ${exerciseId}:\n${filledFields}` : null;

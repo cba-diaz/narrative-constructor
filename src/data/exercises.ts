@@ -244,6 +244,7 @@ export const sectionExercises: SectionExercises[] = [
         id: "8_1",
         titulo: "Ficha de cada fundador",
         instruccion: "No CVs completos. Solo experiencia que los califica para ESTE problema.",
+        nota: "Fundador 3 (opcional — solo si aplica)",
         campos: [
           { id: "fundador_1_nombre", type: "input", label: "Fundador 1 - Nombre", placeholder: "Valentina" },
           { id: "fundador_1_rol", type: "input", label: "Fundador 1 - Rol", placeholder: "CEO" },
@@ -254,7 +255,7 @@ export const sectionExercises: SectionExercises[] = [
           { id: "fundador_2_experiencia", type: "textarea", label: "Fundador 2 - ¿Qué experiencia lo califica?", placeholder: "8 años en Siemens coordinando capacitación técnica" },
           { id: "fundador_2_superpoder", type: "textarea", label: "Fundador 2 - ¿Cuál es su superpoder único?", placeholder: "Conoce la industria técnica por dentro" },
           { id: "fundador_3_nombre", type: "input", label: "Fundador 3 - Nombre (opcional)", placeholder: "Camila" },
-          { id: "fundador_3_rol", type: "input", label: "Fundador 3 - Rol", placeholder: "CTO" },
+          { id: "fundador_3_rol", type: "input", label: "Fundador 3 - Rol (opcional)", placeholder: "CTO" },
           { id: "fundador_3_experiencia", type: "textarea", label: "Fundador 3 - ¿Qué experiencia lo califica?", placeholder: "Lideró matching en Rappi" },
           { id: "fundador_3_superpoder", type: "textarea", label: "Fundador 3 - ¿Cuál es su superpoder único?", placeholder: "Sabe construir algoritmos de matching" }
         ]
