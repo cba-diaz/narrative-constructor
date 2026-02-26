@@ -242,15 +242,15 @@ export const sectionExercises: SectionExercises[] = [
           { id: "fundador_1_nombre", type: "input", label: "Fundador 1 - Nombre", placeholder: "Valentina" },
           { id: "fundador_1_rol", type: "input", label: "Fundador 1 - Rol", placeholder: "CEO" },
           { id: "fundador_1_experiencia", type: "textarea", label: "Fundador 1 - ¿Qué experiencia lo califica?", placeholder: "4 años como directora de operaciones en Platzi" },
-          { id: "fundador_1_superpoder", type: "textarea", label: "Fundador 1 - ¿Cuál es su superpoder único?", placeholder: "Sabe escalar programas educativos" },
+          { id: "fundador_1_superpoder", type: "textarea", label: "Fundador 1 - ¿Cuál es su habilidad clave para ejecutar este negocio?", placeholder: "Sabe escalar programas educativos" },
           { id: "fundador_2_nombre", type: "input", label: "Fundador 2 - Nombre", placeholder: "Andrés" },
           { id: "fundador_2_rol", type: "input", label: "Fundador 2 - Rol", placeholder: "COO" },
           { id: "fundador_2_experiencia", type: "textarea", label: "Fundador 2 - ¿Qué experiencia lo califica?", placeholder: "8 años en Siemens coordinando capacitación técnica" },
-          { id: "fundador_2_superpoder", type: "textarea", label: "Fundador 2 - ¿Cuál es su superpoder único?", placeholder: "Conoce la industria técnica por dentro" },
+          { id: "fundador_2_superpoder", type: "textarea", label: "Fundador 2 - ¿Cuál es su habilidad clave para ejecutar este negocio?", placeholder: "Conoce la industria técnica por dentro" },
           { id: "fundador_3_nombre", type: "input", label: "Fundador 3 - Nombre (opcional)", placeholder: "Camila" },
           { id: "fundador_3_rol", type: "input", label: "Fundador 3 - Rol (opcional)", placeholder: "CTO" },
           { id: "fundador_3_experiencia", type: "textarea", label: "Fundador 3 - ¿Qué experiencia lo califica?", placeholder: "Lideró matching en Rappi" },
-          { id: "fundador_3_superpoder", type: "textarea", label: "Fundador 3 - ¿Cuál es su superpoder único?", placeholder: "Sabe construir algoritmos de matching" }
+          { id: "fundador_3_superpoder", type: "textarea", label: "Fundador 3 - ¿Cuál es su habilidad clave para ejecutar este negocio? (opcional)", placeholder: "Sabe construir algoritmos de matching" }
         ]
       },
       {
