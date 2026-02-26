@@ -1,21 +1,37 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePitchStore } from '@/hooks/usePitchStore';
+import { useAuth } from '@/hooks/useAuth';
 import { blocks } from '@/data/blocks';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Download, Copy, Check, FileText, Clock, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Download, Copy, Check, FileText, Clock, AlertTriangle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
 
 export default function PitchKit() {
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { data, getPitchKitBlocks, getPitchKitCompletedCount, getPitchKitTotalWords } = usePitchStore();
-  
+  const [copiedBlock, setCopiedBlock] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/login');
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   const pitchKitBlocks = getPitchKitBlocks();
   const completedCount = getPitchKitCompletedCount();
   const totalWords = getPitchKitTotalWords();
-  const [copiedBlock, setCopiedBlock] = useState<number | null>(null);
 
   // Estimate reading time (150 words per minute)
   const readingTimeMinutes = Math.ceil(totalWords / 150);
