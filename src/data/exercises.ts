@@ -7,6 +7,7 @@ export interface ExerciseField {
   options?: { value: string; label: string; followUpField?: ExerciseField }[];
   required?: boolean;
   maxWords?: number;
+  nota?: string;
 }
 
 export interface Exercise {
@@ -278,7 +279,7 @@ export const sectionExercises: SectionExercises[] = [
           { id: "protagonista_hoy", type: "textarea", label: "¿Cómo está tu protagonista hoy gracias a tu solución?", placeholder: "Carlos hoy gana tres veces más. Se cambió de barrio. Está pagando la universidad de su hermana." },
           { id: "escala_vision", type: "textarea", label: "¿Cuántas personas podrían vivir lo que vivió tu protagonista?", placeholder: "2.3 millones de vacantes en Latinoamérica esperando un Carlos que las llene" },
           { id: "mundo_diferente", type: "textarea", label: "¿Qué cambia en el mundo si tu startup tiene éxito?", placeholder: "Millones de jóvenes pueden acceder a empleos técnicos bien pagados sin endeudarse" },
-          { id: "siguiente_paso", type: "textarea", label: "¿Cuál es el siguiente paso concreto?", placeholder: "Una llamada de 30 minutos esta semana" },
+          { id: "siguiente_paso", type: "textarea", label: "¿Cuál es el siguiente paso concreto?", placeholder: "Una llamada de 30 minutos esta semana", nota: "Termina con un verbo de acción y un tiempo concreto. Prohibido terminar con 'gracias' o '¿preguntas?'" },
           { id: "facilitar", type: "textarea", label: "¿Cómo lo facilitas?", placeholder: "Les mando tres horarios apenas terminemos" }
         ]
       }
