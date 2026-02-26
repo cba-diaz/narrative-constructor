@@ -94,8 +94,8 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
                 <div className="text-xs text-muted-foreground">Bloques guiados</div>
               </div>
               <div className="space-y-1">
-                <div className="text-2xl font-bold text-primary">~30</div>
-                <div className="text-xs text-muted-foreground">Minutos</div>
+                <div className="text-2xl font-bold text-primary">~20</div>
+                <div className="text-xs text-muted-foreground">Min aprox</div>
               </div>
               <div className="space-y-1">
                 <div className="text-2xl font-bold text-primary">4-5</div>
@@ -204,8 +204,8 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
               <div className="text-xs text-muted-foreground">Bloques guiados</div>
             </div>
             <div className="space-y-1">
-              <div className="text-2xl font-bold text-primary">~30</div>
-              <div className="text-xs text-muted-foreground">Minutos</div>
+              <div className="text-2xl font-bold text-primary">~20</div>
+              <div className="text-xs text-muted-foreground">Min aprox</div>
             </div>
             <div className="space-y-1">
               <div className="text-2xl font-bold text-primary">4-5</div>
