@@ -294,9 +294,10 @@ export function FinalBlockStep({
         </div>
         {isGenerating && (
           <div className="absolute inset-0 top-8 flex items-center justify-center bg-background/80 rounded-md z-10">
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-3 text-center px-6">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
-              <span className="text-sm text-muted-foreground">Generando borrador con IA...</span>
+              <span className="text-sm font-medium text-foreground">Generando tu borrador...</span>
+              <span className="text-xs text-muted-foreground">La IA está leyendo tus ejercicios. Suele tomar entre 5 y 10 segundos.</span>
             </div>
           </div>
         )}
