@@ -31,14 +31,6 @@ export const sectionExercises: SectionExercises[] = [
     seccionNumero: 1,
     ejercicios: [
       {
-        id: "1_1",
-        titulo: "Tu startup en 8 palabras",
-        instruccion: "Reduce progresivamente la descripción de tu startup hasta obtener una frase de 8 palabras que será la apertura de tu pitch.",
-        campos: [],
-        componentType: "progressive-reduction",
-        nota: "Esta frase de 8 palabras será la apertura de tu pitch."
-      },
-      {
         id: "1_2",
         titulo: "Excavadora de Problemas",
         instruccion: "Excava hasta encontrar la raíz del problema. La respuesta del Nivel 5 es tu problema real. Los niveles 1-4 son síntomas.",
@@ -69,6 +61,14 @@ export const sectionExercises: SectionExercises[] = [
           { id: "frecuencia", type: "input", label: "¿Con qué frecuencia?", placeholder: "cada día / cada mes / cada año" },
           { id: "tangible", type: "textarea", label: "Haz el número tangible. Tradúcelo a algo que se pueda visualizar.", placeholder: "En el tiempo de esta presentación, se generaron 50,000 horas de audio sin transcribir en Latinoamérica" }
         ]
+      },
+      {
+        id: "1_1",
+        titulo: "Tu startup en 8 palabras",
+        instruccion: "Ejercicio opcional. Con todo lo que ya definiste sobre tu problema y protagonista, reduce tu startup a 8 palabras. Esta frase puede ser la apertura de tu pitch.",
+        campos: [],
+        componentType: "progressive-reduction",
+        nota: "Opcional pero poderoso. Si lo completas, la IA lo usará como apertura del bloque."
       }
     ]
   },
