@@ -231,7 +231,7 @@ export const sectionExercises: SectionExercises[] = [
           { id: "metrica_1", type: "input", label: "Métrica 1:", placeholder: "15,000 graduados" },
           { id: "metrica_2", type: "input", label: "Métrica 2:", placeholder: "$4M USD en ingresos anuales" },
           { id: "metrica_3", type: "input", label: "Métrica 3:", placeholder: "Break even operativo" },
-          { id: "posicionamiento", type: "textarea", label: "¿Cómo te posiciona esto para el siguiente paso?", placeholder: "Listos para Serie A" }
+          
         ]
       }
     ]
