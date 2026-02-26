@@ -106,8 +106,8 @@ export const sectionExercises: SectionExercises[] = [
     ejercicios: [
       {
         id: "4_1",
-        titulo: "Elige tu métrica protagonista",
-        instruccion: "¿Cuál es LA métrica que mejor demuestra tu progreso? Usuarios, clientes, revenue, transacciones... elige una.",
+        titulo: "Tracción y momentum",
+        instruccion: "Elige tu métrica protagonista, muestra cómo has evolucionado y qué está pasando ahora. Los inversionistas quieren ver tendencia y momentum.",
         campos: [
           { 
             id: "tipo_metrica", 
@@ -123,15 +123,8 @@ export const sectionExercises: SectionExercises[] = [
           },
           { id: "otra_metrica", type: "input", label: "Si elegiste 'Otra', especifica cuál", placeholder: "Graduados, envíos, etc." },
           { id: "numero_hoy", type: "input", label: "¿Cuánto es ese número HOY?", placeholder: "2,340" },
-          { id: "numero_6_meses", type: "input", label: "¿Cuánto era hace 6 meses?", placeholder: "890" },
-          { id: "crecimiento", type: "input", label: "¿Cuál es el % de crecimiento?", placeholder: "163%" }
-        ]
-      },
-      {
-        id: "4_2",
-        titulo: "Timeline y momentum de tracción",
-        instruccion: "Muestra cómo has evolucionado y qué está pasando ahora. Los inversionistas quieren ver tendencia y momentum.",
-        campos: [
+          { id: "numero_inicio", type: "input", label: "¿Cuánto era cuando empezaste?", placeholder: "50" },
+          { id: "crecimiento", type: "input", label: "¿Cuál es el % de crecimiento?", placeholder: "163%" },
           { id: "hito_1_fecha", type: "input", label: "Hito 1 - Fecha (mes/año)", placeholder: "Marzo 2024" },
           { id: "hito_1_metrica", type: "input", label: "Hito 1 - Métrica", placeholder: "120 estudiantes" },
           { id: "hito_1_contexto", type: "textarea", label: "Hito 1 - ¿Qué pasó? ¿Por qué importa?", placeholder: "Lanzamos en Medellín" },
