@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Exercise, ExerciseField } from '@/data/exercises';
 import { ExerciseData } from '@/hooks/usePitchStore';
 import { Input } from '@/components/ui/input';
@@ -320,7 +320,17 @@ export function ExerciseStep({
         {hasSpecializedComponent ? (
           renderSpecializedComponent()
         ) : (
-          exercise.campos.map(renderField)
+          exercise.campos.map((field) => (
+            <React.Fragment key={field.id}>
+              {field.id === 'hito_1_fecha' && exercise.id === '4_1' && (
+                <div className="pt-4 pb-2 border-t border-border">
+                  <p className="text-sm font-semibold text-foreground">Tu línea de tiempo</p>
+                  <p className="text-xs text-muted-foreground">Los 3 hitos que mejor cuentan tu historia de crecimiento</p>
+                </div>
+              )}
+              {renderField(field)}
+            </React.Fragment>
+          ))
         )}
       </div>
 
