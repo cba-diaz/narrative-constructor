@@ -163,13 +163,14 @@ export const sectionExercises: SectionExercises[] = [
     ejercicios: [
       {
         id: "5_1",
-        titulo: "Traduce tu mercado a unidades humanas",
-        instruccion: "El cerebro no procesa '$50 billones'. Necesita unidades tangibles. ¿Cuál es tu 'ticket de cine'?",
+        titulo: "Tu mercado en unidades humanas y círculos",
+        instruccion: "El cerebro no procesa '$50 billones'. Traduce tu mercado a unidades tangibles y estructura tu expansión en círculos concéntricos.",
         campos: [
           { id: "unidad", type: "input", label: "¿Qué unidad representa tu mercado?", placeholder: "técnicos / tiendas / envíos / transacciones" },
-          { id: "cantidad_inicial", type: "input", label: "¿Cuántas hay en tu mercado inicial?", placeholder: "340,000 en Colombia" },
-          { id: "cantidad_expandido", type: "input", label: "¿Cuántas hay en tu mercado expandido?", placeholder: "2.3 millones en Latinoamérica" },
-          { id: "valor_promedio", type: "input", label: "¿Cuál es el valor promedio por unidad?", placeholder: "$400 por curso" }
+          { id: "valor_promedio", type: "input", label: "¿Cuál es el valor promedio por unidad?", placeholder: "$400 por curso" },
+          { id: "circulo_1", type: "textarea", label: "Círculo 1 — Donde ya operas (cantidad + geografía):", placeholder: "Colombia: 340,000 vacantes técnicas" },
+          { id: "circulo_2", type: "textarea", label: "Círculo 2 — Próxima expansión:", placeholder: "México + Perú: 800,000 vacantes" },
+          { id: "circulo_3", type: "textarea", label: "Círculo 3 — Visión regional:", placeholder: "Latinoamérica: 2.3 millones de vacantes" }
         ]
       },
       {
@@ -183,16 +184,6 @@ export const sectionExercises: SectionExercises[] = [
           { id: "stark_diferencia", type: "textarea", label: "¿Qué hacen bien? ¿Dónde estás mejor posicionado?", placeholder: "Tienen buena marca pero no tienen nuestra red de empresas" },
           { id: "targaryen_nombre", type: "input", label: "Los Targaryen (Disruptores internacionales): ¿Qué jugador global podría entrar?", placeholder: "Coursera, Uber, etc." },
           { id: "targaryen_ventaja", type: "textarea", label: "¿Por qué el contexto local te da ventaja?", placeholder: "No entienden las regulaciones locales, no tienen las alianzas" }
-        ]
-      },
-      {
-        id: "5_3",
-        titulo: "Tu expansión en círculos",
-        instruccion: "Estructura tu mercado como círculos concéntricos. Desde donde ya ganaste hacia donde planeas conquistar.",
-        campos: [
-          { id: "circulo_1", type: "textarea", label: "Círculo 1 - Donde ya operas:", placeholder: "Colombia: 340,000 vacantes técnicas" },
-          { id: "circulo_2", type: "textarea", label: "Círculo 2 - Próxima expansión:", placeholder: "México + Perú: 800,000 vacantes" },
-          { id: "circulo_3", type: "textarea", label: "Círculo 3 - Visión regional:", placeholder: "Latinoamérica: 2.3 millones de vacantes" }
         ]
       }
     ]
@@ -301,21 +292,13 @@ export const sectionExercises: SectionExercises[] = [
       },
       {
         id: "8_2",
-        titulo: "La complementariedad",
-        instruccion: "No 'somos amigos de la universidad'. ¿Qué habilidades distintas aporta cada uno?",
+        titulo: "Complementariedad y talento faltante",
+        instruccion: "¿Cómo funcionan juntos y qué les falta? Los mejores fundadores saben qué les falta.",
         campos: [
           { id: "complementariedad", type: "textarea", label: "¿Cómo se complementan las habilidades del equipo?", placeholder: "Uno sabe escalar, otro conoce la industria, otro construye la tecnología" },
-          { id: "como_conocieron", type: "textarea", label: "¿Cómo se conocieron y cuánto tiempo llevan trabajando juntos?", placeholder: "Nos conocimos en un programa del BID en 2021. Llevamos 3 años juntos." }
-        ]
-      },
-      {
-        id: "8_3",
-        titulo: "El talento que falta",
-        instruccion: "Los mejores fundadores saben qué les falta y cómo lo van a conseguir.",
-        campos: [
+          { id: "como_conocieron", type: "textarea", label: "¿Cómo se conocieron y cuánto tiempo llevan trabajando juntos?", placeholder: "Nos conocimos en un programa del BID en 2021. Llevamos 3 años juntos." },
           { id: "rol_faltante", type: "input", label: "¿Qué rol clave falta en tu equipo?", placeholder: "VP de Ventas con red en México" },
-          { id: "plan_reclutamiento", type: "textarea", label: "¿Cómo planeas reclutar a esa persona?", placeholder: "Ya tenemos un headhunter trabajando en esto" },
-          { id: "candidatos", type: "textarea", label: "¿Tienes candidatos en el pipeline?", placeholder: "Tenemos 3 finalistas, esperamos cerrar el próximo mes" }
+          { id: "plan_reclutamiento", type: "textarea", label: "¿Cómo planeas reclutar a esa persona?", placeholder: "Ya tenemos un headhunter trabajando en esto" }
         ]
       }
     ]

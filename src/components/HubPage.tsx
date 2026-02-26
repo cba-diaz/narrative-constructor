@@ -27,6 +27,7 @@ interface HubPageProps {
   completedBlocks: number[];
   currentBlock: number;
   pitchKitCount: number;
+  pitchKitSavedBlocks: number[];
   onSelectBlock: (blockNumber: number) => void;
   onViewPitch: () => void;
   onReset: () => void;
@@ -38,6 +39,7 @@ export function HubPage({
   completedBlocks, 
   currentBlock,
   pitchKitCount,
+  pitchKitSavedBlocks,
   onSelectBlock, 
   onViewPitch,
   onReset
@@ -212,7 +214,7 @@ export function HubPage({
           {/* Block status grid */}
           <div className="grid grid-cols-3 gap-2 mb-4">
             {blocks.map((block) => {
-              const isInKit = completedBlocks.includes(block.numero);
+              const isInKit = pitchKitSavedBlocks.includes(block.numero);
               return (
                 <div key={block.numero} className="flex items-center gap-1.5 text-xs">
                   {isInKit ? (
