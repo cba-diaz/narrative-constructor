@@ -176,6 +176,7 @@ export function HubPage({
               <div>
                 <h3 className="text-lg font-bold text-foreground">🎬 TU PITCH KIT</h3>
                 <p className="text-xs text-muted-foreground">Bloques listos para tu presentación</p>
+                <p className="text-xs text-muted-foreground">El Pitch Kit guarda solo los bloques que confirmas con el botón 'Guardar en Pitch Kit'. Es independiente de tu progreso en los ejercicios.</p>
               </div>
             </div>
             <div className="text-right">
