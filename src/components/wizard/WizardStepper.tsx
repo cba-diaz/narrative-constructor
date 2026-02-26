@@ -51,7 +51,7 @@ export function WizardStepper({ steps, currentStep, completedSteps, onStepClick 
               isCurrent && "text-primary",
               isFuture && "text-muted-foreground"
             )}>
-              {index === allSteps.length - 1 ? 'Final' : `Ej. ${index + 1}`}
+              {index === allSteps.length - 1 ? 'Final' : (step.titulo?.split(' ').slice(0, 2).join(' ') || `Ej. ${index + 1}`)}
             </span>
 
             {/* Connector line */}
