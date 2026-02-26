@@ -23,6 +23,7 @@ interface HubPageProps {
   currentBlock: number;
   pitchKitCount: number;
   pitchKitSavedBlocks: number[];
+  blockContents: Record<number, string>;
   onSelectBlock: (blockNumber: number) => void;
   onViewPitch: () => void;
   onReset: () => void;
@@ -35,6 +36,7 @@ export function HubPage({
   currentBlock,
   pitchKitCount,
   pitchKitSavedBlocks,
+  blockContents,
   onSelectBlock, 
   onViewPitch,
   onReset
@@ -163,6 +165,16 @@ export function HubPage({
                   </div>
                   <h3 className="font-semibold text-foreground">{block.nombre}</h3>
                   <p className="text-sm text-muted-foreground">{block.pregunta}</p>
+                  {status === 'completed' && blockContents[block.numero] && (() => {
+                    const wordCount = blockContents[block.numero].trim().split(/\s+/).filter(w => w.length > 0).length;
+                    const blockDef = blocks.find(b => b.numero === block.numero);
+                    const isInRange = blockDef && wordCount >= blockDef.palabrasMin && wordCount <= blockDef.palabrasMax;
+                    return (
+                      <span className={cn("text-xs", isInRange ? "text-success" : "text-warning")}>
+                        {wordCount} palabras · {isInRange ? 'en rango ✓' : 'fuera de rango'}
+                      </span>
+                    );
+                  })()}
                 </div>
 
                 {/* Arrow */}

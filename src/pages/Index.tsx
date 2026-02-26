@@ -112,6 +112,7 @@ const Index = () => {
         currentBlock={data.currentBlock}
         pitchKitCount={getPitchKitCompletedCount()}
         pitchKitSavedBlocks={Object.keys(data.pitchKit).filter(k => data.pitchKit[parseInt(k)]?.content?.trim().length > 0).map(k => parseInt(k))}
+        blockContents={data.blocks}
         onSelectBlock={handleSelectBlock}
         onViewPitch={() => navigateTo('pitch')}
         onReset={handleReset}
