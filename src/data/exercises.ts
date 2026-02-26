@@ -31,14 +31,6 @@ export const sectionExercises: SectionExercises[] = [
     seccionNumero: 1,
     ejercicios: [
       {
-        id: "1_2",
-        titulo: "Excavadora de Problemas",
-        instruccion: "Excava hasta encontrar la raíz del problema. La respuesta del Nivel 5 es tu problema real. Los niveles 1-4 son síntomas.",
-        campos: [],
-        componentType: "problem-digger",
-        nota: "Si tu solución ataca el Nivel 1, estás poniendo curitas. Ataca el Nivel 5."
-      },
-      {
         id: "1_3",
         titulo: "Casting del Protagonista",
         instruccion: "Tu problema necesita una persona específica, no un 'segmento de mercado'. Los inversionistas invierten en personas, no en demografías.",
@@ -51,6 +43,14 @@ export const sectionExercises: SectionExercises[] = [
           { id: "aspiracion", type: "textarea", label: "Aspiración: ¿Qué quiere lograr?", placeholder: "Quiere ser técnico en refrigeración porque vio que pagan tres veces más" },
           { id: "frustracion", type: "textarea", label: "Frustración: ¿Qué lo frustra relacionado con tu problema?", placeholder: "Sabe que tiene potencial pero no puede estudiar porque no puede dejar de trabajar" }
         ]
+      },
+      {
+        id: "1_2",
+        titulo: "Excavadora de Problemas",
+        instruccion: "Excava hasta encontrar la raíz del problema. La respuesta del Nivel 5 es tu problema real. Los niveles 1-4 son síntomas.",
+        campos: [],
+        componentType: "problem-digger",
+        nota: "Si tu solución ataca el Nivel 1, estás poniendo curitas. Ataca el Nivel 5."
       },
       {
         id: "1_4",
