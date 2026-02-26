@@ -380,10 +380,14 @@ export function FinalBlockStep({
               : "bg-primary/10 border-2 border-primary text-primary hover:bg-primary/20"
           )}
           onClick={() => onSaveToPitchKit(content)}
+          disabled={isGenerating || wordCount < 20}
         >
           <Package className="w-5 h-5 mr-2" />
           {isPitchKitSaved ? 'Guardado en Pitch Kit ✓' : `Guardar en Pitch Kit → Bloque ${sectionNumber}`}
         </Button>
+        {wordCount < 20 && wordCount > 0 && (
+          <p className="text-xs text-muted-foreground text-center">Escribe al menos 20 palabras antes de guardar en el Pitch Kit.</p>
+        )}
 
         <Button 
           size="lg" 
