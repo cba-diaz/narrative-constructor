@@ -140,7 +140,7 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
           </button>
           
           <div className="text-center">
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">Sección {sectionNumber}</div>
+            <div className="text-xs text-muted-foreground uppercase tracking-wide">Bloque {sectionNumber}</div>
             <div className="font-bold text-foreground">{block.nombre}</div>
           </div>
 
