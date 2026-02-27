@@ -67,10 +67,10 @@ export const sectionExercises: SectionExercises[] = [
       {
         id: "1_1",
         titulo: "Tu startup en 8 palabras",
-        instruccion: "Ejercicio opcional. Con todo lo que ya definiste sobre tu problema y protagonista, reduce tu startup a 8 palabras. Esta frase puede ser la apertura de tu pitch.",
+        instruccion: "Ejercicio recomendado. Con todo lo que ya definiste sobre tu problema y protagonista, reduce tu startup a 8 palabras. Esta frase abre tu pitch.",
         campos: [],
         componentType: "progressive-reduction",
-        nota: "Opcional pero poderoso. Si lo completas, la IA lo usará como apertura del bloque."
+        nota: "Esta frase abre tu pitch. Tómate 5 minutos."
       }
     ]
   },
