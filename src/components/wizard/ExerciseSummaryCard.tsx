@@ -140,6 +140,29 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
         );
       }
 
+      case 3: {
+        const superpower = exercisesData['3_1'] || {};
+        return (
+          <div className="space-y-3">
+            {superpower.diferenciacion && (
+              <div className="p-3 rounded-lg bg-background border border-border">
+                <p className="text-xs font-medium text-foreground mb-1">Tu diferenciación</p>
+                <p className="text-sm text-muted-foreground italic line-clamp-3">"{superpower.diferenciacion}"</p>
+                {superpower.test_veredicto === 'diferenciada' && (
+                  <p className="text-xs text-success font-medium mt-2">✓ Pasó el test del competidor</p>
+                )}
+              </div>
+            )}
+            {superpower.competidor_nombre && (
+              <div className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">Tu competidor principal</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{superpower.competidor_nombre}</p>
+              </div>
+            )}
+          </div>
+        );
+      }
+
       case 4: {
         const traccion = exercisesData['4_1'] || {};
         return (
@@ -186,6 +209,37 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
         );
       }
 
+      case 6: {
+        const modelo = exercisesData['6_1'] || {};
+        const unitEcon = exercisesData['6_2'] || {};
+        return (
+          <div className="space-y-3">
+            {(modelo.cliente || modelo.precio) && (
+              <div className="p-3 rounded-lg bg-background border border-border">
+                <p className="text-xs font-medium text-foreground mb-1">Tu mecanismo básico</p>
+                {modelo.cliente && <p className="text-xs text-muted-foreground">Paga: {modelo.cliente}</p>}
+                {modelo.precio && <p className="text-xs text-muted-foreground">Precio: {modelo.precio} · {modelo.frecuencia}</p>}
+              </div>
+            )}
+            {unitEcon.ratio && (
+              <div className="p-3 rounded-lg bg-background border border-border text-center">
+                <p className="text-2xl font-bold text-primary">{unitEcon.ratio}</p>
+                <p className="text-xs text-muted-foreground mt-1">ratio LTV/CAC</p>
+                {unitEcon.ratio_contexto && (
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{unitEcon.ratio_contexto}</p>
+                )}
+              </div>
+            )}
+            {unitEcon.escala_sin_costo && (
+              <div className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">Escalabilidad</p>
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{unitEcon.escala_sin_costo}</p>
+              </div>
+            )}
+          </div>
+        );
+      }
+
       case 7: {
         const peticion = exercisesData['7_1'] || {};
         return (
@@ -208,6 +262,31 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
                 {['metrica_1','metrica_2','metrica_3'].filter(m => peticion[m]).map(m => (
                   <p key={m} className="text-xs text-muted-foreground">· {peticion[m]}</p>
                 ))}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      case 8: {
+        const equipo = exercisesData['8_1'] || {};
+        const complemento = exercisesData['8_2'] || {};
+        return (
+          <div className="space-y-3">
+            {[
+              { nombre: equipo.fundador_1_nombre, rol: equipo.fundador_1_rol, habilidad: equipo.fundador_1_superpoder },
+              { nombre: equipo.fundador_2_nombre, rol: equipo.fundador_2_rol, habilidad: equipo.fundador_2_superpoder },
+              { nombre: equipo.fundador_3_nombre, rol: equipo.fundador_3_rol, habilidad: equipo.fundador_3_superpoder },
+            ].filter(f => f.nombre).map((f, i) => (
+              <div key={i} className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">{f.nombre} · {f.rol}</p>
+                {f.habilidad && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{f.habilidad}</p>}
+              </div>
+            ))}
+            {complemento.complementariedad && (
+              <div className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">Por qué funcionan juntos</p>
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{complemento.complementariedad}</p>
               </div>
             )}
           </div>
