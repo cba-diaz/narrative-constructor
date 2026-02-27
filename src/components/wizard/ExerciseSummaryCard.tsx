@@ -145,6 +145,107 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
         );
       }
 
+      case 4: {
+        const traccion = exercisesData['4_1'] || {};
+        return (
+          <div className="space-y-3">
+            {traccion.numero_hoy && (
+              <div className="p-3 rounded-lg bg-background border border-border text-center">
+                <p className="text-2xl font-bold text-primary">{traccion.numero_hoy}</p>
+                <p className="text-xs text-muted-foreground mt-1">{traccion.tipo_metrica || 'métrica principal'} hoy</p>
+                {traccion.crecimiento && <p className="text-sm font-medium text-success mt-1">↑ {traccion.crecimiento} de crecimiento</p>}
+              </div>
+            )}
+            {['hito_1','hito_2','hito_3'].map((h) => traccion[`${h}_fecha`] ? (
+              <div key={h} className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">{traccion[`${h}_fecha`]} · {traccion[`${h}_metrica`]}</p>
+                {traccion[`${h}_contexto`] && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{traccion[`${h}_contexto`]}</p>}
+              </div>
+            ) : null)}
+          </div>
+        );
+      }
+
+      case 5: {
+        const mercado = exercisesData['5_1'] || {};
+        const competencia = exercisesData['5_2'] || {};
+        return (
+          <div className="space-y-3">
+            {[
+              { label: '🎯 Donde operas', value: mercado.circulo_1 },
+              { label: '📈 Próxima expansión', value: mercado.circulo_2 },
+              { label: '🌎 Visión regional', value: mercado.circulo_3 },
+            ].filter(c => c.value).map((c) => (
+              <div key={c.label} className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">{c.label}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{c.value}</p>
+              </div>
+            ))}
+            {competencia.competidor_principal && (
+              <div className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">⚔️ Vs. {competencia.competidor_principal}</p>
+                {competencia.tu_ventaja && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{competencia.tu_ventaja}</p>}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      case 7: {
+        const peticion = exercisesData['7_1'] || {};
+        return (
+          <div className="space-y-3">
+            {peticion.monto && (
+              <div className="p-3 rounded-lg bg-background border border-border text-center">
+                <p className="text-2xl font-bold text-primary">{peticion.monto}</p>
+                <p className="text-xs text-muted-foreground mt-1">levantamiento</p>
+              </div>
+            )}
+            {['cat_1','cat_2','cat_3'].map((c) => peticion[`${c}_nombre`] ? (
+              <div key={c} className="p-2 rounded bg-background border border-border flex items-center justify-between">
+                <p className="text-xs text-foreground">{peticion[`${c}_nombre`]}</p>
+                <p className="text-xs font-bold text-primary">{peticion[`${c}_porcentaje`]}</p>
+              </div>
+            ) : null)}
+            {peticion.metrica_1 && (
+              <div className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">En 18 meses</p>
+                {['metrica_1','metrica_2','metrica_3'].filter(m => peticion[m]).map(m => (
+                  <p key={m} className="text-xs text-muted-foreground">· {peticion[m]}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      case 9: {
+        const cierre = exercisesData['9_1'] || {};
+        return (
+          <div className="space-y-3">
+            {protagonistData?.nombre && (
+              <div className="p-3 rounded-lg bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">Tu protagonista</p>
+                <p className="text-sm font-bold text-primary mt-1">{protagonistData.nombre}</p>
+                {cierre.protagonista_hoy && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{cierre.protagonista_hoy}</p>}
+              </div>
+            )}
+            {cierre.mundo_diferente && (
+              <div className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">Tu visión del mundo</p>
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-3">{cierre.mundo_diferente}</p>
+              </div>
+            )}
+            {cierre.siguiente_paso && (
+              <div className="p-2 rounded bg-background border border-border">
+                <p className="text-xs font-medium text-foreground">Llamado a la acción</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{cierre.siguiente_paso}</p>
+              </div>
+            )}
+          </div>
+        );
+      }
+
       default: {
         const allData = Object.values(exercisesData).reduce((acc, data) => ({ ...acc, ...data }), {});
         const entries = Object.entries(allData).filter(([_, v]) => v && v.trim().length > 0);
