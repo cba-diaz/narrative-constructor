@@ -182,6 +182,13 @@ export default function PitchKit() {
           </div>
         </div>
 
+        {completedCount === 9 && (
+          <div className="p-4 rounded-lg bg-success/10 border border-success/30 text-center">
+            <p className="text-sm font-medium text-success mb-1">🎬 Tu Pitch Kit está completo.</p>
+            <p className="text-sm text-muted-foreground">Ahora léelo en voz alta tres veces. El pitch que memoriza el inversionista no es el que está en este documento, es el que escucha de tu boca.</p>
+          </div>
+        )}
+
         {/* Blocks */}
         <div className="space-y-6">
           {blocks.map(block => {
