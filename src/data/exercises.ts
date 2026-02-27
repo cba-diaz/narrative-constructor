@@ -95,7 +95,7 @@ export const sectionExercises: SectionExercises[] = [
       {
         id: "3_1",
         titulo: "Detector de Superpoderes",
-        instruccion: "Tu superpoder es lo que te hace diferente de verdad. Esta suite de 4 módulos te ayudará a encontrarlo y articularlo.",
+        instruccion: "Tu superpoder es lo que te hace diferente de verdad. Esta suite de 3 módulos te ayudará a encontrarlo y articularlo.",
         campos: [],
         componentType: "superpower-detector",
         nota: "Un superpoder real es algo que un competidor NO podría decir."
