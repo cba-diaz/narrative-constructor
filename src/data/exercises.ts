@@ -131,10 +131,10 @@ export const sectionExercises: SectionExercises[] = [
           { id: "hito_1_contexto", type: "textarea", label: "Hito 1 - ¿Qué pasó? ¿Por qué importa?", placeholder: "Lanzamos en Medellín" },
           { id: "hito_2_fecha", type: "input", label: "Hito 2 - Fecha", placeholder: "Agosto 2024" },
           { id: "hito_2_metrica", type: "input", label: "Hito 2 - Métrica", placeholder: "890 estudiantes" },
-          { id: "hito_2_contexto", type: "textarea", label: "Hito 2 - ¿Qué pasó?", placeholder: "Expandimos a Bogotá" },
+          { id: "hito_2_contexto", type: "textarea", label: "Hito 2 - ¿Qué pasó? ¿Por qué importa?", placeholder: "Expandimos a Bogotá" },
           { id: "hito_3_fecha", type: "input", label: "Hito 3 - Fecha", placeholder: "Diciembre 2024" },
           { id: "hito_3_metrica", type: "input", label: "Hito 3 - Métrica", placeholder: "2,340 graduados" },
-          { id: "hito_3_contexto", type: "textarea", label: "Hito 3 - ¿Qué pasó?", placeholder: "4 ciudades operando" },
+          { id: "hito_3_contexto", type: "textarea", label: "Hito 3 - ¿Qué pasó? ¿Por qué importa?", placeholder: "4 ciudades operando" },
           { id: "logro_reciente", type: "textarea", label: "Momentum: ¿Qué logro reciente puedes mencionar?", placeholder: "Esta semana cerramos con Walmart / Este mes sumamos 92 empresas nuevas" },
           { id: "senal_crecimiento", type: "textarea", label: "¿Qué señal tienes de que el crecimiento va a continuar?", placeholder: "Lista de espera de X / Pipeline de Y clientes" }
         ]
