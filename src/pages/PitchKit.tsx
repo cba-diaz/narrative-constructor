@@ -59,7 +59,7 @@ export default function PitchKit() {
       .map(block => {
         const content = pitchKitBlocks[block.numero]?.content;
         if (!content) return null;
-        return `## ${block.numero}. ${block.nombre}\n\n${content}`;
+        return `${block.numero}. ${block.nombre}\n\n${content}`;
       })
       .filter(Boolean)
       .join('\n\n---\n\n');
