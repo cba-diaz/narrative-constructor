@@ -403,7 +403,7 @@ export function FinalBlockStep({
         {wordCount < 20 && wordCount > 0 && (
           <p className="text-xs text-muted-foreground text-center">Escribe al menos 20 palabras antes de guardar en el Pitch Kit.</p>
         )}
-        {!isPitchKitSaved && wordCount >= 20 && (
+        {!isPitchKitSaved && (
           <p className="text-xs text-muted-foreground text-center">"Guardar y continuar" guarda tu borrador y avanza. "Añadir al Pitch Kit" lo incluye en tu pitch final.</p>
         )}
 
