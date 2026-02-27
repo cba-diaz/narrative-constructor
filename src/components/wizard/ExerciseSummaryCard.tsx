@@ -118,25 +118,20 @@ export function ExerciseSummaryCard({ sectionNumber, exercisesData, protagonistD
                 <p className="text-sm text-muted-foreground line-clamp-3">{story.historia_generada}</p>
               </div>
             )}
-            {(story.reveal || story.transformacion || story.vision) && (
+            {(story.que_cambio || story.primer_momento) && (
               <div className="p-3 rounded-lg bg-background border border-border">
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="w-4 h-4 text-success" />
-                  <span className="font-medium text-sm">Los 3 pasos</span>
+                  <span className="font-medium text-sm">La transformación</span>
                 </div>
-                {story.reveal && (
-                  <p className="text-sm text-muted-foreground mb-1">
-                    <span className="text-primary font-medium">Reveal:</span> {story.reveal}
+                {story.que_cambio && (
+                  <p className="text-sm text-muted-foreground mb-1 line-clamp-2">
+                    <span className="text-success font-medium">Después:</span> {story.que_cambio}
                   </p>
                 )}
-                {story.transformacion && (
-                  <p className="text-sm text-muted-foreground mb-1">
-                    <span className="text-success font-medium">Transformación:</span> {story.transformacion}
-                  </p>
-                )}
-                {story.vision && (
-                  <p className="text-sm text-muted-foreground">
-                    <span className="text-warning font-medium">Visión:</span> {story.vision}
+                {story.primer_momento && (
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    <span className="text-primary font-medium">Primer uso:</span> {story.primer_momento}
                   </p>
                 )}
               </div>
