@@ -370,25 +370,7 @@ export function FinalBlockStep({
 
       {/* Navigation */}
       <div className="space-y-3 pt-4 border-t border-border">
-        {/* Pitch Kit Button */}
-        <Button 
-          size="lg" 
-          className={cn(
-            "w-full h-12",
-            isPitchKitSaved 
-              ? "bg-success hover:bg-success/90 text-success-foreground" 
-              : "bg-primary/10 border-2 border-primary text-primary hover:bg-primary/20"
-          )}
-          onClick={() => onSaveToPitchKit(content)}
-          disabled={isGenerating || wordCount < 20}
-        >
-          <Package className="w-5 h-5 mr-2" />
-          {isPitchKitSaved ? 'Guardado en Pitch Kit ✓' : `Guardar en Pitch Kit → Bloque ${sectionNumber}`}
-        </Button>
-        {wordCount < 20 && wordCount > 0 && (
-          <p className="text-xs text-muted-foreground text-center">Escribe al menos 20 palabras antes de guardar en el Pitch Kit.</p>
-        )}
-
+        {/* Primary: Save and continue */}
         <Button 
           size="lg" 
           className="w-full btn-primary-gradient h-12"
@@ -397,7 +379,34 @@ export function FinalBlockStep({
           {isLastSection ? 'Guardar y terminar' : 'Guardar y continuar'}
           <ChevronRight className="w-5 h-5 ml-2" />
         </Button>
-        
+
+        {/* Secondary: Pitch Kit */}
+        <Button 
+          variant="outline"
+          className={cn(
+            "w-full",
+            isPitchKitSaved && "border-success text-success hover:bg-success/10"
+          )}
+          onClick={() => {
+            onSaveToPitchKit(content);
+            if (!isPitchKitSaved) {
+              setTimeout(() => {
+                onSave(content);
+              }, 800);
+            }
+          }}
+          disabled={isGenerating || wordCount < 20}
+        >
+          <Package className="w-4 h-4 mr-2" />
+          {isPitchKitSaved ? '✓ En Pitch Kit' : 'Añadir al Pitch Kit'}
+        </Button>
+        {wordCount < 20 && wordCount > 0 && (
+          <p className="text-xs text-muted-foreground text-center">Escribe al menos 20 palabras antes de guardar en el Pitch Kit.</p>
+        )}
+        {!isPitchKitSaved && wordCount >= 20 && (
+          <p className="text-xs text-muted-foreground text-center">"Guardar y continuar" guarda tu borrador y avanza. "Añadir al Pitch Kit" lo incluye en tu pitch final.</p>
+        )}
+
         <div className="flex gap-3">
           <Button 
             variant="outline" 
