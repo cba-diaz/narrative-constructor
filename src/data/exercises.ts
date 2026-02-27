@@ -42,7 +42,8 @@ export const sectionExercises: SectionExercises[] = [
           { id: "ciudad", type: "input", label: "Ciudad y país", placeholder: "Medellín, Colombia" },
           { id: "contexto", type: "textarea", label: "Contexto: ¿De quién depende? ¿Quién depende de él/ella?", placeholder: "Vive con su mamá y hermana menor. Es el principal ingreso del hogar." },
           { id: "aspiracion", type: "textarea", label: "Aspiración: ¿Qué quiere lograr?", placeholder: "Quiere ser técnico en refrigeración porque vio que pagan tres veces más" },
-          { id: "frustracion", type: "textarea", label: "Frustración: ¿Qué lo frustra relacionado con tu problema?", placeholder: "Sabe que tiene potencial pero no puede estudiar porque no puede dejar de trabajar" }
+          { id: "frustracion", type: "textarea", label: "Frustración: ¿Qué lo frustra relacionado con tu problema?", placeholder: "Sabe que tiene potencial pero no puede estudiar porque no puede dejar de trabajar" },
+          { id: "momento", type: "textarea", label: "¿En qué momento exacto ocurre el problema?", placeholder: "Miércoles a las 6 PM, cuando revisa el saldo después del trabajo y ve que no le alcanza para el arriendo", nota: "El Bloque 1 exige una hora o fecha específica. Este es el dato que convierte el problema abstracto en una escena real." }
         ]
       },
       {
