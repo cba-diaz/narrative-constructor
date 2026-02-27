@@ -55,7 +55,7 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
               <div className="text-center mb-8">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
                   <Sparkles className="w-4 h-4" />
-                  Constructor de Pitch
+                  Metodología basada en el libro Pitch de Película
                 </div>
                 <h2 className="text-2xl font-bold text-foreground mb-2">
                   Construye tu pitch de inversión en 9 bloques
@@ -146,7 +146,7 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
                 <Sparkles className="w-4 h-4" />
-                Constructor de Pitch
+                Metodología basada en el libro Pitch de Película
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">
                 Construye tu pitch de inversión en 9 bloques
