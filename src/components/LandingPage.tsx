@@ -63,6 +63,13 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
                 <p className="text-muted-foreground">
                   Al terminar tendrás un guión de 4-5 minutos listo para presentar
                 </p>
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-4">
+                  <span>🎭 Tu protagonista</span>
+                  <span className="text-border">→</span>
+                  <span>🦸 Tu héroe</span>
+                  <span className="text-border">→</span>
+                  <span>🎬 Tu pitch</span>
+                </div>
               </div>
 
               <div className="space-y-4">
@@ -146,8 +153,15 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
               </h2>
               <p className="text-muted-foreground">
                 Al terminar tendrás un guión de 4-5 minutos listo para presentar
-              </p>
-            </div>
+               </p>
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-4">
+                  <span>🎭 Tu protagonista</span>
+                  <span className="text-border">→</span>
+                  <span>🦸 Tu héroe</span>
+                  <span className="text-border">→</span>
+                  <span>🎬 Tu pitch</span>
+                </div>
+              </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
