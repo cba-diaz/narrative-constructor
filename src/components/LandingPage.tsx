@@ -64,7 +64,7 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
                   Al terminar tendrás un guión de 4-5 minutos listo para presentar
                 </p>
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-4">
-                  <span>🎭 Tu protagonista</span>
+                  <span>🎭 Tu enemigo</span>
                   <span className="text-border">→</span>
                   <span>🦸 Tu héroe</span>
                   <span className="text-border">→</span>
