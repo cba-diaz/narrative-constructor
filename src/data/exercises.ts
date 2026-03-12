@@ -126,7 +126,7 @@ export const sectionExercises: SectionExercises[] = [
           { id: "otra_metrica", type: "input", label: "Si elegiste 'Otra', especifica cuál", placeholder: "Graduados, envíos, etc." },
           { id: "numero_hoy", type: "input", label: "¿Cuánto es ese número HOY?", placeholder: "2,340" },
           { id: "numero_inicio", type: "input", label: "¿Cuánto era cuando empezaste?", placeholder: "50" },
-          { id: "crecimiento", type: "input", label: "¿Cuál es el % de crecimiento?", placeholder: "163%" },
+          { id: "crecimiento", type: "input", label: "% de crecimiento (se calcula automáticamente)", placeholder: "Se calcula al llenar los campos anteriores", nota: "Se calcula a partir de tu número inicial y actual" },
           { id: "hito_1_fecha", type: "input", label: "Hito 1 - Fecha (mes/año)", placeholder: "Marzo 2024" },
           { id: "hito_1_metrica", type: "input", label: "Hito 1 - Métrica", placeholder: "120 estudiantes" },
           { id: "hito_1_contexto", type: "textarea", label: "Hito 1 - ¿Qué pasó? ¿Por qué importa?", placeholder: "Lanzamos en Medellín" },
