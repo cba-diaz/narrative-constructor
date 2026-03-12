@@ -186,7 +186,7 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
               sectionNumber={sectionNumber}
               initialContent={blockContent}
               exercisesData={exercisesData}
-              protagonistData={sectionNumber > 1 ? protagonistData : undefined}
+              protagonistData={sectionNumber > 1 ? protagonistData as any : undefined}
               onSave={handleBlockSave}
               onSaveAndFinish={handleBlockSaveAndFinish}
               onSaveToPitchKit={handleSaveToPitchKit}

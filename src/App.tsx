@@ -37,6 +37,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </PitchStoreProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

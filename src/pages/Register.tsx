@@ -191,6 +191,7 @@ export default function Register() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className={errors.confirmPassword ? 'border-destructive' : ''}
                       disabled={isLoading}
+                      autoComplete="new-password"
                     />
                     {errors.confirmPassword && (
                       <p className="text-sm text-destructive">{errors.confirmPassword}</p>

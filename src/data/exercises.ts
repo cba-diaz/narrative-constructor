@@ -164,11 +164,11 @@ export const sectionExercises: SectionExercises[] = [
         titulo: "Censo de Westeros",
         instruccion: "Como Tywin Lannister, necesitas conocer a todos los jugadores en tu mapa antes de moverte. Nombra a tus competidores y define exactamente dónde estás mejor posicionado.",
         campos: [
-          { id: "competidor_principal", type: "input", label: "Tu competidor más fuerte (por nombre)", placeholder: "SENA, Rappi, Mercado Libre, el banco X..." },
-          { id: "competidor_debilidad", type: "textarea", label: "¿Cuál es su debilidad que tú resuelves?", placeholder: "Son lentos, no garantizan empleo, no entienden el contexto local" },
-          { id: "competidor_2", type: "input", label: "Segundo competidor o alternativa (puede ser 'hacer nada')", placeholder: "Excel manual, contratar un consultor, no hacer nada" },
-          { id: "tu_ventaja", type: "textarea", label: "¿Por qué estás mejor posicionado que ambos?", placeholder: "Somos los únicos que combinamos formación + colocación laboral garantizada" },
-          { id: "barrera", type: "textarea", label: "¿Qué harías que ellos no pueden copiar fácilmente?", placeholder: "Llevamos 3 años construyendo la red de 340 empresas aliadas. No se replica en 6 meses." }
+          { id: "competidor_principal", type: "input", label: "Competidor #1 — Nombre", placeholder: "SENA, Rappi, Mercado Libre, el banco X...", nota: "Tu competidor más fuerte. Ponlo por nombre propio." },
+          { id: "competidor_debilidad", type: "textarea", label: "Debilidad del Competidor #1 — ¿Qué hace mal que tú resuelves?", placeholder: "Son lentos, no garantizan empleo, no entienden el contexto local" },
+          { id: "competidor_2", type: "input", label: "Competidor #2 o alternativa — Nombre", placeholder: "Excel manual, contratar un consultor, no hacer nada", nota: "Puede ser otro competidor directo o la alternativa actual (ej. 'no hacer nada')." },
+          { id: "tu_ventaja", type: "textarea", label: "Tu ventaja — ¿Por qué estás mejor posicionado que ambos?", placeholder: "Somos los únicos que combinamos formación + colocación laboral garantizada" },
+          { id: "barrera", type: "textarea", label: "Tu barrera — ¿Qué no pueden copiar fácilmente?", placeholder: "Llevamos 3 años construyendo la red de 340 empresas aliadas. No se replica en 6 meses." }
         ],
         nota: "El Bloque 5 requiere mencionar al menos un competidor por nombre. Sin este dato, el AI no puede cumplir esa restricción."
       }
