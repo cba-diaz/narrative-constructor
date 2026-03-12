@@ -355,8 +355,8 @@ export function ExerciseStep({
         </div>
       )}
 
-      {/* Navigation */}
-      <div className="space-y-3 pt-4 border-t border-border">
+      {/* Navigation - Sticky */}
+      <div className="sticky bottom-0 bg-background/95 backdrop-blur border-t border-border pt-3 pb-4 -mx-4 px-4 space-y-3 z-10">
         {/* Skip to final */}
         <Button
           variant="ghost"
