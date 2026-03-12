@@ -154,9 +154,10 @@ export default function Register() {
                       type="email"
                       placeholder="tu@email.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value.replace(/[^\x20-\x7E@.+\-_]/g, ''))}
                       className={errors.email ? 'border-destructive' : ''}
                       disabled={isLoading}
+                      autoComplete="email"
                     />
                     {errors.email && (
                       <p className="text-sm text-destructive">{errors.email}</p>
