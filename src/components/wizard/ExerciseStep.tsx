@@ -109,6 +109,17 @@ export function ExerciseStep({
   const handleFieldChange = useCallback((fieldId: string, value: string) => {
     setFormData(prev => {
       const updated = { ...prev, [fieldId]: value };
+
+      // Auto-calculate growth percentage for traction exercise (4_1)
+      if (exercise.id === '4_1' && (fieldId === 'numero_hoy' || fieldId === 'numero_inicio')) {
+        const hoy = parseFloat((fieldId === 'numero_hoy' ? value : updated.numero_hoy || '').replace(/,/g, ''));
+        const inicio = parseFloat((fieldId === 'numero_inicio' ? value : updated.numero_inicio || '').replace(/,/g, ''));
+        if (!isNaN(hoy) && !isNaN(inicio) && inicio > 0) {
+          const pct = Math.round(((hoy - inicio) / inicio) * 100);
+          updated.crecimiento = `${pct.toLocaleString()}%`;
+        }
+      }
+
       formDataRef.current = updated;
       return updated;
     });
@@ -122,7 +133,7 @@ export function ExerciseStep({
     saveTimeoutRef.current = setTimeout(() => {
       performSave();
     }, 3000);
-  }, [performSave]);
+  }, [performSave, exercise.id]);
 
   const handleNext = () => {
     if (saveTimeoutRef.current) {
