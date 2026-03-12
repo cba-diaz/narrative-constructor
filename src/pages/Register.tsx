@@ -129,7 +129,7 @@ export default function Register() {
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
                   <div className="space-y-2">
                     <Label htmlFor="fullName">Nombre completo</Label>
                     <Input
@@ -140,6 +140,7 @@ export default function Register() {
                       onChange={(e) => setFullName(e.target.value)}
                       className={errors.fullName ? 'border-destructive' : ''}
                       disabled={isLoading}
+                      autoComplete="name"
                     />
                     {errors.fullName && (
                       <p className="text-sm text-destructive">{errors.fullName}</p>
@@ -153,9 +154,10 @@ export default function Register() {
                       type="email"
                       placeholder="tu@email.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => setEmail(e.target.value.replace(/[^\x20-\x7E@.+\-_]/g, ''))}
                       className={errors.email ? 'border-destructive' : ''}
                       disabled={isLoading}
+                      autoComplete="email"
                     />
                     {errors.email && (
                       <p className="text-sm text-destructive">{errors.email}</p>
@@ -172,6 +174,7 @@ export default function Register() {
                       onChange={(e) => setPassword(e.target.value)}
                       className={errors.password ? 'border-destructive' : ''}
                       disabled={isLoading}
+                      autoComplete="new-password"
                     />
                     {errors.password && (
                       <p className="text-sm text-destructive">{errors.password}</p>
@@ -188,6 +191,7 @@ export default function Register() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className={errors.confirmPassword ? 'border-destructive' : ''}
                       disabled={isLoading}
+                      autoComplete="new-password"
                     />
                     {errors.confirmPassword && (
                       <p className="text-sm text-destructive">{errors.confirmPassword}</p>

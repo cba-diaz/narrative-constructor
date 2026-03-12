@@ -369,7 +369,7 @@ export function FinalBlockStep({
       </Collapsible>
 
       {/* Navigation */}
-      <div className="space-y-3 pt-4 border-t border-border">
+      <div className="sticky bottom-0 bg-background/95 backdrop-blur border-t border-border pt-3 pb-4 -mx-4 px-4 space-y-3 z-10">
         {/* Primary: Save and continue */}
         <Button 
           size="lg" 

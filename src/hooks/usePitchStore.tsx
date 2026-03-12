@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -8,7 +8,7 @@ export interface ExerciseData {
 }
 
 export interface SectionData {
-  exercises: Record<string, ExerciseData>; // keyed by exercise id (e.g., "1_1", "1_2")
+  exercises: Record<string, ExerciseData>;
   currentStep: number;
   completado: boolean;
 }
@@ -24,7 +24,7 @@ export interface PitchData {
   startupName: string;
   blocks: Record<number, string>;
   sections: Record<number, SectionData>;
-  pitchKit: Record<number, PitchKitBlock>; // Separate Pitch Kit storage
+  pitchKit: Record<number, PitchKitBlock>;
   currentBlock: number;
   createdAt: string;
   updatedAt: string;
@@ -47,14 +47,39 @@ const getDefaultData = (): PitchData => ({
   updatedAt: new Date().toISOString(),
 });
 
-export function usePitchStore() {
+interface PitchStoreValue {
+  data: PitchData;
+  saveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  isLoading: boolean;
+  setUserInfo: (userName: string, startupName: string) => Promise<void>;
+  setBlockContent: (blockNumber: number, content: string) => Promise<void>;
+  setCurrentBlock: (blockNumber: number) => Promise<void>;
+  setExerciseData: (sectionNumber: number, exerciseId: string, fieldData: ExerciseData) => Promise<void>;
+  setSectionStep: (sectionNumber: number, step: number) => Promise<void>;
+  getSectionExercises: (sectionNumber: number) => Record<string, ExerciseData>;
+  getSectionStep: (sectionNumber: number) => number;
+  getProtagonistData: () => Record<string, string>;
+  getCompletedBlocks: () => number[];
+  isBlockCompleted: (blockNumber: number) => boolean;
+  getNextIncompleteBlock: () => number | null;
+  getTotalWords: () => number;
+  resetData: () => Promise<void>;
+  hasStarted: boolean;
+  saveToPitchKit: (blockNumber: number, content: string) => Promise<void>;
+  getPitchKitBlocks: () => Record<number, PitchKitBlock>;
+  getPitchKitCompletedCount: () => number;
+  getPitchKitTotalWords: () => number;
+}
+
+const PitchStoreContext = createContext<PitchStoreValue | null>(null);
+
+export function PitchStoreProvider({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuth();
   const [data, setData] = useState<PitchData>(getDefaultData);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Track if we've already loaded data for this user to avoid re-fetching on tab switch
-  const loadedUserIdRef = React.useRef<string | null>(null);
+  const loadedUserIdRef = useRef<string | null>(null);
 
   // Load data from database when user is authenticated
   useEffect(() => {
@@ -67,7 +92,6 @@ export function usePitchStore() {
       return;
     }
 
-    // Skip re-loading if we already loaded for this user (prevents tab-switch reset)
     if (loadedUserIdRef.current === user.id) {
       return;
     }
@@ -105,38 +129,38 @@ export function usePitchStore() {
     loadData();
   }, [user, authLoading]);
 
-  // Save data to database with debouncing to prevent rapid consecutive saves
-  const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-  const pendingDataRef = React.useRef<Partial<PitchData>>({});
+  // Save data to database with debouncing
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pendingDataRef = useRef<Partial<PitchData>>({});
+  // Keep a ref to current data to avoid stale closures in debounced save
+  const dataRef = useRef(data);
+  useEffect(() => { dataRef.current = data; }, [data]);
   
   const saveToDatabase = useCallback(async (newData: Partial<PitchData>) => {
     if (!user) return;
-    // CRITICAL: Don't save while still loading data from DB — would overwrite with empty defaults
     if (isLoading) return;
 
-    // Merge pending data
     pendingDataRef.current = { ...pendingDataRef.current, ...newData };
     
-    // Clear existing timeout
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
     
-    // Debounce the save
     saveTimeoutRef.current = setTimeout(async () => {
       setSaveStatus('saving');
       
       const dataToSave = pendingDataRef.current;
       pendingDataRef.current = {};
+      const currentData = dataRef.current;
       
       const updatePayload = {
         user_id: user.id,
-        user_name: dataToSave.userName ?? data.userName,
-        startup_name: dataToSave.startupName ?? data.startupName,
-        blocks: dataToSave.blocks ?? data.blocks,
-        sections: dataToSave.sections ?? data.sections,
-        pitch_kit: dataToSave.pitchKit ?? data.pitchKit,
-        current_block: dataToSave.currentBlock ?? data.currentBlock,
+        user_name: dataToSave.userName ?? currentData.userName,
+        startup_name: dataToSave.startupName ?? currentData.startupName,
+        blocks: dataToSave.blocks ?? currentData.blocks,
+        sections: dataToSave.sections ?? currentData.sections,
+        pitch_kit: dataToSave.pitchKit ?? currentData.pitchKit,
+        current_block: dataToSave.currentBlock ?? currentData.currentBlock,
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -153,14 +177,13 @@ export function usePitchStore() {
 
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
-    }, 500); // 500ms debounce
-  }, [user, data, isLoading]);
+    }, 500);
+  }, [user, isLoading]);
 
   const setUserInfo = useCallback(async (userName: string, startupName: string) => {
-    const newData = { ...data, userName, startupName, updatedAt: new Date().toISOString() };
-    setData(newData);
+    setData(prev => ({ ...prev, userName, startupName, updatedAt: new Date().toISOString() }));
     await saveToDatabase({ userName, startupName });
-  }, [data, saveToDatabase]);
+  }, [saveToDatabase]);
 
   const setBlockContent = useCallback(async (blockNumber: number, content: string) => {
     setData(prev => {
@@ -288,7 +311,6 @@ export function usePitchStore() {
     setData(getDefaultData());
   }, [user]);
 
-  // Pitch Kit functions
   const saveToPitchKit = useCallback(async (blockNumber: number, content: string) => {
     const wordCount = content.trim().split(/\s+/).filter(word => word.length > 0).length;
     setData(prev => {
@@ -321,7 +343,7 @@ export function usePitchStore() {
 
   const hasStarted = data.userName.length > 0 && data.startupName.length > 0;
 
-  return {
+  const value: PitchStoreValue = {
     data,
     saveStatus,
     isLoading,
@@ -339,10 +361,23 @@ export function usePitchStore() {
     getTotalWords,
     resetData,
     hasStarted,
-    // Pitch Kit
     saveToPitchKit,
     getPitchKitBlocks,
     getPitchKitCompletedCount,
     getPitchKitTotalWords,
   };
+
+  return (
+    <PitchStoreContext.Provider value={value}>
+      {children}
+    </PitchStoreContext.Provider>
+  );
+}
+
+export function usePitchStore() {
+  const ctx = useContext(PitchStoreContext);
+  if (!ctx) {
+    throw new Error('usePitchStore must be used within a PitchStoreProvider');
+  }
+  return ctx;
 }
