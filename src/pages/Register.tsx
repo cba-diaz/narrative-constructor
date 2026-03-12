@@ -140,6 +140,7 @@ export default function Register() {
                       onChange={(e) => setFullName(e.target.value)}
                       className={errors.fullName ? 'border-destructive' : ''}
                       disabled={isLoading}
+                      autoComplete="name"
                     />
                     {errors.fullName && (
                       <p className="text-sm text-destructive">{errors.fullName}</p>
