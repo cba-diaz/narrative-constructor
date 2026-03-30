@@ -139,6 +139,7 @@ export function HubPage({
                 className={cn(
                   "w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 cursor-pointer",
                   status === 'completed' && "bg-success/5 border-success/30 hover:border-success",
+                  status === 'draft' && "bg-amber-50 dark:bg-amber-950/10 border-amber-300/50 hover:border-amber-400",
                   status === 'current' && "bg-primary/5 border-primary/30 hover:border-primary ring-2 ring-primary/20",
                   status === 'available' && "bg-background border-border hover:border-muted-foreground"
                 )}
