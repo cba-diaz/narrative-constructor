@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Lightbulb, Cloud, CloudOff, Loader2, SkipForward } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePitchStore, SaveStatus } from '@/hooks/usePitchStore';
 import {
   ProgressiveReductionExercise,
   ProblemDiggerExercise,
@@ -45,64 +46,42 @@ export function ExerciseStep({
   protagonistData
 }: ExerciseStepProps) {
   const [formData, setFormData] = useState<ExerciseData>(initialData);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const hasChangesRef = useRef(false);
+  const { saveStatus } = usePitchStore();
 
-  // Update form only when switching exercises, not on every initialData change
+  // Update form only when switching exercises
   useEffect(() => {
     setFormData(initialData);
     formDataRef.current = initialData;
-    hasChangesRef.current = false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercise.id]);
 
-  // Store the latest formData in a ref to avoid stale closure issues
   const formDataRef = useRef(formData);
   useEffect(() => {
     formDataRef.current = formData;
   }, [formData]);
 
-  // Store onSave in a ref to avoid dependency issues
   const onSaveRef = useRef(onSave);
   useEffect(() => {
     onSaveRef.current = onSave;
   }, [onSave]);
 
-  // Auto-save function using refs to avoid stale closures
-  const performSave = useCallback(() => {
-    if (hasChangesRef.current) {
-      setSaveStatus('saving');
+  // Debounced save — only 3s debounce, store handles the rest
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const debouncedSave = useCallback(() => {
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(() => {
       onSaveRef.current(formDataRef.current);
-      hasChangesRef.current = false;
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
-    }
+    }, 3000);
   }, []);
-
-  // Set up auto-save interval (every 30 seconds)
-  useEffect(() => {
-    autoSaveIntervalRef.current = setInterval(() => {
-      performSave();
-    }, 30000);
-
-    return () => {
-      if (autoSaveIntervalRef.current) {
-        clearInterval(autoSaveIntervalRef.current);
-      }
-    };
-  }, [performSave]);
 
   // Save on unmount
   useEffect(() => {
     return () => {
-      if (hasChangesRef.current) {
-        onSaveRef.current(formDataRef.current);
-      }
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
+      onSaveRef.current(formDataRef.current);
     };
   }, []);
 
@@ -123,77 +102,43 @@ export function ExerciseStep({
       formDataRef.current = updated;
       return updated;
     });
-    hasChangesRef.current = true;
-    setSaveStatus('idle');
-    
-    // Debounced save after 3 seconds of no typing
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    saveTimeoutRef.current = setTimeout(() => {
-      performSave();
-    }, 3000);
-  }, [performSave, exercise.id]);
+    debouncedSave();
+  }, [debouncedSave, exercise.id]);
 
   const handleNext = () => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     onSave(formData);
-    hasChangesRef.current = false;
     onNext();
   };
 
   const handleBack = () => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     onSave(formData);
-    hasChangesRef.current = false;
     onBack();
   };
 
   const handleSkipToFinal = () => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     onSave(formData);
-    hasChangesRef.current = false;
     onSkipToFinal();
+  };
+
+  const handleManualSave = () => {
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    onSave(formData);
   };
 
   // Render specialized component if componentType is set
   const renderSpecializedComponent = () => {
     switch (exercise.componentType) {
       case 'progressive-reduction':
-        return (
-          <ProgressiveReductionExercise
-            data={formData}
-            onChange={handleFieldChange}
-          />
-        );
+        return <ProgressiveReductionExercise data={formData} onChange={handleFieldChange} />;
       case 'problem-digger':
-        return (
-          <ProblemDiggerExercise
-            data={formData}
-            onChange={handleFieldChange}
-          />
-        );
+        return <ProblemDiggerExercise data={formData} onChange={handleFieldChange} />;
       case 'customer-story':
-        return (
-          <CustomerStoryBuilder
-            data={formData}
-            onChange={handleFieldChange}
-            protagonistData={protagonistData}
-          />
-        );
+        return <CustomerStoryBuilder data={formData} onChange={handleFieldChange} protagonistData={protagonistData} />;
       case 'superpower-detector':
-        return (
-          <SuperpowerDetector
-            data={formData}
-            onChange={handleFieldChange}
-          />
-        );
+        return <SuperpowerDetector data={formData} onChange={handleFieldChange} />;
       default:
         return null;
     }
@@ -218,6 +163,7 @@ export function ExerciseStep({
               onChange={(e) => handleFieldChange(field.id, e.target.value)}
               placeholder={field.placeholder}
               className="w-full"
+              autoComplete="off"
             />
             {field.nota && <p className="text-xs text-muted-foreground">{field.nota}</p>}
           </div>
@@ -235,6 +181,7 @@ export function ExerciseStep({
               onChange={(e) => handleFieldChange(field.id, e.target.value)}
               placeholder={field.placeholder}
               className="min-h-[100px] resize-none"
+              autoComplete="off"
             />
             {field.nota && <p className="text-xs text-muted-foreground">{field.nota}</p>}
           </div>
@@ -287,6 +234,21 @@ export function ExerciseStep({
 
   const hasSpecializedComponent = !!exercise.componentType;
 
+  // Map store saveStatus to display
+  const getSaveIcon = () => {
+    if (saveStatus === 'saving') return <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />;
+    if (saveStatus === 'saved') return <Cloud className="w-3 h-3 text-success" />;
+    if (saveStatus === 'error') return <CloudOff className="w-3 h-3 text-destructive" />;
+    return null;
+  };
+
+  const getSaveLabel = () => {
+    if (saveStatus === 'saving') return <span className="text-muted-foreground">Guardando...</span>;
+    if (saveStatus === 'saved') return <span className="text-success">Guardado</span>;
+    if (saveStatus === 'error') return <span className="text-destructive">Error al guardar</span>;
+    return null;
+  };
+
   return (
     <div className="space-y-6">
       {/* Exercise Header */}
@@ -300,26 +262,9 @@ export function ExerciseStep({
               <div className="text-xs text-muted-foreground uppercase tracking-wide">
                 Ejercicio {exerciseNumber} de {totalExercises}
               </div>
-              {/* Save Status Indicator */}
               <div className="flex items-center gap-1.5 text-xs">
-                {saveStatus === 'saving' && (
-                  <>
-                    <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
-                    <span className="text-muted-foreground">Guardando...</span>
-                  </>
-                )}
-                {saveStatus === 'saved' && (
-                  <>
-                    <Cloud className="w-3 h-3 text-success" />
-                    <span className="text-success">Guardado</span>
-                  </>
-                )}
-                {saveStatus === 'error' && (
-                  <>
-                    <CloudOff className="w-3 h-3 text-destructive" />
-                    <span className="text-destructive">Error al guardar</span>
-                  </>
-                )}
+                {getSaveIcon()}
+                {getSaveLabel()}
               </div>
             </div>
             <h2 className="text-xl font-bold text-foreground mb-2">{exercise.titulo}</h2>
@@ -328,7 +273,7 @@ export function ExerciseStep({
         </div>
       </div>
 
-      {/* Content - either specialized component or form fields */}
+      {/* Content */}
       <div className="space-y-4">
         {hasSpecializedComponent ? (
           renderSpecializedComponent()
@@ -390,19 +335,9 @@ export function ExerciseStep({
           </Button>
 
           <div className="flex items-center gap-3">
-            {/* Manual Save Button */}
             <Button
               variant="outline"
-              onClick={() => {
-                if (saveTimeoutRef.current) {
-                  clearTimeout(saveTimeoutRef.current);
-                }
-                setSaveStatus('saving');
-                onSave(formData);
-                hasChangesRef.current = false;
-                setSaveStatus('saved');
-                setTimeout(() => setSaveStatus('idle'), 2000);
-              }}
+              onClick={handleManualSave}
               disabled={saveStatus === 'saving'}
               className="flex items-center gap-2"
             >

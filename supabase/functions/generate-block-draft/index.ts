@@ -1,12 +1,24 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+const ALLOWED_ORIGINS = [
+  "https://startupsdepelicula.com",
+  "https://www.startupsdepelicula.com",
+  "https://narrative-constructor.lovable.app",
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  };
+}
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -27,9 +39,9 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
-    if (authError || !claimsData?.claims) {
+    // Use getUser instead of getClaims for reliability
+    const { data: userData, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !userData?.user) {
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -44,7 +56,6 @@ serve(async (req) => {
     }
 
     // Build context from exercises
-    // For section 8, filter out empty founder 3 fields
     const exercisesSummary = Object.entries(exercisesData as Record<string, Record<string, string>>)
       .map(([exerciseId, fields]) => {
         let filteredFields = Object.entries(fields)
@@ -116,7 +127,7 @@ Recuerda: entre ${block.palabrasMin} y ${block.palabrasMax} palabras exactas. So
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        max_tokens: 300,
+        max_tokens: 500,
         temperature: 0.7,
       }),
     });
@@ -147,6 +158,7 @@ Recuerda: entre ${block.palabrasMin} y ${block.palabrasMax} palabras exactas. So
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
+    const corsHeaders = getCorsHeaders(req);
     console.error("Error:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),

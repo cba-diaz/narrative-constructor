@@ -4,7 +4,7 @@ import { Block } from '@/data/blocks';
 
 /**
  * Generates a polished block draft using AI, based on exercise data.
- * The AI respects word limits, restrictions, and prohibitions.
+ * Includes retry with exponential backoff for transient errors.
  */
 export async function generateBlockDraft(
   sectionNumber: number,
@@ -18,7 +18,8 @@ export async function generateBlockDraft(
     contexto?: string;
     aspiracion?: string;
     frustracion?: string;
-  }
+  },
+  maxRetries = 2
 ): Promise<string> {
   // Check if there's enough exercise data to generate a draft
   const hasData = Object.values(exercisesData).some(
@@ -26,27 +27,54 @@ export async function generateBlockDraft(
   );
   if (!hasData) return '';
 
-  const { data, error } = await supabase.functions.invoke('generate-block-draft', {
-    body: {
-      sectionNumber,
-      exercisesData,
-      protagonistData,
-      block: {
-        nombre: block.nombre,
-        palabrasMin: block.palabrasMin,
-        palabrasMax: block.palabrasMax,
-        estructura: block.estructura,
-        restricciones: block.restricciones,
-        prohibido: block.prohibido,
-        ejemplo: block.ejemplo,
-      },
-    },
-  });
+  let lastError: Error | null = null;
 
-  if (error) {
-    console.error('Error generating draft:', error);
-    throw new Error(error.message || 'Error al generar borrador');
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-block-draft', {
+        body: {
+          sectionNumber,
+          exercisesData,
+          protagonistData,
+          block: {
+            nombre: block.nombre,
+            palabrasMin: block.palabrasMin,
+            palabrasMax: block.palabrasMax,
+            estructura: block.estructura,
+            restricciones: block.restricciones,
+            prohibido: block.prohibido,
+            ejemplo: block.ejemplo,
+          },
+        },
+      });
+
+      if (error) {
+        lastError = new Error(error.message || 'Error al generar borrador');
+        // Don't retry on 402 (payment) or 401 (auth)
+        if (error.message?.includes('402') || error.message?.includes('401')) {
+          throw lastError;
+        }
+        // Retry on other errors
+        if (attempt < maxRetries) {
+          await sleep(1000 * Math.pow(2, attempt));
+          continue;
+        }
+        throw lastError;
+      }
+
+      return data?.draft || '';
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error('Unknown error');
+      if (attempt < maxRetries) {
+        await sleep(1000 * Math.pow(2, attempt));
+        continue;
+      }
+    }
   }
 
-  return data?.draft || '';
+  throw lastError || new Error('Error al generar borrador');
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
