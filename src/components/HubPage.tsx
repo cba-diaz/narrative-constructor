@@ -49,12 +49,18 @@ export function HubPage({
     navigate('/');
   };
 
+  const hasDraft = (blockNumber: number) => {
+    return blockContents[blockNumber] && blockContents[blockNumber].trim().length > 0;
+  };
+
   const getBlockStatus = (blockNumber: number) => {
     if (completedBlocks.includes(blockNumber)) return 'completed';
     
     // Find the first incomplete block to highlight as "current"
     const firstIncomplete = blocks.find(b => !completedBlocks.includes(b.numero))?.numero || 1;
     if (blockNumber === firstIncomplete) return 'current';
+    
+    if (hasDraft(blockNumber)) return 'draft';
     
     return 'available';
   };
