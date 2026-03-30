@@ -194,6 +194,7 @@ export function HubPage({
                 <ChevronRight className={cn(
                   "w-5 h-5 flex-shrink-0",
                   status === 'completed' && "text-success",
+                  status === 'draft' && "text-amber-500",
                   status === 'current' && "text-primary",
                   status === 'available' && "text-muted-foreground"
                 )} />
