@@ -170,6 +170,11 @@ export function HubPage({
                         En progreso
                       </span>
                     )}
+                    {status === 'draft' && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 font-medium">
+                        Borrador
+                      </span>
+                    )}
                   </div>
                   <h3 className="font-semibold text-foreground">{block.nombre}</h3>
                   <p className="text-sm text-muted-foreground">{block.pregunta}</p>
