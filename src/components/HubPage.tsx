@@ -49,12 +49,18 @@ export function HubPage({
     navigate('/');
   };
 
+  const hasDraft = (blockNumber: number) => {
+    return blockContents[blockNumber] && blockContents[blockNumber].trim().length > 0;
+  };
+
   const getBlockStatus = (blockNumber: number) => {
     if (completedBlocks.includes(blockNumber)) return 'completed';
     
     // Find the first incomplete block to highlight as "current"
     const firstIncomplete = blocks.find(b => !completedBlocks.includes(b.numero))?.numero || 1;
     if (blockNumber === firstIncomplete) return 'current';
+    
+    if (hasDraft(blockNumber)) return 'draft';
     
     return 'available';
   };
@@ -133,6 +139,7 @@ export function HubPage({
                 className={cn(
                   "w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 cursor-pointer",
                   status === 'completed' && "bg-success/5 border-success/30 hover:border-success",
+                  status === 'draft' && "bg-amber-50 dark:bg-amber-950/10 border-amber-300/50 hover:border-amber-400",
                   status === 'current' && "bg-primary/5 border-primary/30 hover:border-primary ring-2 ring-primary/20",
                   status === 'available' && "bg-background border-border hover:border-muted-foreground"
                 )}
@@ -141,6 +148,7 @@ export function HubPage({
                 <div className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
                   status === 'completed' && "bg-success text-success-foreground",
+                  status === 'draft' && "bg-amber-400 text-white",
                   status === 'current' && "bg-primary text-primary-foreground",
                   status === 'available' && "bg-muted text-muted-foreground"
                 )}>
@@ -162,6 +170,11 @@ export function HubPage({
                         En progreso
                       </span>
                     )}
+                    {status === 'draft' && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 font-medium">
+                        Borrador
+                      </span>
+                    )}
                   </div>
                   <h3 className="font-semibold text-foreground">{block.nombre}</h3>
                   <p className="text-sm text-muted-foreground">{block.pregunta}</p>
@@ -181,6 +194,7 @@ export function HubPage({
                 <ChevronRight className={cn(
                   "w-5 h-5 flex-shrink-0",
                   status === 'completed' && "text-success",
+                  status === 'draft' && "text-amber-500",
                   status === 'current' && "text-primary",
                   status === 'available' && "text-muted-foreground"
                 )} />

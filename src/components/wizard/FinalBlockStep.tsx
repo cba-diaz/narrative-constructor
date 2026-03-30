@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Block } from '@/data/blocks';
-import { ExerciseData } from '@/hooks/usePitchStore';
+import { ExerciseData, usePitchStore } from '@/hooks/usePitchStore';
 import { ExerciseSummaryCard } from './ExerciseSummaryCard';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -47,12 +47,15 @@ export function FinalBlockStep({
 }: FinalBlockStepProps) {
   const [content, setContent] = useState(initialContent);
   const [showExample, setShowExample] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [isGenerating, setIsGenerating] = useState(false);
+  const { saveStatus } = usePitchStore();
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const hasChangesRef = useRef(false);
   const draftGeneratedRef = useRef(false);
+  const contentRef = useRef(content);
+  const onSaveRef = useRef(onSave);
+
+  useEffect(() => { contentRef.current = content; }, [content]);
+  useEffect(() => { onSaveRef.current = onSave; }, [onSave]);
 
   // Generate AI draft if no content exists
   useEffect(() => {
@@ -78,53 +81,25 @@ export function FinalBlockStep({
       .then(draft => {
         if (draft) {
           setContent(draft);
-          hasChangesRef.current = true;
-          onSave(draft);
+          contentRef.current = draft;
+          onSaveRef.current(draft);
         }
       })
       .catch(err => console.error('Error generating draft:', err))
       .finally(() => setIsGenerating(false));
-  }, [sectionNumber, exercisesData, block, protagonistData, onSave]);
+  }, [sectionNumber, exercisesData, block, protagonistData]);
 
   const handleRegenerate = useCallback(() => {
     triggerGeneration();
   }, [triggerGeneration]);
 
-  // Auto-save function
-  const performSave = useCallback(() => {
-    if (hasChangesRef.current && content.trim()) {
-      setSaveStatus('saving');
-      onSave(content);
-      hasChangesRef.current = false;
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
-    }
-  }, [content, onSave]);
-
-  // Set up auto-save interval (every 30 seconds)
-  useEffect(() => {
-    autoSaveIntervalRef.current = setInterval(() => {
-      performSave();
-    }, 30000);
-
-    return () => {
-      if (autoSaveIntervalRef.current) {
-        clearInterval(autoSaveIntervalRef.current);
-      }
-    };
-  }, [performSave]);
-
   // Save on unmount
   useEffect(() => {
     return () => {
-      if (hasChangesRef.current && content.trim()) {
-        onSave(content);
-      }
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+      onSaveRef.current(contentRef.current);
     };
-  }, [content, onSave]);
+  }, []);
 
   // Word count
   const wordCount = useMemo(() => {
@@ -139,36 +114,24 @@ export function FinalBlockStep({
 
   const handleContentChange = useCallback((value: string) => {
     setContent(value);
-    hasChangesRef.current = true;
-    setSaveStatus('idle');
+    contentRef.current = value;
     
     // Debounced save after 3 seconds of no typing
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(() => {
       if (value.trim()) {
-        setSaveStatus('saving');
-        onSave(value);
-        hasChangesRef.current = false;
-        setSaveStatus('saved');
-        setTimeout(() => setSaveStatus('idle'), 2000);
+        onSaveRef.current(value);
       }
     }, 3000);
-  }, [onSave]);
+  }, []);
 
   const handleSave = useCallback(() => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    setSaveStatus('saving');
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     onSave(content);
-    hasChangesRef.current = false;
-    setSaveStatus('saved');
-    setTimeout(() => setSaveStatus('idle'), 2000);
   }, [content, onSave]);
 
   const handleSaveAndFinish = () => {
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     onSaveAndFinish(content);
   };
 
@@ -222,7 +185,7 @@ export function FinalBlockStep({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Restrictions & Prohibited - Collapsed */}
+      {/* Restrictions & Prohibited */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <Collapsible>
           <CollapsibleTrigger asChild>
@@ -271,7 +234,7 @@ export function FinalBlockStep({
 
       {/* Editor */}
       <div className="relative">
-        {/* Save Status Indicator */}
+        {/* Save Status Indicator — uses store's real status */}
         <div className="flex items-center justify-end gap-1.5 text-xs mb-2">
           {saveStatus === 'saving' && (
             <>
@@ -307,6 +270,7 @@ export function FinalBlockStep({
           placeholder={isGenerating ? 'Generando borrador...' : block.placeholder}
           className="min-h-[250px] resize-none text-base leading-relaxed"
           disabled={isGenerating}
+          autoComplete="off"
         />
         
         {/* Word Counter */}
@@ -389,11 +353,6 @@ export function FinalBlockStep({
           )}
           onClick={() => {
             onSaveToPitchKit(content);
-            if (!isPitchKitSaved) {
-              setTimeout(() => {
-                onSave(content);
-              }, 800);
-            }
           }}
           disabled={isGenerating || wordCount < 20}
         >
