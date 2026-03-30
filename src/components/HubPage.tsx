@@ -148,6 +148,7 @@ export function HubPage({
                 <div className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
                   status === 'completed' && "bg-success text-success-foreground",
+                  status === 'draft' && "bg-amber-400 text-white",
                   status === 'current' && "bg-primary text-primary-foreground",
                   status === 'available' && "bg-muted text-muted-foreground"
                 )}>
