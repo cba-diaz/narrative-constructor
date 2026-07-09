@@ -85,7 +85,7 @@ export function FinalBlockStep({
           onSaveRef.current(draft);
         }
       })
-      .catch(err => console.error('Error generating draft:', err))
+      .catch(err => { if (import.meta.env.DEV) console.error('Error generating draft:', err); })
       .finally(() => setIsGenerating(false));
   }, [sectionNumber, exercisesData, block, protagonistData]);
 

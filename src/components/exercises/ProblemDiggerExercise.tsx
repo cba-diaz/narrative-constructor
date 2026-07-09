@@ -45,7 +45,7 @@ export function ProblemDiggerExercise({ data, onChange }: ProblemDiggerExerciseP
       });
 
       if (error) {
-        console.error('Error generating question:', error);
+        if (import.meta.env.DEV) console.error('Error generating question:', error);
         return;
       }
 
@@ -53,7 +53,7 @@ export function ProblemDiggerExercise({ data, onChange }: ProblemDiggerExerciseP
         setDynamicLabels(prev => ({ ...prev, [levelId]: responseData.question }));
       }
     } catch (error) {
-      console.error('Error:', error);
+      if (import.meta.env.DEV) console.error('Error:', error);
     } finally {
       setLoadingLevels(prev => ({ ...prev, [levelId]: false }));
     }
