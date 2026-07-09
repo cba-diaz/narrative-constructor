@@ -119,7 +119,7 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
         .maybeSingle();
 
       if (error) {
-        console.error('Error loading pitch data:', error);
+        if (import.meta.env.DEV) console.error('Error loading pitch data:', error);
         setIsLoading(false);
         return;
       }
@@ -172,7 +172,7 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
     isSavingRef.current = false;
 
     if (error) {
-      console.error('Error saving pitch data:', error);
+      if (import.meta.env.DEV) console.error('Error saving pitch data:', error);
       isDirtyRef.current = true; // Mark dirty again so retry picks it up
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 3000);
@@ -384,7 +384,7 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
       .eq('user_id', user.id);
     
     if (error) {
-      console.error('Error resetting data:', error);
+      if (import.meta.env.DEV) console.error('Error resetting data:', error);
       return;
     }
     

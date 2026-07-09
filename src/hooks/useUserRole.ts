@@ -23,7 +23,7 @@ export function useUserRole() {
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error fetching roles:', error);
+        if (import.meta.env.DEV) console.error('Error fetching roles:', error);
         setRoles([]);
       } else {
         setRoles(data?.map(r => r.role as AppRole) || []);
