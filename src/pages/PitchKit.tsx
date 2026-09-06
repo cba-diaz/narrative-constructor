@@ -31,6 +31,10 @@ export default function PitchKit() {
     );
   }
 
+  if (!unlocked) {
+    return <IsbnGate onUnlock={() => setUnlocked(true)} onBack={() => navigate('/?view=hub')} />;
+  }
+
   const pitchKitBlocks = getPitchKitBlocks();
   const completedCount = getPitchKitCompletedCount();
   const totalWords = getPitchKitTotalWords();
