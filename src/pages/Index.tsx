@@ -1,9 +1,10 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { LandingPage } from '@/components/LandingPage';
 import { HubPage } from '@/components/HubPage';
 import { SectionWizard } from '@/components/SectionWizard';
 import { PitchView } from '@/components/PitchView';
+import { IsbnGate, isPitchUnlocked } from '@/components/IsbnGate';
 import { blocks } from '@/data/blocks';
 import { usePitchStore } from '@/hooks/usePitchStore';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,6 +15,7 @@ type View = 'landing' | 'hub' | 'editor' | 'pitch';
 const Index = () => {
   const { user, loading: authLoading } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [pitchUnlocked, setPitchUnlocked] = useState(() => isPitchUnlocked());
   const {
     data,
     isLoading: dataLoading,
@@ -140,6 +142,9 @@ const Index = () => {
   }
   
   if (currentView === 'pitch') {
+    if (!pitchUnlocked) {
+      return <IsbnGate onUnlock={() => setPitchUnlocked(true)} onBack={() => navigateTo('hub')} />;
+    }
     return (
       <PitchView
         userName={data.userName}
