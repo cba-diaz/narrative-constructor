@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, Download, Copy, Check, FileText, Clock, AlertTriangle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { IsbnGate, isPitchUnlocked } from '@/components/IsbnGate';
 
 export default function PitchKit() {
   const { user, loading } = useAuth();
@@ -14,6 +15,7 @@ export default function PitchKit() {
   const { toast } = useToast();
   const { data, getPitchKitBlocks, getPitchKitCompletedCount, getPitchKitTotalWords } = usePitchStore();
   const [copiedBlock, setCopiedBlock] = useState<number | null>(null);
+  const [unlocked, setUnlocked] = useState(() => isPitchUnlocked());
 
   useEffect(() => {
     if (!loading && !user) {
