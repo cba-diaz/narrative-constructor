@@ -44,11 +44,12 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
           <div className="w-full max-w-md animate-fade-in">
             {/* Logo */}
             <div className="flex items-center justify-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-                <Film className="w-6 h-6 text-primary-foreground" />
+              <div className="w-12 h-12 rounded-sm bg-foreground flex items-center justify-center">
+                <Film className="w-6 h-6 text-background" />
               </div>
-              <h1 className="text-2xl font-bold text-foreground">Pitch de Película</h1>
+              <h1 className="text-2xl font-display font-black text-foreground">Pitch de Película</h1>
             </div>
+
 
             {/* Main Card */}
             <div className="card-elevated p-8">
