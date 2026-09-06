@@ -54,13 +54,14 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
             {/* Main Card */}
             <div className="card-elevated p-8">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-primary text-primary-foreground eyebrow mb-4">
                   <Sparkles className="w-4 h-4" />
                   Metodología basada en el libro Pitch de Película
                 </div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">
-                  Construye tu pitch de inversión en 9 bloques
+                <h2 className="text-3xl font-display font-black text-foreground mb-2 leading-tight">
+                  Construye tu pitch de inversión en <span className="text-primary">9 bloques</span>
                 </h2>
+
                 <p className="text-muted-foreground">
                   Al terminar tendrás un guión de 4-5 minutos listo para presentar
                 </p>
