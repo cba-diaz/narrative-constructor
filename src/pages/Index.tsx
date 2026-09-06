@@ -140,6 +140,9 @@ const Index = () => {
   }
   
   if (currentView === 'pitch') {
+    if (!pitchUnlocked) {
+      return <IsbnGate onUnlock={() => setPitchUnlocked(true)} onBack={() => navigateTo('hub')} />;
+    }
     return (
       <PitchView
         userName={data.userName}
