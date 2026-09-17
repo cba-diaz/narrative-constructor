@@ -173,6 +173,8 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
     const currentUser = userRef.current;
     const currentData = dataRef.current;
     if (!currentUser || isLoadingRef.current || !isDirtyRef.current) return true;
+    // Never write before we know what is stored — protects against wiping saved data
+    if (!loadOkRef.current) return false;
     if (isSavingRef.current) return true; // already saving
 
     isSavingRef.current = true;
