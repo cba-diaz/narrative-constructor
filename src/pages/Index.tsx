@@ -89,6 +89,14 @@ const Index = () => {
   }, [resetData, navigateTo]);
 
   const completedBlocks = getCompletedBlocks();
+  const effectiveKit = getPitchKitBlocks();
+  const effectiveContents = useMemo(() => {
+    const out: Record<number, string> = { ...data.blocks };
+    Object.entries(effectiveKit).forEach(([num, b]) => {
+      if (b?.content?.trim()) out[parseInt(num)] = b.content;
+    });
+    return out;
+  }, [data.blocks, effectiveKit]);
 
   // Show loading while auth or data is loading
   if (authLoading || (user && dataLoading)) {
