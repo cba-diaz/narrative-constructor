@@ -105,6 +105,8 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
     
     if (!user) {
       loadedUserIdRef.current = null;
+      loadOkRef.current = false;
+      setLoadFailed(false);
       setData(getDefaultData());
       setIsLoading(false);
       return;
@@ -114,37 +116,56 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
       return;
     }
 
+    let cancelled = false;
+
     const loadData = async () => {
       setIsLoading(true);
-      const { data: pitchData, error } = await supabase
-        .from('pitch_data')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
+      setLoadFailed(false);
 
-      if (error) {
-        if (import.meta.env.DEV) console.error('Error loading pitch data:', error);
+      // Retry with backoff — a flaky network must never leave the app "empty"
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const { data: pitchData, error } = await supabase
+          .from('pitch_data')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (cancelled) return;
+
+        if (error) {
+          if (import.meta.env.DEV) console.error('Error loading pitch data:', error);
+          if (attempt < 3) {
+            await new Promise(r => setTimeout(r, 600 * Math.pow(2, attempt)));
+            continue;
+          }
+          // Give up: keep saving disabled so nothing gets overwritten
+          loadOkRef.current = false;
+          setLoadFailed(true);
+          setIsLoading(false);
+          return;
+        }
+
+        if (pitchData) {
+          setData({
+            userName: pitchData.user_name || '',
+            startupName: pitchData.startup_name || '',
+            blocks: (pitchData.blocks as unknown as Record<number, string>) || {},
+            sections: (pitchData.sections as unknown as Record<number, SectionData>) || {},
+            pitchKit: (pitchData.pitch_kit as unknown as Record<number, PitchKitBlock>) || {},
+            currentBlock: pitchData.current_block || 1,
+            createdAt: pitchData.created_at,
+            updatedAt: pitchData.updated_at,
+          });
+        }
+        loadedUserIdRef.current = user.id;
+        loadOkRef.current = true;
         setIsLoading(false);
         return;
       }
-
-      if (pitchData) {
-        setData({
-          userName: pitchData.user_name || '',
-          startupName: pitchData.startup_name || '',
-          blocks: (pitchData.blocks as unknown as Record<number, string>) || {},
-          sections: (pitchData.sections as unknown as Record<number, SectionData>) || {},
-          pitchKit: (pitchData.pitch_kit as unknown as Record<number, PitchKitBlock>) || {},
-          currentBlock: pitchData.current_block || 1,
-          createdAt: pitchData.created_at,
-          updatedAt: pitchData.updated_at,
-        });
-      }
-      loadedUserIdRef.current = user.id;
-      setIsLoading(false);
     };
 
     loadData();
+    return () => { cancelled = true; };
   }, [user, authLoading]);
 
   // Core save function — performs the actual upsert
