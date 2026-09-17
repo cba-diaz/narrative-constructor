@@ -430,17 +430,17 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
   }, [scheduleSave]);
 
   const getPitchKitBlocks = useCallback(() => {
-    return data.pitchKit;
-  }, [data.pitchKit]);
+    return effectivePitchKit;
+  }, [effectivePitchKit]);
 
   const getPitchKitCompletedCount = useCallback(() => {
-    return Object.keys(data.pitchKit).filter(k => data.pitchKit[parseInt(k)]?.content?.trim().length > 0).length;
-  }, [data.pitchKit]);
+    return Object.values(effectivePitchKit).filter(b => b?.content?.trim().length > 0).length;
+  }, [effectivePitchKit]);
 
   const getPitchKitTotalWords = useCallback(() => {
-    return Object.values(data.pitchKit)
+    return Object.values(effectivePitchKit)
       .reduce((total, block) => total + (block?.wordCount || 0), 0);
-  }, [data.pitchKit]);
+  }, [effectivePitchKit]);
 
   const hasStarted = data.userName.length > 0 && data.startupName.length > 0;
 
