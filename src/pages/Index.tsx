@@ -26,6 +26,7 @@ const Index = () => {
     resetData,
     hasStarted,
     getPitchKitCompletedCount,
+    getPitchKitBlocks,
   } = usePitchStore();
 
   // Derive view from URL — single source of truth

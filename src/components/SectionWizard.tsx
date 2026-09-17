@@ -117,7 +117,7 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
     });
     
     onComplete();
-  }, [sectionNumber, setBlockContent, toast, onComplete]);
+  }, [sectionNumber, setBlockContent, saveToPitchKit, toast, onComplete]);
 
   const handleSaveToPitchKit = useCallback((content: string) => {
     saveToPitchKit(sectionNumber, content);
