@@ -122,8 +122,8 @@ const Index = () => {
         completedBlocks={completedBlocks}
         currentBlock={data.currentBlock}
         pitchKitCount={getPitchKitCompletedCount()}
-        pitchKitSavedBlocks={Object.keys(data.pitchKit).filter(k => data.pitchKit[parseInt(k)]?.content?.trim().length > 0).map(k => parseInt(k))}
-        blockContents={data.blocks}
+        pitchKitSavedBlocks={completedBlocks}
+        blockContents={effectiveContents}
         onSelectBlock={handleSelectBlock}
         onViewPitch={() => navigateTo('pitch')}
         onReset={handleReset}
@@ -158,7 +158,7 @@ const Index = () => {
       <PitchView
         userName={data.userName}
         startupName={data.startupName}
-        blockContents={data.blocks}
+        blockContents={effectiveContents}
         onBack={() => navigateTo('hub')}
         onEditBlock={handleSelectBlock}
       />
