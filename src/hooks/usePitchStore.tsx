@@ -72,6 +72,7 @@ interface PitchStoreValue {
   getPitchKitCompletedCount: () => number;
   getPitchKitTotalWords: () => number;
   flushSave: () => Promise<void>;
+  loadFailed: boolean;
 }
 
 const PitchStoreContext = createContext<PitchStoreValue | null>(null);
@@ -89,6 +90,10 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
   const userRef = useRef(user);
   const isLoadingRef = useRef(isLoading);
   const isDirtyRef = useRef(false);
+  // True only once the remote data for the current user has been read successfully.
+  // While false, saving is blocked so a failed load can never overwrite stored data.
+  const loadOkRef = useRef(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   // Keep refs in sync
   useEffect(() => { dataRef.current = data; }, [data]);
@@ -101,6 +106,8 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
     
     if (!user) {
       loadedUserIdRef.current = null;
+      loadOkRef.current = false;
+      setLoadFailed(false);
       setData(getDefaultData());
       setIsLoading(false);
       return;
@@ -110,37 +117,56 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
       return;
     }
 
+    let cancelled = false;
+
     const loadData = async () => {
       setIsLoading(true);
-      const { data: pitchData, error } = await supabase
-        .from('pitch_data')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
+      setLoadFailed(false);
 
-      if (error) {
-        if (import.meta.env.DEV) console.error('Error loading pitch data:', error);
+      // Retry with backoff — a flaky network must never leave the app "empty"
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const { data: pitchData, error } = await supabase
+          .from('pitch_data')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (cancelled) return;
+
+        if (error) {
+          if (import.meta.env.DEV) console.error('Error loading pitch data:', error);
+          if (attempt < 3) {
+            await new Promise(r => setTimeout(r, 600 * Math.pow(2, attempt)));
+            continue;
+          }
+          // Give up: keep saving disabled so nothing gets overwritten
+          loadOkRef.current = false;
+          setLoadFailed(true);
+          setIsLoading(false);
+          return;
+        }
+
+        if (pitchData) {
+          setData({
+            userName: pitchData.user_name || '',
+            startupName: pitchData.startup_name || '',
+            blocks: (pitchData.blocks as unknown as Record<number, string>) || {},
+            sections: (pitchData.sections as unknown as Record<number, SectionData>) || {},
+            pitchKit: (pitchData.pitch_kit as unknown as Record<number, PitchKitBlock>) || {},
+            currentBlock: pitchData.current_block || 1,
+            createdAt: pitchData.created_at,
+            updatedAt: pitchData.updated_at,
+          });
+        }
+        loadedUserIdRef.current = user.id;
+        loadOkRef.current = true;
         setIsLoading(false);
         return;
       }
-
-      if (pitchData) {
-        setData({
-          userName: pitchData.user_name || '',
-          startupName: pitchData.startup_name || '',
-          blocks: (pitchData.blocks as unknown as Record<number, string>) || {},
-          sections: (pitchData.sections as unknown as Record<number, SectionData>) || {},
-          pitchKit: (pitchData.pitch_kit as unknown as Record<number, PitchKitBlock>) || {},
-          currentBlock: pitchData.current_block || 1,
-          createdAt: pitchData.created_at,
-          updatedAt: pitchData.updated_at,
-        });
-      }
-      loadedUserIdRef.current = user.id;
-      setIsLoading(false);
     };
 
     loadData();
+    return () => { cancelled = true; };
   }, [user, authLoading]);
 
   // Core save function — performs the actual upsert
@@ -148,6 +174,8 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
     const currentUser = userRef.current;
     const currentData = dataRef.current;
     if (!currentUser || isLoadingRef.current || !isDirtyRef.current) return true;
+    // Never write before we know what is stored — protects against wiping saved data
+    if (!loadOkRef.current) return false;
     if (isSavingRef.current) return true; // already saving
 
     isSavingRef.current = true;
@@ -467,10 +495,19 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
     getPitchKitCompletedCount,
     getPitchKitTotalWords,
     flushSave,
+    loadFailed,
   };
 
   return (
     <PitchStoreContext.Provider value={value}>
+      {loadFailed && (
+        <div className="fixed top-0 inset-x-0 z-50 bg-destructive text-destructive-foreground text-sm px-4 py-2 text-center">
+          No pudimos cargar tu pitch guardado. Tu contenido está a salvo: no se guardará nada nuevo hasta recuperar la conexión.{' '}
+          <button className="underline font-medium" onClick={() => window.location.reload()}>
+            Reintentar
+          </button>
+        </div>
+      )}
       {children}
     </PitchStoreContext.Provider>
   );
