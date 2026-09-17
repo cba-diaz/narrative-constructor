@@ -89,6 +89,10 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
   const userRef = useRef(user);
   const isLoadingRef = useRef(isLoading);
   const isDirtyRef = useRef(false);
+  // True only once the remote data for the current user has been read successfully.
+  // While false, saving is blocked so a failed load can never overwrite stored data.
+  const loadOkRef = useRef(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   // Keep refs in sync
   useEffect(() => { dataRef.current = data; }, [data]);
