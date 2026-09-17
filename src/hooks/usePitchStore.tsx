@@ -348,32 +348,53 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
     };
   }, [data.sections]);
 
-  // completedBlocks now based on pitchKit saves (the final version), not drafts
+  // Effective pitch kit: explicit Pitch Kit saves, with block drafts as fallback
+  // so nothing the user wrote ever disappears from the final pitch.
+  const effectivePitchKit = React.useMemo<Record<number, PitchKitBlock>>(() => {
+    const merged: Record<number, PitchKitBlock> = {};
+    for (let i = 1; i <= 9; i++) {
+      const kit = data.pitchKit[i];
+      if (kit?.content?.trim()) {
+        merged[i] = kit;
+        continue;
+      }
+      const draft = data.blocks[i];
+      if (draft && draft.trim()) {
+        merged[i] = {
+          content: draft,
+          savedAt: data.updatedAt,
+          wordCount: draft.trim().split(/\s+/).filter(Boolean).length,
+        };
+      }
+    }
+    return merged;
+  }, [data.pitchKit, data.blocks, data.updatedAt]);
+
   const getCompletedBlocks = useCallback(() => {
-    return Object.entries(data.pitchKit)
+    return Object.entries(effectivePitchKit)
       .filter(([_, block]) => block?.content?.trim().length > 0)
       .map(([num]) => parseInt(num));
-  }, [data.pitchKit]);
+  }, [effectivePitchKit]);
 
   const isBlockCompleted = useCallback((blockNumber: number) => {
-    return !!data.pitchKit[blockNumber]?.content?.trim();
-  }, [data.pitchKit]);
+    return !!effectivePitchKit[blockNumber]?.content?.trim();
+  }, [effectivePitchKit]);
 
   const getNextIncompleteBlock = useCallback(() => {
     for (let i = 1; i <= 9; i++) {
-      if (!data.pitchKit[i]?.content?.trim()) return i;
+      if (!effectivePitchKit[i]?.content?.trim()) return i;
     }
     return null;
-  }, [data.pitchKit]);
+  }, [effectivePitchKit]);
 
   const getTotalWords = useCallback(() => {
-    return Object.values(data.pitchKit)
+    return Object.values(effectivePitchKit)
       .map(b => b?.content || '')
       .join(' ')
       .split(/\s+/)
       .filter(word => word.length > 0)
       .length;
-  }, [data.pitchKit]);
+  }, [effectivePitchKit]);
 
   const resetData = useCallback(async () => {
     if (!user) return;
