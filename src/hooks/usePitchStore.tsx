@@ -494,10 +494,19 @@ export function PitchStoreProvider({ children }: { children: React.ReactNode }) 
     getPitchKitCompletedCount,
     getPitchKitTotalWords,
     flushSave,
+    loadFailed,
   };
 
   return (
     <PitchStoreContext.Provider value={value}>
+      {loadFailed && (
+        <div className="fixed top-0 inset-x-0 z-50 bg-destructive text-destructive-foreground text-sm px-4 py-2 text-center">
+          No pudimos cargar tu pitch guardado. Tu contenido está a salvo: no se guardará nada nuevo hasta recuperar la conexión.{' '}
+          <button className="underline font-medium" onClick={() => window.location.reload()}>
+            Reintentar
+          </button>
+        </div>
+      )}
       {children}
     </PitchStoreContext.Provider>
   );
