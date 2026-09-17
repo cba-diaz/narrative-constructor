@@ -102,6 +102,12 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
 
   const handleBlockSaveAndFinish = useCallback((content: string) => {
     setBlockContent(sectionNumber, content);
+    // Keep the Pitch Kit in sync: saving the block also updates the final pitch
+    if (content.trim().length > 0) {
+      saveToPitchKit(sectionNumber, content);
+      setPitchKitSaved(true);
+    }
+    
     
     const isLastSection = sectionNumber === 9;
     toast({
@@ -111,7 +117,7 @@ export function SectionWizard({ sectionNumber, onComplete, onBack }: SectionWiza
     });
     
     onComplete();
-  }, [sectionNumber, setBlockContent, toast, onComplete]);
+  }, [sectionNumber, setBlockContent, saveToPitchKit, toast, onComplete]);
 
   const handleSaveToPitchKit = useCallback((content: string) => {
     saveToPitchKit(sectionNumber, content);

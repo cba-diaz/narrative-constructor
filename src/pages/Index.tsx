@@ -26,6 +26,7 @@ const Index = () => {
     resetData,
     hasStarted,
     getPitchKitCompletedCount,
+    getPitchKitBlocks,
   } = usePitchStore();
 
   // Derive view from URL — single source of truth
@@ -88,6 +89,14 @@ const Index = () => {
   }, [resetData, navigateTo]);
 
   const completedBlocks = getCompletedBlocks();
+  const effectiveKit = getPitchKitBlocks();
+  const effectiveContents = useMemo(() => {
+    const out: Record<number, string> = { ...data.blocks };
+    Object.entries(effectiveKit).forEach(([num, b]) => {
+      if (b?.content?.trim()) out[parseInt(num)] = b.content;
+    });
+    return out;
+  }, [data.blocks, effectiveKit]);
 
   // Show loading while auth or data is loading
   if (authLoading || (user && dataLoading)) {
@@ -113,8 +122,8 @@ const Index = () => {
         completedBlocks={completedBlocks}
         currentBlock={data.currentBlock}
         pitchKitCount={getPitchKitCompletedCount()}
-        pitchKitSavedBlocks={Object.keys(data.pitchKit).filter(k => data.pitchKit[parseInt(k)]?.content?.trim().length > 0).map(k => parseInt(k))}
-        blockContents={data.blocks}
+        pitchKitSavedBlocks={completedBlocks}
+        blockContents={effectiveContents}
         onSelectBlock={handleSelectBlock}
         onViewPitch={() => navigateTo('pitch')}
         onReset={handleReset}
@@ -149,7 +158,7 @@ const Index = () => {
       <PitchView
         userName={data.userName}
         startupName={data.startupName}
-        blockContents={data.blocks}
+        blockContents={effectiveContents}
         onBack={() => navigateTo('hub')}
         onEditBlock={handleSelectBlock}
       />
