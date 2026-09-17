@@ -72,6 +72,7 @@ interface PitchStoreValue {
   getPitchKitCompletedCount: () => number;
   getPitchKitTotalWords: () => number;
   flushSave: () => Promise<void>;
+  loadFailed: boolean;
 }
 
 const PitchStoreContext = createContext<PitchStoreValue | null>(null);
