@@ -102,7 +102,7 @@ export function PitchView({
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-4 py-3">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button 
             onClick={onBack}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -125,7 +125,7 @@ export function PitchView({
       </header>
 
       {/* Content */}
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Title Section */}
         <div className="text-center mb-10 animate-fade-in">
           <h1 className="text-3xl font-bold text-foreground mb-2">Tu Pitch Completo</h1>
@@ -152,12 +152,13 @@ export function PitchView({
 
         <StoryboardPitch blockContents={blockContents} onEditBlock={onEditBlock} />
 
-        {/* Pitch Content */}
-        <div className="mb-6 border-b border-border pb-4">
-          <p className="eyebrow text-primary">Versión completa</p>
-          <h2 className="mt-1 text-2xl text-foreground">El pitch en texto</h2>
-        </div>
-        <div className="space-y-6">
+        <div className="mx-auto max-w-3xl">
+          {/* Pitch Content */}
+          <div className="mb-6 border-b border-border pb-4">
+            <p className="eyebrow text-primary">Versión completa</p>
+            <h2 className="mt-1 text-2xl text-foreground">El pitch en texto</h2>
+          </div>
+          <div className="space-y-6">
           {blocks.map((block) => {
             const content = blockContents[block.numero];
             const hasContent = content && content.trim().length > 0;
@@ -206,10 +207,10 @@ export function PitchView({
               </div>
             );
           })}
-        </div>
+          </div>
 
-        {/* Footer CTA */}
-        <div className="mt-12 text-center card-elevated p-8">
+          {/* Footer CTA */}
+          <div className="mt-12 text-center card-elevated p-8">
           <h2 className="text-xl font-bold text-foreground mb-2">
             Tu pitch está {completedBlocksCount === 9 ? 'listo' : 'casi listo'}
           </h2>
@@ -237,10 +238,10 @@ export function PitchView({
               Descargar como TXT
             </Button>
           </div>
-        </div>
+          </div>
 
-        {/* Attribution */}
-        <div className="mt-8 text-center">
+          {/* Attribution */}
+          <div className="mt-8 text-center">
           <a 
             href="https://pitchdepelicula.com" 
             target="_blank" 
@@ -249,6 +250,7 @@ export function PitchView({
           >
             Creado con Pitch de Película — pitchdepelicula.com
           </a>
+          </div>
         </div>
       </main>
     </div>
