@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { StoryboardPitch } from '@/components/StoryboardPitch';
 
 interface PitchViewProps {
   userName: string;
@@ -126,7 +127,7 @@ export function PitchView({
       {/* Content */}
       <main className="max-w-3xl mx-auto px-4 py-8">
         {/* Title Section */}
-        <div className="text-center mb-8 animate-fade-in">
+        <div className="text-center mb-10 animate-fade-in">
           <h1 className="text-3xl font-bold text-foreground mb-2">Tu Pitch Completo</h1>
           <p className="text-lg text-muted-foreground mb-4">
             {startupName} — {userName}
@@ -149,7 +150,13 @@ export function PitchView({
           </div>
         </div>
 
+        <StoryboardPitch blockContents={blockContents} onEditBlock={onEditBlock} />
+
         {/* Pitch Content */}
+        <div className="mb-6 border-b border-border pb-4">
+          <p className="eyebrow text-primary">Versión completa</p>
+          <h2 className="mt-1 text-2xl text-foreground">El pitch en texto</h2>
+        </div>
         <div className="space-y-6">
           {blocks.map((block) => {
             const content = blockContents[block.numero];
