@@ -8,6 +8,7 @@ import { ChevronLeft, Download, Copy, Check, FileText, Clock, AlertTriangle, Loa
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { IsbnGate, isPitchUnlocked } from '@/components/IsbnGate';
+import { StoryboardPitch } from '@/components/StoryboardPitch';
 
 export default function PitchKit() {
   const { user, loading } = useAuth();
@@ -194,6 +195,16 @@ export default function PitchKit() {
             <p className="text-sm text-muted-foreground">Ahora léelo en voz alta tres veces. El pitch que memoriza el inversionista no es el que está en este documento, es el que escucha de tu boca.</p>
           </div>
         )}
+
+        {/* Storyboard */}
+        <div className="mt-8">
+          <StoryboardPitch
+            blockContents={Object.fromEntries(
+              blocks.map(b => [b.numero, pitchKitBlocks[b.numero]?.content ?? ''])
+            )}
+            onEditBlock={(n) => navigate(`/?view=editor&section=${n}`)}
+          />
+        </div>
 
         {/* Blocks */}
         <div className="space-y-6">
