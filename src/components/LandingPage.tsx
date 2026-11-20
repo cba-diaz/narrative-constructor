@@ -115,7 +115,7 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
         </main>
 
         {/* Footer */}
-        <footer className="py-6 text-center border-t border-border">
+        <footer className="py-6 text-center border-t border-border flex items-center justify-center gap-4">
           <a 
             href="https://pitchdepelicula.com" 
             target="_blank" 
@@ -124,6 +124,9 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
           >
             pitchdepelicula.com
           </a>
+          <Link to="/privacidad" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            Privacidad
+          </Link>
         </footer>
       </div>
     );
@@ -233,7 +236,7 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
       </main>
 
       {/* Footer */}
-      <footer className="py-6 text-center border-t border-border">
+      <footer className="py-6 text-center border-t border-border flex items-center justify-center gap-4">
         <a 
           href="https://pitchdepelicula.com" 
           target="_blank" 
@@ -242,6 +245,9 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
         >
           pitchdepelicula.com
         </a>
+        <Link to="/privacidad" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+          Privacidad
+        </Link>
       </footer>
     </div>
   );
