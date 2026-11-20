@@ -1,18 +1,10 @@
-import { useMemo } from 'react';
-import { blocks } from '@/data/blocks';
-import { Button } from '@/components/ui/button';
-import { 
-  ChevronLeft, 
-  Copy, 
-  Download, 
-  Pencil, 
-  Clock,
-  FileText,
-  Check
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
-import { StoryboardPitch } from '@/components/StoryboardPitch';
+import { useMemo } from "react";
+import { blocks } from "@/data/blocks";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, Copy, Download, Pencil, Clock, FileText, Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { StoryboardPitch } from "@/components/StoryboardPitch";
 
 interface PitchViewProps {
   userName: string;
@@ -22,42 +14,35 @@ interface PitchViewProps {
   onEditBlock: (blockNumber: number) => void;
 }
 
-export function PitchView({ 
-  userName, 
-  startupName, 
-  blockContents, 
-  onBack, 
-  onEditBlock 
-}: PitchViewProps) {
+export function PitchView({ userName, startupName, blockContents, onBack, onEditBlock }: PitchViewProps) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
   const totalWords = useMemo(() => {
     return Object.values(blockContents)
-      .join(' ')
+      .join(" ")
       .split(/\s+/)
-      .filter(word => word.length > 0)
-      .length;
+      .filter((word) => word.length > 0).length;
   }, [blockContents]);
 
   const readingTime = useMemo(() => {
     return Math.ceil(totalWords / 150);
   }, [totalWords]);
 
-  const completedBlocksCount = Object.values(blockContents).filter(c => c && c.trim().length > 0).length;
+  const completedBlocksCount = Object.values(blockContents).filter((c) => c && c.trim().length > 0).length;
 
   const generatePlainText = () => {
     let text = `${startupName.toUpperCase()}\n\n`;
-    
+
     blocks.forEach((block) => {
       const content = blockContents[block.numero];
       if (content && content.trim()) {
         text += `${content.trim()}\n\n`;
       }
     });
-    
+
     text += `---\nCreado con Pitch de Película\npitchdepelicula.com`;
-    
+
     return text;
   };
 
@@ -81,16 +66,16 @@ export function PitchView({
 
   const handleDownloadTXT = () => {
     const text = generatePlainText();
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `${startupName.toLowerCase().replace(/\s+/g, '-')}-pitch.txt`;
+    a.download = `${startupName.toLowerCase().replace(/\s+/g, "-")}-pitch.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
+
     toast({
       title: "✓ Descargado",
       description: `${startupName}-pitch.txt`,
@@ -101,20 +86,20 @@ export function PitchView({
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-4 py-3">
+      <header className="pdp-view-top">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button 
+          <button
             onClick={onBack}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
             <span className="hidden sm:inline">Volver al hub</span>
           </button>
-          
+
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleCopy}>
               {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-              {copied ? 'Copiado' : 'Copiar'}
+              {copied ? "Copiado" : "Copiar"}
             </Button>
             <Button variant="outline" size="sm" onClick={handleDownloadTXT}>
               <Download className="w-4 h-4 mr-2" />
@@ -128,13 +113,12 @@ export function PitchView({
       <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Title Section */}
         <div className="text-center mb-10 animate-fade-in">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Tu Pitch Completo</h1>
-          <p className="text-lg text-muted-foreground mb-4">
-            {startupName} — {userName}
-          </p>
-          
+          <p className="pdp-view-pre">Startups de Película presenta</p>
+          <h1 className="pdp-view-titulo">{startupName}</h1>
+          <p className="pdp-view-credito">Un pitch de {userName}</p>
+
           {/* Stats */}
-          <div className="flex items-center justify-center gap-6 text-sm">
+          <div className="pdp-view-stats">
             <div className="flex items-center gap-2 text-muted-foreground">
               <FileText className="w-4 h-4" />
               <span>~{totalWords} palabras</span>
@@ -159,97 +143,80 @@ export function PitchView({
             <h2 className="mt-1 text-2xl text-foreground">El pitch en texto</h2>
           </div>
           <div className="space-y-6">
-          {blocks.map((block) => {
-            const content = blockContents[block.numero];
-            const hasContent = content && content.trim().length > 0;
-            
-            return (
-              <div 
-                key={block.numero} 
-                className="card-elevated p-6 animate-fade-in group"
-                style={{ animationDelay: `${block.numero * 50}ms` }}
-              >
-                {/* Block Header */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
-                      {block.numero}. {block.nombre}
-                    </span>
-                  </div>
-                  <button 
-                    onClick={() => onEditBlock(block.numero)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-muted rounded-lg"
-                    title="Editar bloque"
-                  >
-                    <Pencil className="w-4 h-4 text-muted-foreground" />
-                  </button>
-                </div>
-                
-                {/* Content */}
-                {hasContent ? (
-                  <p className="text-foreground whitespace-pre-wrap leading-relaxed">
-                    {content}
-                  </p>
-                ) : (
-                  <div className="py-4 text-center">
-                    <p className="text-muted-foreground italic mb-3">
-                      Este bloque aún no está completo
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
+            {blocks.map((block) => {
+              const content = blockContents[block.numero];
+              const hasContent = content && content.trim().length > 0;
+
+              return (
+                <div
+                  key={block.numero}
+                  className="card-elevated p-6 animate-fade-in group"
+                  style={{ animationDelay: `${block.numero * 50}ms` }}
+                >
+                  {/* Block Header */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium px-2 py-1 rounded-full bg-primary/10 text-primary">
+                        {block.numero}. {block.nombre}
+                      </span>
+                    </div>
+                    <button
                       onClick={() => onEditBlock(block.numero)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-muted rounded-lg"
+                      title="Editar bloque"
                     >
-                      Completar bloque
-                    </Button>
+                      <Pencil className="w-4 h-4 text-muted-foreground" />
+                    </button>
                   </div>
-                )}
-              </div>
-            );
-          })}
+
+                  {/* Content */}
+                  {hasContent ? (
+                    <p className="text-foreground whitespace-pre-wrap leading-relaxed">{content}</p>
+                  ) : (
+                    <div className="py-4 text-center">
+                      <p className="text-muted-foreground italic mb-3">Este bloque aún no está completo</p>
+                      <Button variant="outline" size="sm" onClick={() => onEditBlock(block.numero)}>
+                        Completar bloque
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Footer CTA */}
           <div className="mt-12 text-center card-elevated p-8">
-          <h2 className="text-xl font-bold text-foreground mb-2">
-            Tu pitch está {completedBlocksCount === 9 ? 'listo' : 'casi listo'}
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            {completedBlocksCount === 9 
-              ? "Léelo en voz alta. Practica hasta que fluya."
-              : `Te faltan ${9 - completedBlocksCount} bloques por completar.`
-            }
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button 
-              size="lg" 
-              className="btn-primary-gradient"
-              onClick={handleCopy}
-            >
-              <Copy className="w-5 h-5 mr-2" />
-              Copiar al portapapeles
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              onClick={handleDownloadTXT}
-            >
-              <Download className="w-5 h-5 mr-2" />
-              Descargar como TXT
-            </Button>
-          </div>
+            <h2 className="text-xl font-bold text-foreground mb-2">
+              Tu pitch está {completedBlocksCount === 9 ? "listo" : "casi listo"}
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              {completedBlocksCount === 9
+                ? "Léelo en voz alta. Practica hasta que fluya."
+                : `Te faltan ${9 - completedBlocksCount} bloques por completar.`}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button size="lg" className="btn-primary-gradient" onClick={handleCopy}>
+                <Copy className="w-5 h-5 mr-2" />
+                Copiar al portapapeles
+              </Button>
+              <Button variant="outline" size="lg" onClick={handleDownloadTXT}>
+                <Download className="w-5 h-5 mr-2" />
+                Descargar como TXT
+              </Button>
+            </div>
           </div>
 
           {/* Attribution */}
           <div className="mt-8 text-center">
-          <a 
-            href="https://pitchdepelicula.com" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            Creado con Pitch de Película — pitchdepelicula.com
-          </a>
+            <a
+              href="https://pitchdepelicula.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              Creado con Pitch de Película — pitchdepelicula.com
+            </a>
           </div>
         </div>
       </main>
