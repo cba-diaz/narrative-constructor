@@ -190,14 +190,18 @@ export function HubPage({
                     <span className="pdp-panel-pregunta">{block.pregunta}</span>
                     <span className="pdp-panel-pie">
                       {st === "completed"
-                        ? pal + " palabras · " + (enRango ? "en rango" : "fuera de rango")
+                        ? pal + " palabras"
                         : st === "draft"
                           ? "Borrador a medias"
                           : st === "current"
                             ? "Siguiente toma"
                             : block.palabrasMin + " a " + block.palabrasMax + " palabras"}
                     </span>
-                    {st === "completed" && <span className="pdp-sello">Toma buena</span>}
+                    {st === "completed" && (
+                      <span className={cn("pdp-sello", !enRango && "otra")}>
+                        {enRango ? "Toma buena" : "Otra toma"}
+                      </span>
+                    )}
                   </button>
                 );
               })}
