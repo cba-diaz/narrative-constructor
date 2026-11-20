@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { lovable } from '@/integrations/lovable';
 import { translateAuthError } from '@/lib/translateAuthError';
+import { ConsentFields, CONSENT_REQUIRED_ERROR } from '@/components/ConsentFields';
+import { CONSENT_VERSION, savePendingConsent } from '@/lib/consent';
 
 const registerSchema = z.object({
   fullName: z.string().trim().min(2, { message: 'El nombre debe tener al menos 2 caracteres' }).max(100),
@@ -30,6 +32,8 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [consentAccepted, setConsentAccepted] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const { signUp, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -45,12 +49,25 @@ export default function Register() {
         const field = err.path[0] as string;
         fieldErrors[field] = err.message;
       });
+      if (!consentAccepted) fieldErrors.consent = CONSENT_REQUIRED_ERROR;
       setErrors(fieldErrors);
       return;
     }
 
+    if (!consentAccepted) {
+      setErrors({ consent: CONSENT_REQUIRED_ERROR });
+      return;
+    }
+
     setIsLoading(true);
-    const { error } = await signUp(email.trim(), password, fullName.trim());
+    savePendingConsent(marketingOptIn, 'registro-email');
+    const { error } = await signUp(email.trim(), password, fullName.trim(), {
+      pdp_consent: {
+        version: CONSENT_VERSION,
+        marketing: marketingOptIn,
+        accepted_at: new Date().toISOString(),
+      },
+    });
     setIsLoading(false);
 
     if (error) {
@@ -66,6 +83,11 @@ export default function Register() {
   };
 
   const handleGoogleSignIn = async () => {
+    if (!consentAccepted) {
+      setErrors({ consent: CONSENT_REQUIRED_ERROR });
+      return;
+    }
+    savePendingConsent(marketingOptIn, 'registro-google');
     setIsGoogleLoading(true);
     const { error } = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
@@ -198,6 +220,18 @@ export default function Register() {
                     )}
                   </div>
 
+                  <ConsentFields
+                    accepted={consentAccepted}
+                    marketing={marketingOptIn}
+                    onAcceptedChange={(v) => {
+                      setConsentAccepted(v);
+                      if (v) setErrors((prev) => ({ ...prev, consent: '' }));
+                    }}
+                    onMarketingChange={setMarketingOptIn}
+                    error={errors.consent || undefined}
+                    disabled={isLoading || isGoogleLoading}
+                  />
+
                   <Button
                     type="submit"
                     size="lg"
@@ -274,7 +308,7 @@ export default function Register() {
         </div>
       </main>
 
-      <footer className="py-6 text-center border-t border-border">
+      <footer className="py-6 text-center border-t border-border flex items-center justify-center gap-4">
         <a
           href="https://pitchdepelicula.com"
           target="_blank"
@@ -283,6 +317,9 @@ export default function Register() {
         >
           pitchdepelicula.com
         </a>
+        <Link to="/privacidad" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+          Privacidad
+        </Link>
       </footer>
     </div>
   );
