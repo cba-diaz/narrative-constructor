@@ -14,12 +14,20 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Jost', 'system-ui', 'sans-serif'],
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', 'Georgia', '"Times New Roman"', 'serif'],
+        hand: ['Caveat', 'cursive'],
         mono: ['JetBrains Mono', 'Menlo', 'monospace'],
       },
 
       colors: {
+        rojo: { DEFAULT: "var(--rojo)", oscuro: "var(--rojo-oscuro)" },
+        crema: "var(--crema)",
+        negro: "var(--negro)",
+        tinta: "var(--tinta)",
+        amarillo: "var(--amarillo)",
+        salmon: "var(--salmon)",
+        celeste: "var(--celeste)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -72,10 +80,16 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      // Esquinas rectas en todo el sitio, igual que pitchdepelicula.com
       borderRadius: {
+        none: "0px",
+        sm: "var(--radius)",
+        DEFAULT: "var(--radius)",
+        md: "var(--radius)",
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        xl: "var(--radius)",
+        "2xl": "var(--radius)",
+        "3xl": "var(--radius)",
       },
       keyframes: {
         "accordion-down": {
