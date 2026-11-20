@@ -1329,3 +1329,24 @@
     border-bottom: 0;
   }
 }
+.pdp-view-top .text-foreground {
+  color: var(--crema);
+}
+.pdp-view-top .text-muted-foreground {
+  color: var(--amarillo);
+}
+.pdp-view-top button {
+  color: rgba(250, 245, 236, 0.8);
+  border-radius: 0;
+}
+.pdp-view-top button:hover {
+  color: var(--amarillo);
+}
+.pdp-view-top .font-bold {
+  font-family: "Fraunces", Georgia, serif;
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1;
+  font-weight: 900;
+  font-size: 20px;
+}
