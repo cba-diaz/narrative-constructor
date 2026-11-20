@@ -572,7 +572,7 @@
   border: 2px solid var(--negro);
   background: var(--crema);
 }
-.pdp-auth-card .pdp-google:hover {
+.pdp-auth-card button:not([type="submit"]):hover {
   background: var(--amarillo);
 }
 .pdp-auth-foot {
