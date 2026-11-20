@@ -1,20 +1,21 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ArrowLeft, Loader2, Mail } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { z } from 'zod';
+import { useState } from "react";
+import { AuthShell } from "@/components/IsbnGate";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft, Loader2, Mail } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 
 const emailSchema = z.object({
-  email: z.string().trim().email({ message: 'Introduce un email válido' }),
+  email: z.string().trim().email({ message: "Introduce un email válido" }),
 });
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { resetPassword } = useAuth();
@@ -22,7 +23,7 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     const result = emailSchema.safeParse({ email });
     if (!result.success) {
@@ -36,9 +37,9 @@ export default function ForgotPassword() {
 
     if (resetError) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: resetError.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
@@ -48,112 +49,69 @@ export default function ForgotPassword() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <main className="flex-1 flex items-center justify-center px-4 py-12">
-          <div className="w-full max-w-md animate-fade-in">
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <span className="brand-mark w-10 h-10 text-base">P</span>
-              <h1 className="text-2xl font-display font-semibold text-foreground">Pitch de Película</h1>
-            </div>
-
-            <div className="card-elevated p-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-6">
-                <Mail className="w-8 h-8 text-success" />
-              </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                Revisa tu email
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Hemos enviado instrucciones para restablecer tu contraseña a{' '}
-                <strong className="text-foreground">{email}</strong>
-              </p>
-              <Link to="/login">
-                <Button variant="outline" className="w-full">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Volver a iniciar sesión
-                </Button>
-              </Link>
-            </div>
+      <AuthShell escena="Clave" toma="02">
+        <div className="pdp-auth-card">
+          <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mb-6">
+            <Mail className="w-8 h-8 text-success" />
           </div>
-        </main>
-      </div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Revisa tu email</h2>
+          <p className="text-muted-foreground mb-6">
+            Hemos enviado instrucciones para restablecer tu contraseña a{" "}
+            <strong className="text-foreground">{email}</strong>
+          </p>
+          <Link to="/login">
+            <Button variant="outline" className="w-full">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver a iniciar sesión
+            </Button>
+          </Link>
+        </div>
+      </AuthShell>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md animate-fade-in">
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <span className="brand-mark w-10 h-10 text-base">P</span>
-            <h1 className="text-2xl font-display font-semibold text-foreground">Pitch de Película</h1>
-          </div>
-
-          <div className="card-elevated p-8">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                ¿Olvidaste tu contraseña?
-              </h2>
-              <p className="text-muted-foreground">
-                Introduce tu email y te enviaremos instrucciones para restablecerla
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={error ? 'border-destructive' : ''}
-                  disabled={isLoading}
-                />
-                {error && <p className="text-sm text-destructive">{error}</p>}
-              </div>
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full btn-primary-gradient text-base h-12"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Enviando...
-                  </>
-                ) : (
-                  'Enviar instrucciones'
-                )}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <Link
-                to="/login"
-                className="text-muted-foreground hover:text-primary inline-flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Volver a iniciar sesión
-              </Link>
-            </div>
-          </div>
+    <AuthShell escena="Clave" toma="02">
+      <div className="pdp-auth-card">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-2">¿Olvidaste tu contraseña?</h2>
+          <p className="text-muted-foreground">Introduce tu email y te enviaremos instrucciones para restablecerla</p>
         </div>
-      </main>
 
-      <footer className="py-6 text-center border-t border-border">
-        <a
-          href="https://pitchdepelicula.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-muted-foreground hover:text-primary transition-colors"
-        >
-          pitchdepelicula.com
-        </a>
-      </footer>
-    </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="tu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={error ? "border-destructive" : ""}
+              disabled={isLoading}
+            />
+            {error && <p className="text-sm text-destructive">{error}</p>}
+          </div>
+
+          <Button type="submit" size="lg" className="w-full btn-primary-gradient text-base h-12" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Enviando...
+              </>
+            ) : (
+              "Enviar instrucciones"
+            )}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <Link to="/login" className="text-muted-foreground hover:text-primary inline-flex items-center gap-2">
+            <ArrowLeft className="w-4 h-4" />
+            Volver a iniciar sesión
+          </Link>
+        </div>
+      </div>
+    </AuthShell>
   );
 }
