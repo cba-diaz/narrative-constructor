@@ -1,7 +1,7 @@
-import { blocks } from '@/data/blocks';
-import { Button } from '@/components/ui/button';
-import { Check, ChevronRight, Eye, RotateCcw, Package, LogOut } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { blocks } from "@/data/blocks";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronRight, Eye, RotateCcw, Package, LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,8 +13,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 interface HubPageProps {
   userName: string;
@@ -29,24 +29,24 @@ interface HubPageProps {
   onReset: () => void;
 }
 
-export function HubPage({ 
-  userName, 
-  startupName, 
-  completedBlocks, 
+export function HubPage({
+  userName,
+  startupName,
+  completedBlocks,
   currentBlock,
   pitchKitCount,
   pitchKitSavedBlocks,
   blockContents,
-  onSelectBlock, 
+  onSelectBlock,
   onViewPitch,
-  onReset
+  onReset,
 }: HubPageProps) {
   const navigate = useNavigate();
   const { signOut, user } = useAuth();
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    navigate("/");
   };
 
   const hasDraft = (blockNumber: number) => {
@@ -54,15 +54,15 @@ export function HubPage({
   };
 
   const getBlockStatus = (blockNumber: number) => {
-    if (completedBlocks.includes(blockNumber)) return 'completed';
-    
+    if (completedBlocks.includes(blockNumber)) return "completed";
+
     // Find the first incomplete block to highlight as "current"
-    const firstIncomplete = blocks.find(b => !completedBlocks.includes(b.numero))?.numero || 1;
-    if (blockNumber === firstIncomplete) return 'current';
-    
-    if (hasDraft(blockNumber)) return 'draft';
-    
-    return 'available';
+    const firstIncomplete = blocks.find((b) => !completedBlocks.includes(b.numero))?.numero || 1;
+    if (blockNumber === firstIncomplete) return "current";
+
+    if (hasDraft(blockNumber)) return "draft";
+
+    return "available";
   };
 
   const getNextBlock = () => {
@@ -79,242 +79,205 @@ export function HubPage({
   const completionPercentage = (completedBlocks.length / 9) * 100;
   const nextBlock = getNextBlock();
 
+  const ACTOS = [
+    { titulo: "Acto I", tono: "Emoción", nums: [1, 2, 3], c: "c0" },
+    { titulo: "Acto II", tono: "Razón", nums: [4, 5, 6], c: "c1" },
+    { titulo: "Acto III", tono: "Emoción", nums: [7, 8, 9], c: "c2" },
+  ];
+  const actoDe = (n: number) => (n <= 3 ? "c0" : n <= 6 ? "c1" : "c2");
+  const palabrasDe = (n: number) =>
+    (blockContents[n] || "")
+      .trim()
+      .split(/\s+/)
+      .filter((w) => w.length > 0).length;
+  const dos = (n: number) => String(n).padStart(2, "0");
+
   return (
-    <div className="min-h-screen bg-background px-4 py-8">
-      <div className="max-w-2xl mx-auto animate-fade-in">
-        {/* Header with logout */}
-        <div className="flex items-center justify-between mb-4">
-          <div />
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleSignOut}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Cerrar sesión
-          </Button>
-        </div>
-        
-        {/* Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-foreground mb-1">{startupName}</h1>
-          <p className="text-muted-foreground">Pitch de {userName}</p>
-        </div>
+    <div className="pdp-hub">
+      <div className="pdp-grain" aria-hidden="true" />
+      <header className="pdp-hub-top">
+        <a href="https://pitchdepelicula.com" className="pdp-hub-logo">
+          <span className="pdp-p">P</span>
+          Pitch de Película
+        </a>
+        <button onClick={handleSignOut} className="pdp-hub-salir">
+          <LogOut className="w-4 h-4" />
+          Cerrar sesión
+        </button>
+      </header>
 
-        {completedBlocks.length > 0 && completedBlocks.length < 9 && (
-          <p className="text-sm text-muted-foreground text-center mb-4">
-            Bienvenido de vuelta, {userName}. Llevas {completedBlocks.length} de 9 bloques.
-          </p>
-        )}
-        {completedBlocks.length === 9 && (
-          <p className="text-sm text-primary text-center font-medium mb-4">
-            🎬 Tu pitch está completo, {userName}. Léelo en voz alta antes de presentar.
-          </p>
-        )}
-
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-muted-foreground">Progreso</span>
-            <span className="font-medium text-foreground">{completedBlocks.length}/9 bloques</span>
+      <main className="pdp-hub-wrap animate-fade-in">
+        <section className="pdp-clap pdp-hub-clap" aria-label="Ficha del pitch">
+          <div className="pdp-clap-stick" />
+          <div className="pdp-clap-board">
+            <div className="pdp-clap-row">
+              <span>Prod.</span>
+              <b>{startupName || "Tu startup"}</b>
+            </div>
+            <div className="pdp-clap-grid cuatro">
+              <div>
+                <span>Director</span>
+                <b>{userName}</b>
+              </div>
+              <div>
+                <span>Escena</span>
+                <b>{nextBlock ? "Bloque " + nextBlock : "Final"}</b>
+              </div>
+              <div>
+                <span>Rodado</span>
+                <b>{completedBlocks.length}/9</b>
+              </div>
+              <div>
+                <span>Pitch Kit</span>
+                <b>{pitchKitCount}/9</b>
+              </div>
+            </div>
           </div>
-          <div className="h-2 bg-secondary rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${completionPercentage}%` }}
-            />
-          </div>
-        </div>
+        </section>
 
-        {/* Blocks Grid */}
-        <div className="space-y-3 mb-8">
-          {blocks.map((block) => {
-            const status = getBlockStatus(block.numero);
-            
+        <p className="pdp-hub-nota">
+          {completedBlocks.length === 9
+            ? "Tu pitch está completo, " + userName + ". Léelo en voz alta antes de presentar."
+            : completedBlocks.length > 0
+              ? "Llevas " + completedBlocks.length + " de 9 bloques. Sigue con el bloque " + nextBlock + "."
+              : "Empieza por el bloque 1. Son nueve bloques en tres actos."}
+        </p>
+
+        <div className="pdp-strip" aria-label={completedBlocks.length + " de 9 bloques escritos"}>
+          {blocks.map((b) => {
+            const st = getBlockStatus(b.numero);
             return (
               <button
-                key={block.numero}
-                onClick={() => handleBlockClick(block.numero)}
+                key={b.numero}
+                onClick={() => handleBlockClick(b.numero)}
+                title={b.nombre}
                 className={cn(
-                  "w-full flex items-center gap-4 p-4 rounded-xl border transition-all duration-200 cursor-pointer",
-                  status === 'completed' && "bg-success/5 border-success/30 hover:border-success",
-                  status === 'draft' && "bg-amber-50 dark:bg-amber-950/10 border-amber-300/50 hover:border-amber-400",
-                  status === 'current' && "bg-primary/5 border-primary/30 hover:border-primary ring-2 ring-primary/20",
-                  status === 'available' && "bg-background border-border hover:border-muted-foreground"
+                  "pdp-frame",
+                  st === "completed" && actoDe(b.numero),
+                  st === "current" && "actual",
+                  st === "draft" && "borrador",
                 )}
               >
-                {/* Status Icon */}
-                <div className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
-                  status === 'completed' && "bg-success text-success-foreground",
-                  status === 'draft' && "bg-amber-400 text-white",
-                  status === 'current' && "bg-primary text-primary-foreground",
-                  status === 'available' && "bg-muted text-muted-foreground"
-                )}>
-                  {status === 'completed' ? (
-                    <Check className="w-5 h-5" />
-                  ) : (
-                    <span className="font-bold">{block.numero}</span>
-                  )}
-                </div>
-
-                {/* Block Info */}
-                <div className="flex-1 text-left">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      BLOQUE {block.numero}
-                    </span>
-                    {status === 'current' && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
-                        En progreso
-                      </span>
-                    )}
-                    {status === 'draft' && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 font-medium">
-                        Borrador
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-foreground">{block.nombre}</h3>
-                  <p className="text-sm text-muted-foreground">{block.pregunta}</p>
-                  {status === 'completed' && blockContents[block.numero] && (() => {
-                    const wordCount = blockContents[block.numero].trim().split(/\s+/).filter(w => w.length > 0).length;
-                    const blockDef = blocks.find(b => b.numero === block.numero);
-                    const isInRange = blockDef && wordCount >= blockDef.palabrasMin && wordCount <= blockDef.palabrasMax;
-                    return (
-                      <span className={cn("text-xs", isInRange ? "text-success" : "text-warning")}>
-                        {wordCount} palabras · {isInRange ? 'en rango ✓' : 'fuera de rango'}
-                      </span>
-                    );
-                  })()}
-                </div>
-
-                {/* Arrow */}
-                <ChevronRight className={cn(
-                  "w-5 h-5 flex-shrink-0",
-                  status === 'completed' && "text-success",
-                  status === 'draft' && "text-amber-500",
-                  status === 'current' && "text-primary",
-                  status === 'available' && "text-muted-foreground"
-                )} />
+                {dos(b.numero)}
               </button>
             );
           })}
         </div>
 
-        {/* Pitch Kit Section */}
-        <div className="mb-8 p-5 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-primary/20">
-                <Package className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">🎬 TU PITCH KIT</h3>
-                <p className="text-xs text-muted-foreground">Bloques listos para tu presentación</p>
-                <p className="text-xs text-muted-foreground">El Pitch Kit guarda solo los bloques que confirmas con el botón 'Guardar en Pitch Kit'. Es independiente de tu progreso en los ejercicios.</p>
-              </div>
+        {ACTOS.map((acto) => (
+          <section key={acto.titulo} className="pdp-acto">
+            <div className="pdp-acto-head">
+              <span className={"pdp-acto-tag " + acto.c}>{acto.titulo}</span>
+              <h2>{acto.tono}</h2>
+              <span className="pdp-acto-rango">
+                Bloques {acto.nums[0]} a {acto.nums[2]}
+              </span>
             </div>
-            <div className="text-right">
-              <div className="text-3xl font-bold text-primary">{pitchKitCount}/9</div>
-              <div className="text-xs text-muted-foreground">guardados</div>
+            <div className="pdp-paneles">
+              {acto.nums.map((n) => {
+                const block = blocks.find((b) => b.numero === n);
+                if (!block) return null;
+                const st = getBlockStatus(n);
+                const pal = palabrasDe(n);
+                const enRango = pal >= block.palabrasMin && pal <= block.palabrasMax;
+                return (
+                  <button key={n} onClick={() => handleBlockClick(n)} className={cn("pdp-panel", st, acto.c)}>
+                    <span className="pdp-panel-top">
+                      <span>Panel {dos(n)}</span>
+                      {pitchKitSavedBlocks.includes(n) && <span className="pdp-panel-kit">En el Kit</span>}
+                    </span>
+                    <span className="pdp-panel-nombre">{block.nombre}</span>
+                    <span className="pdp-panel-pregunta">{block.pregunta}</span>
+                    <span className="pdp-panel-pie">
+                      {st === "completed"
+                        ? pal + " palabras · " + (enRango ? "en rango" : "fuera de rango")
+                        : st === "draft"
+                          ? "Borrador a medias"
+                          : st === "current"
+                            ? "Siguiente toma"
+                            : block.palabrasMin + " a " + block.palabrasMax + " palabras"}
+                    </span>
+                    {st === "completed" && <span className="pdp-sello">Toma buena</span>}
+                  </button>
+                );
+              })}
             </div>
-          </div>
-          
-          {/* Progress bar for Pitch Kit */}
-          <div className="h-3 bg-secondary rounded-full overflow-hidden mb-4">
-            <div 
-              className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(pitchKitCount / 9) * 100}%` }}
-            />
-          </div>
+          </section>
+        ))}
 
-          {/* Block status grid */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            {blocks.map((block) => {
-              const isInKit = pitchKitSavedBlocks.includes(block.numero);
-              return (
-                <div key={block.numero} className="flex items-center gap-1.5 text-xs">
-                  {isInKit ? (
-                    <Check className="w-3.5 h-3.5 text-primary" />
-                  ) : (
-                    <div className="w-3.5 h-3.5 rounded-full border border-muted-foreground/50" />
-                  )}
-                  <span className={cn(
-                    "truncate",
-                    isInKit ? "text-foreground" : "text-muted-foreground"
-                  )}>
-                    {block.nombre.split(' ')[1]}
+        <div className="pdp-hub-final">
+          <section className="pdp-ticket pdp-kit">
+            <div className="pdp-ticket-head">
+              <span>Pitch Kit</span>
+              <span>{pitchKitCount} de 9 guardados</span>
+            </div>
+            <div className="pdp-kit-body">
+              <p>
+                Guarda solo los bloques que confirmas con el botón "Guardar en Pitch Kit". Es independiente de tu avance
+                en los ejercicios.
+              </p>
+              <div className="pdp-kit-slots">
+                {blocks.map((b) => (
+                  <span
+                    key={b.numero}
+                    className={cn(
+                      "pdp-kit-slot",
+                      pitchKitSavedBlocks.includes(b.numero) && "lleno " + actoDe(b.numero),
+                    )}
+                  >
+                    {dos(b.numero)} {b.nombre.replace(/^(El|La|Los|Las) /, "")}
                   </span>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+              <button className="pdp-btn" onClick={() => navigate("/pitch-kit")}>
+                <Package className="w-4 h-4" />
+                Ver Pitch Kit completo
+              </button>
+            </div>
+          </section>
+
+          <div className="pdp-hub-acciones">
+            {nextBlock && (
+              <button className="pdp-btn rojo grande" onClick={() => onSelectBlock(nextBlock)}>
+                Seguir con el bloque {nextBlock}
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            )}
+            {completedBlocks.length > 0 && (
+              <button className="pdp-btn grande" onClick={onViewPitch}>
+                <Eye className="w-5 h-5" />
+                Ver mi pitch
+              </button>
+            )}
+            <p className="pdp-hub-metodo">Emoción, razón, emoción.</p>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="pdp-hub-reset">
+                  <RotateCcw className="w-4 h-4" />
+                  Empezar de nuevo
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Empezar de nuevo?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esto borrará todo tu progreso y no se puede deshacer. ¿Estás seguro?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={onReset}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Sí, empezar de nuevo
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
-          
-          <Button 
-            className="w-full btn-primary-gradient"
-            onClick={() => navigate('/pitch-kit')}
-          >
-            <Package className="w-4 h-4 mr-2" />
-            Ver Pitch Kit completo
-            <ChevronRight className="w-4 h-4 ml-auto" />
-          </Button>
         </div>
-
-        {/* Action Buttons */}
-        <div className="space-y-3">
-          {nextBlock && (
-            <Button 
-              size="lg" 
-              className="w-full btn-primary-gradient h-12"
-              onClick={() => onSelectBlock(nextBlock)}
-            >
-              Continuar con Bloque {nextBlock}
-              <ChevronRight className="w-5 h-5 ml-2" />
-            </Button>
-          )}
-
-          {completedBlocks.length > 0 && (
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="w-full h-12"
-              onClick={onViewPitch}
-            >
-              <Eye className="w-5 h-5 mr-2" />
-              Ver mi pitch
-            </Button>
-          )}
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="w-full text-muted-foreground hover:text-destructive"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Empezar de nuevo
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>¿Empezar de nuevo?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Esto borrará todo tu progreso y no se puede deshacer. ¿Estás seguro?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={onReset} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Sí, empezar de nuevo
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }
