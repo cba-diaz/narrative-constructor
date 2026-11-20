@@ -1235,3 +1235,97 @@
     font-size: 20px;
   }
 }
+
+/* Vista del pitch completo */
+.pdp-view-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 12px 20px;
+  background: var(--negro);
+  color: var(--crema);
+}
+.pdp-view-top > div > button {
+  color: rgba(250, 245, 236, 0.75);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.pdp-view-top > div > button:hover {
+  color: var(--amarillo);
+}
+.pdp-view-top .flex.items-center.gap-2 button {
+  border: 2px solid var(--crema);
+  border-radius: 0;
+  background: transparent;
+  color: var(--crema);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+.pdp-view-top .flex.items-center.gap-2 button:hover {
+  background: var(--amarillo);
+  color: var(--negro);
+  border-color: var(--amarillo);
+}
+.pdp-view-pre {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--rojo);
+  margin-bottom: 10px;
+}
+.pdp-view-titulo {
+  font-family: "Fraunces", Georgia, serif;
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1;
+  font-weight: 900;
+  font-size: clamp(44px, 7vw, 84px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--negro);
+}
+.pdp-view-credito {
+  font-family: "Caveat", cursive;
+  font-size: 30px;
+  color: var(--rojo);
+  margin: 6px 0 22px;
+  transform: rotate(-1deg);
+}
+.pdp-view-stats {
+  display: inline-flex;
+  border: 2px solid var(--negro);
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--negro);
+}
+.pdp-view-stats > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-right: 2px solid var(--negro);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--negro) !important;
+}
+.pdp-view-stats > div:last-child {
+  border-right: 0;
+}
+@media (max-width: 560px) {
+  .pdp-view-stats {
+    flex-direction: column;
+  }
+  .pdp-view-stats > div {
+    border-right: 0;
+    border-bottom: 2px solid var(--negro);
+  }
+  .pdp-view-stats > div:last-child {
+    border-bottom: 0;
+  }
+}
