@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Jost:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Caveat:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,66 +6,78 @@
 
 @layer base {
   :root {
-    /* Cinematic paper & ink — pitchdepelicula.com */
-    --background: 40 47% 95%;
-    --foreground: 38 9% 11%;
+    /* Paleta de pitchdepelicula.com */
+    --rojo: #c43425;
+    --rojo-oscuro: #8e1f14;
+    --crema: #faf5ec;
+    --negro: #151310;
+    --tinta: #1e1b16;
+    --amarillo: #ffe98a;
+    --salmon: #f5b79e;
+    --celeste: #a9cbde;
+    --gris: #6b665d;
 
-    --card: 42 60% 98%;
-    --card-foreground: 38 9% 11%;
+    --background: 39 70% 95%;
+    --foreground: 37 15% 10%;
 
-    --popover: 42 60% 98%;
-    --popover-foreground: 38 9% 11%;
+    --card: 39 70% 95%;
+    --card-foreground: 37 15% 10%;
 
-    /* Primary - Cinema red */
-    --primary: 6 66% 46%;
-    --primary-foreground: 40 47% 97%;
+    --popover: 39 70% 95%;
+    --popover-foreground: 37 15% 10%;
 
-    /* Secondary - warm sand */
-    --secondary: 38 30% 88%;
-    --secondary-foreground: 38 9% 11%;
+    /* Rojo cine */
+    --primary: 5 68% 46%;
+    --primary-foreground: 39 70% 95%;
+
+    /* Arena, para pistas de progreso y fondos suaves */
+    --secondary: 40 38% 88%;
+    --secondary-foreground: 37 16% 7%;
 
     /* Success */
-    --success: 158 52% 32%;
-    --success-foreground: 40 47% 97%;
+    --success: 158 52% 30%;
+    --success-foreground: 39 70% 95%;
 
     /* Warning */
-    --warning: 32 85% 46%;
-    --warning-foreground: 38 9% 11%;
+    --warning: 30 85% 42%;
+    --warning-foreground: 37 16% 7%;
 
     /* Destructive */
-    --destructive: 6 66% 46%;
-    --destructive-foreground: 40 47% 97%;
+    --destructive: 5 68% 46%;
+    --destructive-foreground: 39 70% 95%;
 
-    --muted: 38 28% 91%;
-    --muted-foreground: 36 8% 38%;
+    --muted: 41 41% 90%;
+    --muted-foreground: 39 7% 39%;
 
-    --accent: 6 66% 46%;
-    --accent-foreground: 40 47% 97%;
+    /* Salmón para estados hover, como en el sitio */
+    --accent: 17 82% 79%;
+    --accent-foreground: 37 16% 7%;
 
-    --border: 38 20% 84%;
-    --input: 38 20% 84%;
-    --ring: 6 66% 46%;
+    /* Línea de tinta */
+    --border: 37 16% 7%;
+    --input: 37 16% 7%;
+    --ring: 37 16% 7%;
 
-    --radius: 0.25rem;
+    --radius: 0px;
 
     /* Custom gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(6 66% 48%) 0%, hsl(6 70% 40%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(40 47% 96%) 0%, hsl(38 34% 91%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(5 68% 46%) 0%, hsl(5 75% 32%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(39 70% 95%) 0%, hsl(41 41% 90%) 100%);
 
-    /* Shadows — hard, poster-like */
-    --shadow-sm: 0 1px 0 0 hsl(38 9% 11% / 0.08);
-    --shadow-md: 3px 3px 0 0 hsl(38 9% 11% / 0.12);
-    --shadow-lg: 8px 8px 0 0 hsl(38 9% 11% / 0.14);
-    --shadow-card: 2px 2px 0 0 hsl(38 9% 11% / 0.08);
+    /* Sombras duras, de afiche */
+    --shadow-sm: 0 1px 0 0 hsl(37 16% 7% / 0.12);
+    --shadow-md: 3px 3px 0 0 hsl(37 16% 7% / 0.9);
+    --shadow-lg: 6px 6px 0 0 hsl(37 16% 7%);
+    --shadow-card: 4px 4px 0 0 hsl(37 16% 7%);
 
-    --sidebar-background: 40 40% 93%;
-    --sidebar-foreground: 38 9% 20%;
-    --sidebar-primary: 6 66% 46%;
-    --sidebar-primary-foreground: 40 47% 97%;
-    --sidebar-accent: 38 30% 88%;
-    --sidebar-accent-foreground: 38 9% 11%;
-    --sidebar-border: 38 20% 84%;
-    --sidebar-ring: 6 66% 46%;
+    --sidebar-background: 39 70% 95%;
+    --sidebar-foreground: 37 15% 10%;
+    --sidebar-primary: 5 68% 46%;
+    --sidebar-primary-foreground: 39 70% 95%;
+    --sidebar-accent: 17 82% 79%;
+    --sidebar-accent-foreground: 37 16% 7%;
+    --sidebar-border: 37 16% 7%;
+    --sidebar-ring: 37 16% 7%;
   }
 
 
@@ -121,27 +133,59 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: 'Jost', system-ui, sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-black tracking-tight;
+    @apply font-display font-black;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--amarillo);
+    color: var(--negro);
   }
 }
 
 @layer components {
   .card-elevated {
-    @apply bg-card rounded-sm border border-border;
+    @apply bg-card border-[1.5px] border-border;
     box-shadow: var(--shadow-card);
   }
 
   .btn-primary-gradient {
     background: hsl(var(--primary));
-    @apply text-primary-foreground font-semibold uppercase tracking-[0.12em] rounded-sm;
+    border: 2px solid var(--rojo-oscuro);
+    @apply text-primary-foreground font-bold uppercase tracking-[0.14em];
+  }
+
+  .btn-primary-gradient:hover {
+    background: var(--rojo-oscuro);
   }
 
   .eyebrow {
-    @apply uppercase tracking-[0.18em] text-xs font-medium;
+    @apply uppercase tracking-[0.18em] text-xs font-semibold;
+  }
+
+  /* Subrayado de resaltador amarillo, como los títulos de pitchdepelicula.com */
+  .marker {
+    background-image: linear-gradient(transparent 18%, var(--amarillo) 18%, var(--amarillo) 92%, transparent 92%);
+    padding: 0 0.12em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* Etiqueta roja de sección: "EL CONSTRUCTOR" */
+  .tag-label {
+    @apply inline-flex items-center gap-2 bg-primary text-primary-foreground uppercase font-bold;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    padding: 6px 14px;
+  }
+
+  /* Marca: cuadro negro con la P */
+  .brand-mark {
+    @apply inline-flex items-center justify-center bg-foreground text-background font-semibold uppercase;
+    letter-spacing: 0.1em;
   }
 
 
