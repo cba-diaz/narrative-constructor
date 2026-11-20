@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Film, ArrowRight, Sparkles, LogIn } from 'lucide-react';
+import { ArrowRight, Sparkles, LogIn } from 'lucide-react';
 
 interface LandingPageProps {
   onStart: (userName: string, startupName: string) => void;
@@ -44,22 +44,20 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
           <div className="w-full max-w-md animate-fade-in">
             {/* Logo */}
             <div className="flex items-center justify-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-sm bg-foreground flex items-center justify-center">
-                <Film className="w-6 h-6 text-background" />
-              </div>
-              <h1 className="text-2xl font-display font-black text-foreground">Pitch de Película</h1>
+              <span className="brand-mark w-10 h-10 text-base">P</span>
+              <h1 className="text-2xl font-display font-semibold text-foreground">Pitch de Película</h1>
             </div>
 
 
             {/* Main Card */}
             <div className="card-elevated p-8">
               <div className="text-center mb-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-primary text-primary-foreground eyebrow mb-4">
+                <div className="tag-label mb-5">
                   <Sparkles className="w-4 h-4" />
                   Metodología basada en el libro Pitch de Película
                 </div>
                 <h2 className="text-3xl font-display font-black text-foreground mb-2 leading-tight">
-                  Construye tu pitch de inversión en <span className="text-primary">9 bloques</span>
+                  Construye tu pitch de inversión en <span className="marker">9 bloques</span>
                 </h2>
 
                 <p className="text-muted-foreground">
@@ -99,15 +97,15 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
             {/* Features */}
             <div className="mt-8 grid grid-cols-3 gap-4 text-center">
               <div className="space-y-1">
-                <div className="text-2xl font-bold text-primary">9</div>
+                <div className="text-3xl font-display font-black text-primary">9</div>
                 <div className="text-xs text-muted-foreground">Bloques guiados</div>
               </div>
               <div className="space-y-1">
-                <div className="text-2xl font-bold text-primary">~20</div>
+                <div className="text-3xl font-display font-black text-primary">~20</div>
                 <div className="text-xs text-muted-foreground">Min aprox</div>
               </div>
               <div className="space-y-1">
-                <div className="text-2xl font-bold text-primary">4-5</div>
+                <div className="text-3xl font-display font-black text-primary">4-5</div>
                 <div className="text-xs text-muted-foreground">Min de pitch</div>
               </div>
             </div>
@@ -140,28 +138,26 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
         <div className="w-full max-w-md animate-fade-in">
           {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-sm bg-foreground flex items-center justify-center">
-              <Film className="w-6 h-6 text-background" />
-            </div>
-            <h1 className="text-2xl font-display font-black text-foreground">Pitch de Película</h1>
+            <span className="brand-mark w-10 h-10 text-base">P</span>
+            <h1 className="text-2xl font-display font-semibold text-foreground">Pitch de Película</h1>
           </div>
 
           {/* Main Card */}
           <div className="card-elevated p-8">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-primary text-primary-foreground eyebrow mb-4">
+              <div className="tag-label mb-5">
                 <Sparkles className="w-4 h-4" />
                 Metodología basada en el libro Pitch de Película
               </div>
               <h2 className="text-3xl font-display font-black text-foreground mb-2 leading-tight">
-                Construye tu pitch de inversión en <span className="text-primary">9 bloques</span>
+                Construye tu pitch de inversión en <span className="marker">9 bloques</span>
               </h2>
 
               <p className="text-muted-foreground">
                 Al terminar tendrás un guión de 4-5 minutos listo para presentar
                </p>
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-4">
-                  <span>🎭 Tu protagonista</span>
+                  <span>🎭 Tu enemigo</span>
                   <span className="text-border">→</span>
                   <span>🦸 Tu héroe</span>
                   <span className="text-border">→</span>
@@ -220,15 +216,15 @@ export function LandingPage({ onStart, isAuthenticated = false }: LandingPagePro
           {/* Features */}
           <div className="mt-8 grid grid-cols-3 gap-4 text-center">
             <div className="space-y-1">
-              <div className="text-2xl font-bold text-primary">9</div>
+              <div className="text-3xl font-display font-black text-primary">9</div>
               <div className="text-xs text-muted-foreground">Bloques guiados</div>
             </div>
             <div className="space-y-1">
-              <div className="text-2xl font-bold text-primary">~20</div>
+              <div className="text-3xl font-display font-black text-primary">~20</div>
               <div className="text-xs text-muted-foreground">Min aprox</div>
             </div>
             <div className="space-y-1">
-              <div className="text-2xl font-bold text-primary">4-5</div>
+              <div className="text-3xl font-display font-black text-primary">4-5</div>
               <div className="text-xs text-muted-foreground">Min de pitch</div>
             </div>
           </div>
