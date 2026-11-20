@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Film, ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { lovable } from '@/integrations/lovable';
@@ -79,10 +79,8 @@ export default function Login() {
         <div className="w-full max-w-md animate-fade-in">
           {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-              <Film className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Pitch de Película</h1>
+            <span className="brand-mark w-10 h-10 text-base">P</span>
+            <h1 className="text-2xl font-display font-semibold text-foreground">Pitch de Película</h1>
           </div>
 
           {/* Form Card */}
