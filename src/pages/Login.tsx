@@ -1,24 +1,25 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { ArrowRight, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { z } from 'zod';
-import { lovable } from '@/integrations/lovable';
-import { translateAuthError } from '@/lib/translateAuthError';
+import { useState } from "react";
+import { AuthShell } from "@/components/IsbnGate";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+import { lovable } from "@/integrations/lovable";
+import { translateAuthError } from "@/lib/translateAuthError";
 
 const loginSchema = z.object({
-  email: z.string().trim().email({ message: 'Introduce un email válido' }),
-  password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
+  email: z.string().trim().email({ message: "Introduce un email válido" }),
+  password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
 });
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -34,8 +35,8 @@ export default function Login() {
     if (!result.success) {
       const fieldErrors: { email?: string; password?: string } = {};
       result.error.errors.forEach((err) => {
-        if (err.path[0] === 'email') fieldErrors.email = err.message;
-        if (err.path[0] === 'password') fieldErrors.password = err.message;
+        if (err.path[0] === "email") fieldErrors.email = err.message;
+        if (err.path[0] === "password") fieldErrors.password = err.message;
       });
       setErrors(fieldErrors);
       return;
@@ -47,14 +48,14 @@ export default function Login() {
 
     if (error) {
       toast({
-        title: 'Error al iniciar sesión',
+        title: "Error al iniciar sesión",
         description: translateAuthError(error.message),
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
 
-    navigate('/');
+    navigate("/");
   };
 
   const handleGoogleSignIn = async () => {
@@ -63,165 +64,124 @@ export default function Login() {
       redirect_uri: window.location.origin,
     });
     setIsGoogleLoading(false);
-    
+
     if (error) {
       toast({
-        title: 'Error al iniciar sesión con Google',
+        title: "Error al iniciar sesión con Google",
         description: translateAuthError(error.message),
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md animate-fade-in">
-          {/* Logo */}
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <span className="brand-mark w-10 h-10 text-base">P</span>
-            <h1 className="text-2xl font-display font-semibold text-foreground">Pitch de Película</h1>
-          </div>
-
-          {/* Form Card */}
-          <div className="card-elevated p-8">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                Bienvenido de nuevo
-              </h2>
-              <p className="text-muted-foreground">
-                Inicia sesión para continuar con tu pitch
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={errors.email ? 'border-destructive' : ''}
-                  disabled={isLoading}
-                />
-                {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Contraseña</Label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-sm text-primary hover:underline"
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={errors.password ? 'border-destructive' : ''}
-                  disabled={isLoading}
-                />
-                {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password}</p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full btn-primary-gradient text-base h-12"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Iniciando sesión...
-                  </>
-                ) : (
-                  <>
-                    Iniciar sesión
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </>
-                )}
-              </Button>
-            </form>
-
-            <div className="relative my-6">
-              <Separator />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-sm text-muted-foreground">
-                o continúa con
-              </span>
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              className="w-full h-12"
-              onClick={handleGoogleSignIn}
-              disabled={isLoading || isGoogleLoading}
-            >
-              {isGoogleLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                    <path
-                      fill="currentColor"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    />
-                    <path
-                      fill="currentColor"
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    />
-                  </svg>
-                  Continuar con Google
-                </>
-              )}
-            </Button>
-
-            <div className="mt-6 text-center">
-              <p className="text-muted-foreground">
-                ¿No tienes cuenta?{' '}
-                <Link to="/register" className="text-primary font-medium hover:underline">
-                  Regístrate
-                </Link>
-              </p>
-            </div>
-          </div>
+    <AuthShell escena="Acceso" toma="01">
+      <div className="pdp-auth-card">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Vuelve al set</h2>
+          <p className="text-muted-foreground">Tu pitch sigue donde lo dejaste.</p>
         </div>
-      </main>
 
-      <footer className="py-6 text-center border-t border-border flex items-center justify-center gap-4">
-        <a
-          href="https://pitchdepelicula.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-muted-foreground hover:text-primary transition-colors"
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="tu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={errors.email ? "border-destructive" : ""}
+              disabled={isLoading}
+            />
+            {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Contraseña</Label>
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={errors.password ? "border-destructive" : ""}
+              disabled={isLoading}
+            />
+            {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+          </div>
+
+          <Button type="submit" size="lg" className="w-full btn-primary-gradient text-base h-12" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Iniciando sesión...
+              </>
+            ) : (
+              <>
+                Iniciar sesión
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </>
+            )}
+          </Button>
+        </form>
+
+        <div className="relative my-6">
+          <Separator />
+          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-sm text-muted-foreground">
+            o continúa con
+          </span>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          className="w-full h-12"
+          onClick={handleGoogleSignIn}
+          disabled={isLoading || isGoogleLoading}
         >
-          pitchdepelicula.com
-        </a>
-        <Link to="/privacidad" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-          Privacidad
-        </Link>
-      </footer>
-    </div>
+          {isGoogleLoading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <>
+              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="currentColor"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="currentColor"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="currentColor"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                />
+              </svg>
+              Continuar con Google
+            </>
+          )}
+        </Button>
+
+        <div className="mt-6 text-center">
+          <p className="text-muted-foreground">
+            ¿No tienes cuenta?{" "}
+            <Link to="/register" className="text-primary font-medium hover:underline">
+              Regístrate
+            </Link>
+          </p>
+        </div>
+      </div>
+    </AuthShell>
   );
 }
