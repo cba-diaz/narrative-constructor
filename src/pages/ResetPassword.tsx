@@ -1,24 +1,27 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ArrowRight, Loader2, Check } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { z } from 'zod';
+import { useState, useEffect } from "react";
+import { AuthShell } from "@/components/IsbnGate";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowRight, Loader2, Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 
-const passwordSchema = z.object({
-  password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }).max(72),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Las contraseñas no coinciden',
-  path: ['confirmPassword'],
-});
+const passwordSchema = z
+  .object({
+    password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }).max(72),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
 
 export default function ResetPassword() {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -34,11 +37,11 @@ export default function ResetPassword() {
       const timeout = setTimeout(() => {
         if (!session) {
           toast({
-            title: 'Enlace inválido',
-            description: 'Por favor solicita un nuevo enlace de restablecimiento.',
-            variant: 'destructive',
+            title: "Enlace inválido",
+            description: "Por favor solicita un nuevo enlace de restablecimiento.",
+            variant: "destructive",
           });
-          navigate('/forgot-password');
+          navigate("/forgot-password");
         }
       }, 2000);
       return () => clearTimeout(timeout);
@@ -66,129 +69,83 @@ export default function ResetPassword() {
 
     if (error) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: error.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
       return;
     }
 
     setIsSuccess(true);
-    setTimeout(() => navigate('/'), 2000);
+    setTimeout(() => navigate("/"), 2000);
   };
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <main className="flex-1 flex items-center justify-center px-4 py-12">
-          <div className="w-full max-w-md animate-fade-in">
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <span className="brand-mark w-10 h-10 text-base">P</span>
-              <h1 className="text-2xl font-display font-semibold text-foreground">Pitch de Película</h1>
-            </div>
-
-            <div className="card-elevated p-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-6">
-                <Check className="w-8 h-8 text-success" />
-              </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                ¡Contraseña actualizada!
-              </h2>
-              <p className="text-muted-foreground">
-                Redirigiendo a tu pitch...
-              </p>
-            </div>
+      <AuthShell escena="Clave nueva" toma="03">
+        <div className="pdp-auth-card">
+          <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mb-6">
+            <Check className="w-8 h-8 text-success" />
           </div>
-        </main>
-      </div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">¡Contraseña actualizada!</h2>
+          <p className="text-muted-foreground">Redirigiendo a tu pitch...</p>
+        </div>
+      </AuthShell>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md animate-fade-in">
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <span className="brand-mark w-10 h-10 text-base">P</span>
-            <h1 className="text-2xl font-display font-semibold text-foreground">Pitch de Película</h1>
-          </div>
-
-          <div className="card-elevated p-8">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                Nueva contraseña
-              </h2>
-              <p className="text-muted-foreground">
-                Introduce tu nueva contraseña
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="password">Nueva contraseña</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className={errors.password ? 'border-destructive' : ''}
-                  disabled={isLoading}
-                />
-                {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={errors.confirmPassword ? 'border-destructive' : ''}
-                  disabled={isLoading}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">{errors.confirmPassword}</p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full btn-primary-gradient text-base h-12"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Actualizando...
-                  </>
-                ) : (
-                  <>
-                    Guardar contraseña
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
+    <AuthShell escena="Clave nueva" toma="03">
+      <div className="pdp-auth-card">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Nueva contraseña</h2>
+          <p className="text-muted-foreground">Introduce tu nueva contraseña</p>
         </div>
-      </main>
 
-      <footer className="py-6 text-center border-t border-border">
-        <a
-          href="https://pitchdepelicula.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-muted-foreground hover:text-primary transition-colors"
-        >
-          pitchdepelicula.com
-        </a>
-      </footer>
-    </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="password">Nueva contraseña</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={errors.password ? "border-destructive" : ""}
+              disabled={isLoading}
+            />
+            {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className={errors.confirmPassword ? "border-destructive" : ""}
+              disabled={isLoading}
+            />
+            {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword}</p>}
+          </div>
+
+          <Button type="submit" size="lg" className="w-full btn-primary-gradient text-base h-12" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Actualizando...
+              </>
+            ) : (
+              <>
+                Guardar contraseña
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </>
+            )}
+          </Button>
+        </form>
+      </div>
+    </AuthShell>
   );
 }
