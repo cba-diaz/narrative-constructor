@@ -13,6 +13,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import Privacy from "./pages/Privacy";
+import { ConsentGate } from "@/components/ConsentGate";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ConsentGate>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/pitch-kit" element={<PitchKit />} />
@@ -32,9 +35,11 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/privacidad" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </ConsentGate>
         </BrowserRouter>
       </TooltipProvider>
       </PitchStoreProvider>
