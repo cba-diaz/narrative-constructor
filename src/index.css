@@ -1350,3 +1350,13 @@
   font-weight: 900;
   font-size: 20px;
 }
+.pdp-view-top button[class*="border"] {
+  background: transparent;
+  border: 2px solid var(--crema);
+  color: var(--crema);
+}
+.pdp-view-top button[class*="border"]:hover {
+  background: var(--amarillo);
+  border-color: var(--amarillo);
+  color: var(--negro);
+}
