@@ -1082,3 +1082,37 @@
     font-size: 28px;
   }
 }
+
+/* Créditos al pie de la entrada */
+.pdp-creditos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 2px dashed var(--negro);
+  background: var(--crema);
+}
+.pdp-creditos > div {
+  padding: 14px 10px 16px;
+  text-align: center;
+  border-right: 1.5px solid rgba(21, 19, 16, 0.2);
+}
+.pdp-creditos > div:last-child {
+  border-right: 0;
+}
+.pdp-creditos-n {
+  font-family: "Fraunces", Georgia, serif;
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1;
+  font-weight: 900;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--rojo);
+}
+.pdp-creditos .text-xs {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--negro);
+}
