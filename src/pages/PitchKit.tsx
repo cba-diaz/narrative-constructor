@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { usePitchStore } from '@/hooks/usePitchStore';
-import { useAuth } from '@/hooks/useAuth';
-import { blocks } from '@/data/blocks';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, Download, Copy, Check, FileText, Clock, AlertTriangle, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import { IsbnGate, isPitchUnlocked } from '@/components/IsbnGate';
-import { StoryboardPitch } from '@/components/StoryboardPitch';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { usePitchStore } from "@/hooks/usePitchStore";
+import { useAuth } from "@/hooks/useAuth";
+import { blocks } from "@/data/blocks";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, Download, Copy, Check, FileText, Clock, AlertTriangle, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { IsbnGate, isPitchUnlocked } from "@/components/IsbnGate";
+import { StoryboardPitch } from "@/components/StoryboardPitch";
 
 export default function PitchKit() {
   const { user, loading } = useAuth();
@@ -20,7 +20,7 @@ export default function PitchKit() {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/login');
+      navigate("/login");
     }
   }, [user, loading, navigate]);
 
@@ -33,7 +33,7 @@ export default function PitchKit() {
   }
 
   if (!unlocked) {
-    return <IsbnGate onUnlock={() => setUnlocked(true)} onBack={() => navigate('/?view=hub')} />;
+    return <IsbnGate onUnlock={() => setUnlocked(true)} onBack={() => navigate("/?view=hub")} />;
   }
 
   const pitchKitBlocks = getPitchKitBlocks();
@@ -63,13 +63,13 @@ export default function PitchKit() {
 
   const handleCopyAll = async () => {
     const fullPitch = blocks
-      .map(block => {
+      .map((block) => {
         const content = pitchKitBlocks[block.numero]?.content;
         if (!content) return null;
         return `${block.numero}. ${block.nombre}\n\n${content}`;
       })
       .filter(Boolean)
-      .join('\n\n---\n\n');
+      .join("\n\n---\n\n");
 
     try {
       await navigator.clipboard.writeText(fullPitch);
@@ -88,21 +88,21 @@ export default function PitchKit() {
 
   const handleDownload = () => {
     const fullPitch = blocks
-      .map(block => {
+      .map((block) => {
         const content = pitchKitBlocks[block.numero]?.content;
         if (!content) return null;
-        return `${block.numero}. ${block.nombre}\n${'='.repeat(30)}\n\n${content}`;
+        return `${block.numero}. ${block.nombre}\n${"=".repeat(30)}\n\n${content}`;
       })
       .filter(Boolean)
-      .join('\n\n\n');
+      .join("\n\n\n");
 
-    const header = `PITCH KIT - ${data.startupName}\nCreado por: ${data.userName}\nFecha: ${new Date().toLocaleDateString()}\nPalabras totales: ${totalWords}\nTiempo estimado de lectura: ${readingTimeMinutes} minutos\n\n${'='.repeat(50)}\n\n`;
+    const header = `PITCH KIT - ${data.startupName}\nCreado por: ${data.userName}\nFecha: ${new Date().toLocaleDateString()}\nPalabras totales: ${totalWords}\nTiempo estimado de lectura: ${readingTimeMinutes} minutos\n\n${"=".repeat(50)}\n\n`;
 
-    const blob = new Blob([header + fullPitch], { type: 'text/plain' });
+    const blob = new Blob([header + fullPitch], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `pitch-kit-${data.startupName.toLowerCase().replace(/\s+/g, '-')}.txt`;
+    a.download = `pitch-kit-${data.startupName.toLowerCase().replace(/\s+/g, "-")}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -116,29 +116,29 @@ export default function PitchKit() {
 
   const getBlockStatus = (blockNumber: number) => {
     const block = pitchKitBlocks[blockNumber];
-    if (!block?.content) return 'empty';
-    
-    const blockDef = blocks.find(b => b.numero === blockNumber);
-    if (!blockDef) return 'empty';
-    
-    if (block.wordCount < blockDef.palabrasMin) return 'under';
-    if (block.wordCount > blockDef.palabrasMax) return 'over';
-    return 'valid';
+    if (!block?.content) return "empty";
+
+    const blockDef = blocks.find((b) => b.numero === blockNumber);
+    if (!blockDef) return "empty";
+
+    if (block.wordCount < blockDef.palabrasMin) return "under";
+    if (block.wordCount > blockDef.palabrasMax) return "over";
+    return "valid";
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-4 py-3">
+      <header className="pdp-view-top">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <button 
-            onClick={() => navigate('/?view=hub')}
+          <button
+            onClick={() => navigate("/?view=hub")}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
             <span className="hidden sm:inline">Volver al hub</span>
           </button>
-          
+
           <div className="text-center">
             <div className="text-xs text-muted-foreground uppercase tracking-wide">Pitch Kit</div>
             <div className="font-bold text-foreground">{data.startupName}</div>
@@ -182,7 +182,7 @@ export default function PitchKit() {
             <span className="font-medium text-foreground">{Math.round((completedCount / 9) * 100)}%</span>
           </div>
           <div className="h-3 bg-secondary rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
               style={{ width: `${(completedCount / 9) * 100}%` }}
             />
@@ -192,69 +192,70 @@ export default function PitchKit() {
         {completedCount === 9 && (
           <div className="p-4 rounded-lg bg-success/10 border border-success/30 text-center">
             <p className="text-sm font-medium text-success mb-1">🎬 Tu Pitch Kit está completo.</p>
-            <p className="text-sm text-muted-foreground">Ahora léelo en voz alta tres veces. El pitch que memoriza el inversionista no es el que está en este documento, es el que escucha de tu boca.</p>
+            <p className="text-sm text-muted-foreground">
+              Ahora léelo en voz alta tres veces. El pitch que memoriza el inversionista no es el que está en este
+              documento, es el que escucha de tu boca.
+            </p>
           </div>
         )}
 
         {/* Storyboard */}
         <div className="mt-8">
           <StoryboardPitch
-            blockContents={Object.fromEntries(
-              blocks.map(b => [b.numero, pitchKitBlocks[b.numero]?.content ?? ''])
-            )}
+            blockContents={Object.fromEntries(blocks.map((b) => [b.numero, pitchKitBlocks[b.numero]?.content ?? ""]))}
             onEditBlock={(n) => navigate(`/?view=editor&section=${n}`)}
           />
         </div>
 
         {/* Blocks */}
         <div className="space-y-6">
-          {blocks.map(block => {
+          {blocks.map((block) => {
             const kitBlock = pitchKitBlocks[block.numero];
             const status = getBlockStatus(block.numero);
             const hasContent = !!kitBlock?.content;
 
             return (
-              <div 
+              <div
                 key={block.numero}
                 className={cn(
                   "rounded-xl border p-5",
-                  hasContent ? "bg-card border-border" : "bg-muted/30 border-dashed border-muted-foreground/30"
+                  hasContent ? "bg-card border-border" : "bg-muted/30 border-dashed border-muted-foreground/30",
                 )}
               >
                 {/* Block Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
-                      hasContent ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                    )}>
+                    <div
+                      className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
+                        hasContent ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                      )}
+                    >
                       {block.numero}
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">{block.nombre}</h3>
-                      <p className="text-xs text-muted-foreground">{block.palabrasMin}-{block.palabrasMax} palabras</p>
+                      <p className="text-xs text-muted-foreground">
+                        {block.palabrasMin}-{block.palabrasMax} palabras
+                      </p>
                     </div>
                   </div>
 
                   {hasContent && (
                     <div className="flex items-center gap-2">
-                      {status === 'under' && (
+                      {status === "under" && (
                         <span className="text-xs text-destructive flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" />
                           Faltan palabras
                         </span>
                       )}
-                      {status === 'over' && (
+                      {status === "over" && (
                         <span className="text-xs text-warning flex items-center gap-1">
                           <AlertTriangle className="w-3 h-3" />
                           Excede límite
                         </span>
                       )}
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleCopyBlock(block.numero, kitBlock.content)}
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => handleCopyBlock(block.numero, kitBlock.content)}>
                         {copiedBlock === block.numero ? (
                           <Check className="w-4 h-4 text-success" />
                         ) : (
@@ -268,16 +269,16 @@ export default function PitchKit() {
                 {/* Block Content */}
                 {hasContent ? (
                   <div className="prose prose-sm max-w-none">
-                    <p className="text-foreground whitespace-pre-wrap leading-relaxed">
-                      {kitBlock.content}
-                    </p>
+                    <p className="text-foreground whitespace-pre-wrap leading-relaxed">{kitBlock.content}</p>
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-                      <span className={cn(
-                        "text-xs font-mono",
-                        status === 'valid' && "text-success",
-                        status === 'under' && "text-destructive",
-                        status === 'over' && "text-warning"
-                      )}>
+                      <span
+                        className={cn(
+                          "text-xs font-mono",
+                          status === "valid" && "text-success",
+                          status === "under" && "text-destructive",
+                          status === "over" && "text-warning",
+                        )}
+                      >
                         {kitBlock.wordCount} palabras
                       </span>
                       <span className="text-xs text-muted-foreground">
@@ -288,9 +289,7 @@ export default function PitchKit() {
                 ) : (
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <FileText className="w-5 h-5" />
-                    <span className="text-sm">
-                      Completa la sección "{block.nombre}" y guárdala en el Pitch Kit
-                    </span>
+                    <span className="text-sm">Completa la sección "{block.nombre}" y guárdala en el Pitch Kit</span>
                   </div>
                 )}
               </div>
@@ -304,9 +303,10 @@ export default function PitchKit() {
             <FileText className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">Tu Pitch Kit está vacío</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Completa los ejercicios de cada sección y usa el botón "Guardar en Pitch Kit" para ir construyendo tu pitch final.
+              Completa los ejercicios de cada sección y usa el botón "Guardar en Pitch Kit" para ir construyendo tu
+              pitch final.
             </p>
-            <Button onClick={() => navigate('/?view=hub')} className="btn-primary-gradient">
+            <Button onClick={() => navigate("/?view=hub")} className="btn-primary-gradient">
               Ir al Hub
             </Button>
           </div>
