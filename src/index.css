@@ -606,3 +606,38 @@
     transition: none;
   }
 }
+
+.pdp-clap b,
+.pdp-ticket-head span {
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .pdp-auth-side {
+    padding: 22px 20px 26px 44px;
+  }
+  .pdp-clap {
+    margin-top: 30px;
+  }
+  .pdp-clap-grid > div {
+    padding: 6px 10px 8px;
+  }
+  .pdp-clap b {
+    font-size: 19px;
+  }
+  .pdp-ticket-head {
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    padding: 10px 18px;
+  }
+  .pdp-auth-card {
+    padding: 24px 20px 26px;
+  }
+  .pdp-auth-card h2 {
+    font-size: 28px;
+  }
+}
+@media (max-width: 380px) {
+  .pdp-ticket-head span:first-child {
+    display: none;
+  }
+}
