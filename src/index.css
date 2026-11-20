@@ -538,7 +538,8 @@
   font-size: 32px;
   line-height: 1.08;
 }
-.pdp-auth-card label {
+.pdp-auth-card .space-y-2 > label,
+.pdp-auth-card .space-y-2 > div > label {
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
