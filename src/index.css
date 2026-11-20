@@ -885,6 +885,8 @@
   letter-spacing: 0.12em;
 }
 .pdp-panel-nombre {
+  display: block;
+  text-transform: lowercase;
   font-family: "Fraunces", Georgia, serif;
   font-variation-settings:
     "SOFT" 100,
@@ -894,10 +896,16 @@
   line-height: 1.05;
   color: var(--negro);
 }
+.pdp-panel-nombre::first-letter {
+  text-transform: uppercase;
+}
 .pdp-panel-pregunta {
   font-size: 14px;
   color: var(--gris);
   line-height: 1.4;
+}
+.pdp-panel.completed .pdp-panel-pie {
+  padding-right: 120px;
 }
 .pdp-panel-pie {
   margin-top: auto;
@@ -932,10 +940,14 @@
 .pdp-panel.current .pdp-panel-pie {
   color: var(--rojo);
 }
+.pdp-sello.otra {
+  border-color: var(--gris);
+  color: var(--gris);
+}
 .pdp-sello {
   position: absolute;
   right: 12px;
-  bottom: 12px;
+  bottom: 14px;
   padding: 4px 9px;
   border: 2px solid var(--rojo);
   color: var(--rojo);
